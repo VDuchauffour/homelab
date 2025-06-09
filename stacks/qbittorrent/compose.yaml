@@ -1,0 +1,50 @@
+services:
+  # gluetun:
+  #   image: qmcgaw/gluetun
+  #   container_name: gluetun
+  #   # line above must be uncommented to allow external containers to connect.
+  #   # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
+  #   cap_add:
+  #     - NET_ADMIN
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   ports:
+  #     - 8888:8888/tcp # HTTP proxy
+  #     - 8388:8388/tcp # Shadowsocks
+  #     - 8388:8388/udp # Shadowsocks
+  #     - 8080:8080 #qbittorrent
+  #     - 6881:6881 #qbittorrent
+  #     - 6881:6881/udp #qbittorrent
+  #   volumes:
+  #     - /mnt/YOUR_TRUENAS_DATASET/DATASET_DIR:/gluetun
+  #   environment:
+  #     # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+  #     - VPN_TYPE=openvpn
+  #     - VPN_SERVICE_PROVIDER=REPLACE_WITH_YOUR_VPN_NAME
+  #     - OPENVPN_USER=YOUR_VPN_OpenVPN_IKEv2_USERNAME
+  #     - OPENVPN_PASSWORD=YOUR_VPN_OpenVPN_IKEv2_PASSWORD
+  #     - SERVER_COUNTRIES=THIS_IS_PROTON_VPN_SPECIFIC_SETTING
+  #     - TZ=YOUR_TIMEZONE
+  #     - UPDATER_PERIOD=
+  #     # - VPN_TYPE=wireguard
+  #     # - VPN_SERVICE_PROVIDER=REPLACE_WITH_YOUR_VPN_NAME
+  #     # - WIREGUARD_PRIVATE_KEY=REPLACE_WITH_YOUR_VPN_PRIVATE_KEY
+  #     # - WIREGUARD_ADDRESSES=REPLACE_WITH_YOUR_VPN_ADDRESS
+  #     # - WIREGUARD_PUBLIC_KEY=REPLACE_WITH_YOUR_VPN_PUBLIC_KEY
+  #     # - WIREGUARD_ENDPOINT_IP=REPLACE_WITH_YOUR_VPN_SERVER_ENDPOINT_IP
+  #     # - WIREGUARD_ENDPOINT_PORT=OPTIONAL_REPLACE_WITH_YOUR_VPN_SERVER_ENDPOINT_PORT_IF_NOT_51820 # do not include this line if port is 51820.
+  #     # - WIREGUARD_PRESHARED_KEY=OPTIONAL_REPLACE_WITH_YOUR_VPN_PRESHARED_KEY
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=568
+      - PGID=568
+      - TZ=Europe/Paris
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /mnt/work/apps/qbittorrent/config:/config
+      - /mnt/work/apps/qbittorrent/media:/media
+    restart: unless-stopped
+    # network_mode: container:gluetun
