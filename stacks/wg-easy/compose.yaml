@@ -3,8 +3,8 @@ services:
     image: ghcr.io/wg-easy/wg-easy:15
     container_name: wg-easy
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=568
+      - PGID=568
       - TZ=Europe/Paris
     networks:
       wg:
