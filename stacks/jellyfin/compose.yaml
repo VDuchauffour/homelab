@@ -14,7 +14,7 @@ services:
     volumes:
       - /mnt/work/apps/jellyfin/config:/config
       - /mnt/work/apps/jellyfin/cache:/cache
-      - /mnt/work/apps/jellyfin/media:/media
+      - /mnt/storage/media/videos:/media
     healthcheck:
       interval: 30s
       retries: 5
