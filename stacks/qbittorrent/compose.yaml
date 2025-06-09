@@ -47,5 +47,5 @@ services:
       - /mnt/work/apps/qbittorrent/config:/config
       - /mnt/work/apps/qbittorrent/media:/media
     restart: unless-stopped
-    network_mode: bridge
+    network_mode: host
     # network_mode: container:gluetun
