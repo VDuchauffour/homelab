@@ -4,10 +4,10 @@ services:
     container_name: jellyfin
     environment:
       JELLYFIN_CACHE_DIR: /cache
-      PGID: 1000
-      PUID: 1000
+      PGID: 568
+      PUID: 568
       TZ: Europe/Paris
-    user: "1000:1000"
+    user: "568:568"
     ports:
       - "8920:8920"
       - "8096:8096"
