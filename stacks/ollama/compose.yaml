@@ -8,5 +8,5 @@ services:
     ports:
       - 11434:11434
     volumes:
-      - /mnt/storage/apps/ollama:/root/.ollama
+      - /mnt/work/apps/ollama:/root/.ollama
     restart: unless-stopped
