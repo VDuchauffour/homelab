@@ -26,10 +26,15 @@ services:
       - /mnt/work/apps/paperless-ngx/paperless-ngx/media:/usr/src/paperless/media
       - /mnt/work/apps/paperless-ngx/paperless-ngx/export:/usr/src/paperless/export
       - /mnt/work/apps/paperless-ngx/paperless-ngx/consume:/usr/src/paperless/consume
-    env_file: docker-compose.env
     environment:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
+      USERMAP_UID: 1000
+      USERMAP_GID: 1000
+      #PAPERLESS_URL: https://paperless.example.com
+      PAPERLESS_TIME_ZONE: Europe/Paris
+      PAPERLESS_OCR_LANGUAGE: fra
+      PAPERLESS_DATE_ORDER: DD/MM/YYYY
 volumes:
   data:
   media:
