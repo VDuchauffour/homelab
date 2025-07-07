@@ -52,5 +52,5 @@ services:
     volumes:
       - /mnt/work/apps/qbittorrent/config:/config
       - /mnt/work/apps/qbittorrent/media:/media
-      - /mnt/work/apps/qbittorrent/downlads:/downloads
+      - /mnt/work/apps/qbittorrent/downloads:/downloads
     network_mode: container:gluetun
