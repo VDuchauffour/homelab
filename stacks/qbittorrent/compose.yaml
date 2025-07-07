@@ -44,8 +44,8 @@ services:
     env_file:
       - .env
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=3000
+      - PGID=3000
       - TZ=Europe/Paris
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
