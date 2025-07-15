@@ -1,0 +1,482 @@
+configs:
+  configuration.default:
+    content: |-
+      default_config:
+      tts:
+        - platform: google_translate
+      automation: !include automations.yaml
+      script: !include scripts.yaml
+      scene: !include scenes.yaml
+  empty.default:
+    content: "{}"
+  permissions_actions_data:
+    content: >-
+      [{"mount_path": "/mnt/permission/postgres_postgres_data", "is_temporary":
+      false, "identifier": "postgres_postgres_data", "recursive": false, "mode":
+      "check", "uid": 999, "gid": 999, "chmod": null}]
+  permissions_run_script:
+    content: |
+      #!/usr/bin/env python3
+
+      import os
+      import json
+      import time
+      import shutil
+
+      with open("/script/actions.json", "r") as f:
+          actions_data = json.load(f)
+
+      if not actions_data:
+          # If this script is called, there should be actions data
+          raise ValueError("No actions data found")
+
+      def fix_perms(path, chmod, recursive=False):
+          print(f"Changing permissions{' recursively ' if recursive else ' '}to {chmod} on: [{path}]")
+          os.chmod(path, int(chmod, 8))
+          if recursive:
+              for root, dirs, files in os.walk(path):
+                  for f in files:
+                      os.chmod(os.path.join(root, f), int(chmod, 8))
+          print("Permissions after changes:")
+          print_chmod_stat()
+
+      def fix_owner(path, uid, gid, recursive=False):
+          print(f"Changing ownership{' recursively ' if recursive else ' '}to {uid}:{gid} on: [{path}]")
+          os.chown(path, uid, gid)
+          if recursive:
+              for root, dirs, files in os.walk(path):
+                  for f in files:
+                      os.chown(os.path.join(root, f), uid, gid)
+          print("Ownership after changes:")
+          print_chown_stat()
+
+      def print_chown_stat():
+          curr_stat = os.stat(action["mount_path"])
+          print(f"Ownership: [{curr_stat.st_uid}:{curr_stat.st_gid}]")
+
+      def print_chmod_stat():
+          curr_stat = os.stat(action["mount_path"])
+          print(f"Permissions: [{oct(curr_stat.st_mode)[3:]}]")
+
+      def print_chown_diff(curr_stat, uid, gid):
+          print(f"Ownership: wanted [{uid}:{gid}], got [{curr_stat.st_uid}:{curr_stat.st_gid}].")
+
+      def print_chmod_diff(curr_stat, mode):
+          print(f"Permissions: wanted [{mode}], got [{oct(curr_stat.st_mode)[3:]}].")
+
+      def perform_action(action):
+          start_time = time.time()
+          print(f"=== Applying configuration on volume with identifier [{action['identifier']}] ===")
+
+          if not os.path.isdir(action["mount_path"]):
+              print(f"Path [{action['mount_path']}] is not a directory, skipping...")
+              return
+
+          if action["is_temporary"]:
+              print(f"Path [{action['mount_path']}] is a temporary directory, ensuring it is empty...")
+              for item in os.listdir(action["mount_path"]):
+                  item_path = os.path.join(action["mount_path"], item)
+
+                  # Exclude the safe directory, where we can use to mount files temporarily
+                  if os.path.basename(item_path) == "ix-safe":
+                      continue
+                  if os.path.isdir(item_path):
+                      shutil.rmtree(item_path)
+                  else:
+                      os.remove(item_path)
+
+          if not action["is_temporary"] and os.listdir(action["mount_path"]):
+              print(f"Path [{action['mount_path']}] is not empty, skipping...")
+              return
+
+          print(f"Current Ownership and Permissions on [{action['mount_path']}]:")
+          curr_stat = os.stat(action["mount_path"])
+          print_chown_diff(curr_stat, action["uid"], action["gid"])
+          print_chmod_diff(curr_stat, action["chmod"])
+          print("---")
+
+          if action["mode"] == "always":
+              fix_owner(action["mount_path"], action["uid"], action["gid"], action["recursive"])
+              if not action["chmod"]:
+                  print("Skipping permissions check, chmod is falsy")
+              else:
+                  fix_perms(action["mount_path"], action["chmod"], action["recursive"])
+              return
+
+          elif action["mode"] == "check":
+              if curr_stat.st_uid != action["uid"] or curr_stat.st_gid != action["gid"]:
+                  print("Ownership is incorrect. Fixing...")
+                  fix_owner(action["mount_path"], action["uid"], action["gid"], action["recursive"])
+              else:
+                  print("Ownership is correct. Skipping...")
+
+              if not action["chmod"]:
+                  print("Skipping permissions check, chmod is falsy")
+              else:
+                  if oct(curr_stat.st_mode)[3:] != action["chmod"]:
+                      print("Permissions are incorrect. Fixing...")
+                      fix_perms(action["mount_path"], action["chmod"], action["recursive"])
+                  else:
+                      print("Permissions are correct. Skipping...")
+
+          print(f"Time taken: {(time.time() - start_time) * 1000:.2f}ms")
+          print(f"=== Finished applying configuration on volume with identifier [{action['identifier']}] ==")
+          print()
+
+      if __name__ == "__main__":
+          start_time = time.time()
+          for action in actions_data:
+              perform_action(action)
+          print(f"Total time taken: {(time.time() - start_time) * 1000:.2f}ms")
+  recorder.default:
+    content: |-
+      recorder:
+        purge_keep_days: 30
+        commit_interval: 3
+        db_url: postgresql://home-assistant:01IoffY%5EPDoqS%24%2AF%23yV%40cN%40%2AbB4im468@postgres:5432/home-assistant?sslmode=disable
+  script.sh:
+    content: >-
+
+      #!/bin/sh
+
+      if [ ! -f "/config/configuration.yaml" ]; then
+        echo "File [/config/configuration.yaml] does NOT exist. Creating..."
+        cp "/default/init/configuration.default" "/config/configuration.yaml"
+        if [ ! -f "/config/automations.yaml" ]; then
+          echo "File [/config/automations.yaml] does NOT exist. Creating..."
+          cp "/default/init/empty.default" "/config/automations.yaml"
+        fi
+        if [ ! -f "/config/scripts.yaml" ]; then
+          echo "File [/config/scripts.yaml] does NOT exist. Creating..."
+          cp "/default/init/empty.default" "/config/scripts.yaml"
+        fi
+        if [ ! -f "/config/scenes.yaml" ]; then
+          echo "File [/config/scenes.yaml] does NOT exist. Creating..."
+          cp "/default/init/empty.default" "/config/scenes.yaml"
+        fi
+      fi
+
+
+      chmod +rw "/config/configuration.yaml" || echo "Failed to set permissions
+      on [/config/configuration.yaml]"
+
+      if ! yq --exit-status '.recorder' < "/config/configuration.yaml" &>
+      /dev/null; then
+        echo "Section [recorder] does NOT exist in [/config/configuration.yaml]. Appending..."
+        echo "" >> "/config/configuration.yaml"
+        cat "/default/init/recorder.default" >> "/config/configuration.yaml"
+      fi
+
+      echo "Ensure DB URL is up to date
+      [postgresql://home-assistant:01IoffY%5EPDoqS%24%2AF%23yV%40cN%40%2AbB4im468@postgres:5432/home-assistant?sslmode=disable]
+      in [/config/configuration.yaml]"
+
+      yq -i '.recorder.db_url =
+      "postgresql://home-assistant:01IoffY%5EPDoqS%24%2AF%23yV%40cN%40%2AbB4im468@postgres:5432/home-assistant?sslmode=disable"'
+      "/config/configuration.yaml"
+
+
+      if ! yq --exit-status '.http' < "/config/configuration.yaml" &> /dev/null;
+      then
+        echo "Section [http] does NOT exist in [/config/configuration.yaml]. Appending..."
+        yq -i '.http = {}' "/config/configuration.yaml"
+      fi
+
+
+      echo "Matching server port to configured port [8123] in
+      [/config/configuration.yaml]"
+
+      yq -i '.http.server_port = 8123' "/config/configuration.yaml"
+
+
+      echo "Done"
+services:
+  home-assistant:
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - NET_BIND_SERVICE
+      - NET_RAW
+    cap_drop:
+      - ALL
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      permissions:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4096M
+    environment:
+      GID: "1000"
+      GROUP_ID: "1000"
+      NVIDIA_VISIBLE_DEVICES: void
+      PGID: "1000"
+      PUID: "1000"
+      TZ: Europe/Paris
+      UID: "1000"
+      UMASK: "002"
+      UMASK_SET: "002"
+      USER_ID: "1000"
+    group_add:
+      - 1000
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_interval: 2s
+      start_period: 15s
+      test: wget --quiet -O /dev/null http://127.0.0.1:8123/manifest.json
+      timeout: 5s
+    image: homeassistant/home-assistant:2025.5.3
+    platform: linux/amd64
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: 8123
+        target: 8123
+    privileged: False
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    stdin_open: False
+    tty: False
+    user: "0:0"
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/config
+        target: /config
+        type: bind
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/media
+        target: /media
+        type: bind
+  init:
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+    cap_drop:
+      - ALL
+    configs:
+      - source: configuration.default
+        target: /default/init/configuration.default
+      - source: empty.default
+        target: /default/init/empty.default
+      - source: recorder.default
+        target: /default/init/recorder.default
+      - mode: 493
+        source: script.sh
+        target: /default/init/script.sh
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+    entrypoint:
+      - /bin/sh
+      - /default/init/script.sh
+    environment:
+      GID: "1000"
+      GROUP_ID: "1000"
+      NVIDIA_VISIBLE_DEVICES: void
+      PGID: "1000"
+      PUID: "1000"
+      TZ: Europe/Paris
+      UID: "1000"
+      UMASK: "002"
+      UMASK_SET: "002"
+      USER_ID: "1000"
+    group_add:
+      - 1000
+    healthcheck:
+      disable: True
+    image: mikefarah/yq:4.45.4
+    platform: linux/amd64
+    privileged: False
+    restart: on-failure:1
+    security_opt:
+      - no-new-privileges=true
+    stdin_open: False
+    tty: False
+    user: "0:0"
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/config
+        target: /config
+        type: bind
+  permissions:
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+    cap_drop:
+      - ALL
+    configs:
+      - mode: 320
+        source: permissions_actions_data
+        target: /script/actions.json
+      - mode: 448
+        source: permissions_run_script
+        target: /script/run.py
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+    entrypoint:
+      - python3
+      - /script/run.py
+    environment:
+      GID: "1000"
+      GROUP_ID: "1000"
+      NVIDIA_VISIBLE_DEVICES: void
+      PGID: "1000"
+      PUID: "1000"
+      TZ: Europe/Paris
+      UID: "1000"
+      UMASK: "002"
+      UMASK_SET: "002"
+      USER_ID: "1000"
+    group_add:
+      - 1000
+    healthcheck:
+      disable: True
+    image: python:3.13.0-slim-bookworm
+    network_mode: none
+    platform: linux/amd64
+    privileged: False
+    restart: on-failure:1
+    security_opt:
+      - no-new-privileges=true
+    stdin_open: False
+    tty: False
+    user: "0:0"
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/postgres_data
+        target: /mnt/permission/postgres_postgres_data
+        type: bind
+  postgres:
+    cap_drop:
+      - ALL
+    depends_on:
+      permissions:
+        condition: service_completed_successfully
+      postgres_upgrade:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4096M
+    environment:
+      GID: "1000"
+      GROUP_ID: "1000"
+      NVIDIA_VISIBLE_DEVICES: void
+      PGID: "1000"
+      PGPORT: "5432"
+      POSTGRES_DB: home-assistant
+      POSTGRES_PASSWORD: 01IoffY^PDoqS$$*F#yV@cN@*bB4im468
+      POSTGRES_USER: home-assistant
+      PUID: "1000"
+      TZ: Europe/Paris
+      UID: "1000"
+      UMASK: "002"
+      UMASK_SET: "002"
+      USER_ID: "1000"
+    group_add:
+      - 1000
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_interval: 2s
+      start_period: 15s
+      test: pg_isready -h 127.0.0.1 -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
+      timeout: 5s
+    image: postgres:17.5
+    platform: linux/amd64
+    privileged: False
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    stdin_open: False
+    tty: False
+    user: "999:999"
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/postgres_data
+        target: /var/lib/postgresql/data
+        type: bind
+  postgres_upgrade:
+    cap_drop:
+      - ALL
+    depends_on:
+      permissions:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4096M
+    entrypoint:
+      - /bin/bash
+      - "-c"
+      - /upgrade.sh
+    environment:
+      DATA_DIR: /var/lib/postgresql/data
+      GID: "1000"
+      GROUP_ID: "1000"
+      NVIDIA_VISIBLE_DEVICES: void
+      PGID: "1000"
+      PGPORT: "5432"
+      POSTGRES_DB: home-assistant
+      POSTGRES_PASSWORD: 01IoffY^PDoqS$$*F#yV@cN@*bB4im468
+      POSTGRES_USER: home-assistant
+      PUID: "1000"
+      TARGET_VERSION: "17"
+      TZ: Europe/Paris
+      UID: "1000"
+      UMASK: "002"
+      UMASK_SET: "002"
+      USER_ID: "1000"
+    group_add:
+      - 1000
+    healthcheck:
+      disable: True
+    image: ixsystems/postgres-upgrade:1.0.2
+    platform: linux/amd64
+    privileged: False
+    restart: on-failure:1
+    security_opt:
+      - no-new-privileges=true
+    stdin_open: False
+    tty: False
+    user: "999:999"
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/.ix-apps/app_mounts/home-assistant/postgres_data
+        target: /var/lib/postgresql/data
+        type: bind
