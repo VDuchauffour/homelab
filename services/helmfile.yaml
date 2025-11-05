@@ -1,2 +1,4 @@
 helmfiles:
   - path: kubernetes-dashboard/helmfile.yaml
+  - path: monitoring/helmfile.yaml
+  # - path: argocd/helmfile.yaml

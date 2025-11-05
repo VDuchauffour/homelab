@@ -1,0 +1,31 @@
+enabled: true
+adminPassword: "admin"   # change this in prod
+service:
+  type: ClusterIP
+  port: 3000
+persistence:
+  enabled: false
+dashboards:
+  default:
+    # Example: enable default Kubernetes cluster dashboard
+    k8s-cluster:
+      gnetId: 315
+      revision: 3
+      datasource: Prometheus
+sidecar:
+  dashboards:
+    enabled: true
+  datasources:
+    enabled: true
+
+# -- Node exporter
+nodeExporter:
+  enabled: true
+
+# -- kube-state-metrics
+kubeStateMetrics:
+  enabled: true
+
+# -- service monitors
+defaultRules:
+  create: true
