@@ -8,5 +8,5 @@ releases:
     createNamespace: true
     chart: kubernetes-dashboard/kubernetes-dashboard
     version: "7.14.0"
-    # values:
-    #   - ./values/values-tmpl.yaml.gotmpl
+    values:
+      - ./values/values-tmpl.yaml
