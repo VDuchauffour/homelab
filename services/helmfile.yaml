@@ -1,0 +1,2 @@
+helmfiles:
+  - path: kubernetes-dashboard/helmfile.yaml
