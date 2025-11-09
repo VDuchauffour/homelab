@@ -9,8 +9,9 @@ gluetun:
       SERVER_FEATURES: "p2p"  # For torrent support
   credentials:
     create: false
-    username: ref+bw://45d1d507-3146-41d3-a308-b39000f11c7e/username
-    password: ref+bw://45d1d507-3146-41d3-a308-b39000f11c7e/password
+    existingSecret: qbittorrent-vpn-proton
+    usernameKey: username
+    passwordKey: password
   settings:
     VPN_PORT_FORWARDING: "on"
     STATUS_FILE: "/config/qbittorrent/gluetun/gluetun-status.json"
