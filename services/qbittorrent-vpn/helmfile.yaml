@@ -1,0 +1,9 @@
+releases:
+  - name: qbittorrent-vpn
+    namespace: qbittorrent-vpn
+    createNamespace: true
+    chart: ../../charts/qbittorrent-vpn/
+    version: 1.0.0
+    values:
+      - values/values.yaml
+
