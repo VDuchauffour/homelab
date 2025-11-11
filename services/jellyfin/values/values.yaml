@@ -1,0 +1,43 @@
+persistence:
+  config:
+    enabled: true
+    storageClass: zfs-tank-jellyfin
+  media:
+    enabled: true
+    storageClass: zfs-tank-jellyfin
+  # metrics:
+
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+# for hardware acceleration
+securityContext:
+  capabilities:
+    add:
+      - "SYS_ADMIN"
+    drop:
+      - "ALL"
+  privileged: false
+
+extraVolumes:
+  - name: hwa
+    hostPath:
+      path: /dev/dri
+
+extraVolumeMounts:
+  - name: hwa
+    mountPath: /dev/dri
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations: []
+  hosts:
+    - host: jellyfin.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+
