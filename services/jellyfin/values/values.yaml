@@ -1,12 +1,20 @@
 persistence:
   config:
     enabled: true
-    storageClass: zfs-tank-jellyfin
+    storageClass: zfs-vm-pool-jellyfin-config
   media:
     enabled: true
     storageClass: zfs-tank-jellyfin
   # metrics:
 
+volumes:
+  - name: jellyfin-cache
+    persistentVolumeClaim:
+      claimName: pvc-jellyfin-cache
+
+volumeMounts:
+  - name: jellyfin-cache
+    mountPath: /cache
 
 podSecurityContext:
   runAsUser: 1000
@@ -31,11 +39,24 @@ extraVolumeMounts:
   - name: hwa
     mountPath: /dev/dri
 
+# resources:
+#   limits:
+#     cpu: 1000m
+#     memory: 2Gi
+#   requests:
+#     cpu: 200m
+#     memory: 512Mi
+
 ingress:
   enabled: true
   className: traefik
-  annotations: []
+  annotations: {}
   hosts:
+    - host: jellyfin.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
     - host: jellyfin.home.arpa
       paths:
         - path: /
