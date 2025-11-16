@@ -18,7 +18,7 @@ gluetun:
   persistence:
     enabled: true
     existingClaim: false
-    storageClass: "zfs-tank"
+    storageClass: zfs-vm-pool-qbittorrent-vpn
     size: 100Mi
 
 qbittorrent:
@@ -26,12 +26,12 @@ qbittorrent:
     config:
       enabled: true
       existingClaim: false
-      storageClass: "zfs-tank"
+      storageClass: zfs-vm-pool-qbittorrent-vpn
       size: 2Gi
     downloads:
       enabled: true
       existingClaim: false
-      storageClass: "zfs-tank"
+      storageClass: zfs-tank-qbittorrent-vpn
       size: 200Gi
   env:
     - name: PUID
@@ -41,16 +41,17 @@ qbittorrent:
     - name: TZ
       value: "Europe/Paris" 
 
-podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-
+secretName: qbittorrent-vpn-tls
 ingress:
   enabled: true
   className: traefik
   annotations: []
   hosts:
+    - host: qbittorrent.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
     - host: qbittorrent.home.arpa
       paths:
         - path: /
