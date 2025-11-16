@@ -1,0 +1,14 @@
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: bazarr
+    namespace: media-center
+    createNamespace: true
+    chart: k8s-home-lab/bazarr
+    version: 11.1.2
+    values:
+      - values/values.yaml
+
+
