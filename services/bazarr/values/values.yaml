@@ -1,0 +1,48 @@
+env:
+  TZ: Europe/Paris
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath: /config
+    readOnly: false
+    storageClass: zfs-vm-pool-bazarr-config
+  media:
+    enabled: false
+    type: pvc
+    mountPath: /
+    readOnly: false
+    storageClass: zfs-tank-bazarr
+    accessMode: ReadWriteOnce
+    size: 25Gi
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+service:
+  main:
+    ports:
+      http:
+        port: 6767
+
+ingress:
+ main:
+    enabled: true
+    primary: true
+    annotations: {}
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - 
+        host: bazarr.home.arpa
+        paths:
+          - 
+            path: /
+            pathType: Prefix
+    tls:
+     - secretName: bazarr-tls
+       hosts:
+         - bazarr.home.arpa
