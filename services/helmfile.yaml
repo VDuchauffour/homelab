@@ -1,5 +1,6 @@
 helmfiles:
-  - path: kubernetes-dashboard/helmfile.yaml
-  - path: monitoring/helmfile.yaml
-  # - path: argocd/helmfile.yaml
+  - path: bazarr/helmfile.yaml
+  - path: cert-manager/helmfile.yaml
+  - path: jellyfin/helmfile.yaml
+  - path: jellyseerr/helmfile.yaml
   - path: qbittorrent-vpn/helmfile.yaml
