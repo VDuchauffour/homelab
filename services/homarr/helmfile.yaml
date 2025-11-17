@@ -1,0 +1,13 @@
+repositories:
+  - name: homarr-labs
+    url: https://homarr-labs.github.io/charts/
+
+releases:
+  - name: homarr
+    namespace: homarr
+    chart: homarr-labs/homarr
+    version: 8.2.3
+    createNamespace: true
+    values:
+      - values.yaml
+

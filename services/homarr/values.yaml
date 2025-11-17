@@ -1,0 +1,22 @@
+env:
+  TZ: Europe/Paris
+
+envSecrets:
+  dbEncryption:
+    existingSecret: homarr-db-encryption
+    key: db-encryption-key
+
+secretName: homarr-tls
+ingress:
+  enabled: true
+  ingressClassName: "traefik"
+  annotations: {}
+  hosts:
+    - host: dashboard.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - dashboard.home.arpa
+
