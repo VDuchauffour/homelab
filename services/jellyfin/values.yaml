@@ -1,3 +1,9 @@
+service:
+  type: NodePort
+  port: 8096
+  nodePort: 30096
+
+
 persistence:
   config:
     enabled: true

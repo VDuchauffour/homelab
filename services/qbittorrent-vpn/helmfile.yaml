@@ -9,12 +9,12 @@ releases:
     chart: rtomik-helm-charts/qbittorrent-vpn
     version: 0.0.1
     values:
-      - values/values.yaml
-    hooks:
-      - events: ["preapply"]
-        showlogs: true
-        command: "kubectl"
-        args: ["apply", "-f", "./manifests/pv.yaml", "-f", "./manifests/secret.yaml"]
+      - values.yaml
+    # hooks:
+    #   - events: ["preapply"]
+    #     showlogs: true
+    #     command: "kubectl"
+    #     args: ["apply", "-f", "./manifests/pv.yaml", "-f", "./manifests/secret.yaml"]
       # - events: ["postuninstall"] # Triggered immediately before a release is uninstalled
       #   showlogs: true
       #   command: "kubectl"
