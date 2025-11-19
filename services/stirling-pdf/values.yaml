@@ -1,0 +1,14 @@
+nameOverride: stirling-pdf
+ingressClassName: traefik
+ingress:
+  enabled: true
+  pathType: Prefix
+  annotations: {}
+  hosts:
+    - name: stirling-pdf.home.arpa
+      path: /
+      tls: false
+    - name: stirling-pdf.home.arpa
+      path: /
+      tls: true
+      tlsSecret: stirling-pdf-tls
