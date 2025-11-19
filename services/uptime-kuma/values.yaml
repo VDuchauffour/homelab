@@ -1,0 +1,38 @@
+# image:
+#   tag: 2.0.2
+
+# persistence:
+#   enabled: false
+#   claimNameOverwrite: ""
+#   sizeLimit: 4Gi
+#   storageClass: ""
+#   annotations: {}
+#   labels: {}
+
+# serviceMonitor:
+#   enabled: false
+#   authentication:
+#     enabled: true
+#     username: <username>
+#     password: <token>
+#     existingSecret: ""
+#     existingSecretUsernameKey: username
+#     existingSecretPasswordKey: token
+
+secretName: uptime-kuma-tls
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: status.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - host: status.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+
+
