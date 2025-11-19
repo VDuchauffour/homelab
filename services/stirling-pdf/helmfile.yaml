@@ -1,0 +1,13 @@
+repositories:
+  - name: stirling-pdf
+    url: https://stirling-tools.github.io/Stirling-PDF-chart
+
+releases:
+  - name: stirling-pdf
+    namespace: stirling-pdf
+    createNamespace: true
+    chart: stirling-pdf/stirling-pdf-chart
+    version: 2.2.0
+    values:
+      - values.yaml
+
