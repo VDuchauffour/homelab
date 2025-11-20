@@ -22,12 +22,6 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
 
-service:
-  main:
-    ports:
-      http:
-        port: 6767
-
 ingress:
  main:
     enabled: true
@@ -36,8 +30,7 @@ ingress:
     labels: {}
     ingressClassName: traefik
     hosts:
-      - 
-        host: bazarr.home.arpa
+      - host: bazarr.home.arpa
         paths:
           - 
             path: /
