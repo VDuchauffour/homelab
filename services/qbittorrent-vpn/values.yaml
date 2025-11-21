@@ -14,7 +14,7 @@ gluetun:
     passwordKey: password
   settings:
     VPN_PORT_FORWARDING: 'on'
-    STATUS_FILE: /config/qbittorrent/gluetun/gluetun-status.json
+    STATUS_FILE: /gluetun-status.json
   persistence:
     enabled: true
     existingClaim: false
