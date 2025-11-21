@@ -1,0 +1,18 @@
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts
+releases:
+  - name: cnpg-operator
+    namespace: cnpg-system
+    chart: cnpg/cloudnative-pg
+    version: 0.26.1
+    createNamespace: true
+  - name: cnpg-database
+    namespace: cnpg-database
+    chart: cnpg/cluster
+    version: 0.3.1
+    needs:
+      - cnpg-system/cnpg-operator
+    createNamespace: true
+    values:
+      - values.yaml

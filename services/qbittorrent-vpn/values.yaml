@@ -1,26 +1,25 @@
 gluetun:
   enabled: true
   vpn:
-    provider: "protonvpn"
-    type: "openvpn"
-    serverCountries: "Switzerland"
+    provider: protonvpn
+    type: openvpn
+    serverCountries: Switzerland
     openvpn:
-      PROTONVPN_TIER: "2"  # 0 is free, 2 is paid (Plus/Visionary)
-      SERVER_FEATURES: "p2p"  # For torrent support
+      PROTONVPN_TIER: '2'  # 0 is free, 2 is paid (Plus/Visionary)
+      SERVER_FEATURES: p2p  # For torrent support
   credentials:
     create: false
     existingSecret: qbittorrent-vpn-proton
     usernameKey: username
     passwordKey: password
   settings:
-    VPN_PORT_FORWARDING: "on"
-    STATUS_FILE: "/config/qbittorrent/gluetun/gluetun-status.json"
+    VPN_PORT_FORWARDING: 'on'
+    STATUS_FILE: /config/qbittorrent/gluetun/gluetun-status.json
   persistence:
     enabled: true
     existingClaim: false
     storageClass: zfs-vm-pool-qbittorrent-vpn
     size: 100Mi
-
 qbittorrent:
   persistence:
     config:
@@ -39,20 +38,18 @@ qbittorrent:
     - name: PGID
       value: 1000
     - name: TZ
-      value: "Europe/Paris" 
-
-secretName: qbittorrent-vpn-tls
+      value: Europe/Paris
 ingress:
   enabled: true
   className: traefik
-  annotations: []
+  annotations:
+    kubernetes.io/ingress.class: traefik
   hosts:
     - host: qbittorrent.home.arpa
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - host: qbittorrent.home.arpa
-      paths:
-        - path: /
-          pathType: Prefix
+    - hosts:
+        - qbittorrent.home.arpa
+      secretName: qbittorrent-mkcert-tls

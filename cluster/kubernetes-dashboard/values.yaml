@@ -2,6 +2,5 @@ api:
   serviceAccount:
     create: true
     name: dashboard-admin
-
 rbac:
   clusterAdminRole: true
