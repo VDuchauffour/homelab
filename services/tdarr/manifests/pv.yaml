@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-bazarr-media
+  name: pv-tdarr-media
 spec:
-  storageClassName: zfs-tank-bazarr
+  storageClassName: zfs-tank-tdarr
   capacity:
     storage: 25Gi
   accessModes:
@@ -25,9 +25,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-bazarr-config
+  name: pv-tdarr-config
 spec:
-  storageClassName: zfs-vm-pool-bazarr-config
+  storageClassName: zfs-vm-pool-tdarr-config
   capacity:
     storage: 1Gi
   accessModes:
@@ -35,7 +35,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
-    path: /vm-pool/bazarr
+    path: /vm-pool/tdarr
   nodeAffinity:
     required:
       nodeSelectorTerms:

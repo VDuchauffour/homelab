@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: sonarr
+    namespace: media-center
+    createNamespace: true
+    chart: k8s-home-lab/sonarr
+    version: 17.1.1
+    values:
+      - values.yaml

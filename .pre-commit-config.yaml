@@ -1,3 +1,4 @@
+---
 default_language_version:
   python: python3.12
 repos:
@@ -10,6 +11,8 @@ repos:
       - id: check-xml
       - id: check-json
       - id: check-yaml
+        args:
+          - --allow-multiple-documents
       - id: check-toml
       - id: debug-statements
       - id: check-executables-have-shebangs

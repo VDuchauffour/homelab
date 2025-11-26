@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: radarr
+    namespace: media-center
+    createNamespace: true
+    chart: k8s-home-lab/radarr
+    version: 17.1.2
+    values:
+      - values.yaml
