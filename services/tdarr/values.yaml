@@ -1,0 +1,60 @@
+---
+env:
+  TZ: Europe/Paris
+
+image:
+  repository: ghcr.io/haveagitgat/tdarr
+  tag: latest
+node:
+  enabled: true
+  id: node
+  image:
+    repository: haveagitgat/tdarr_node
+    tag: latest
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath: /config
+    readOnly: false
+    storageClass: zfs-vm-pool-tdarr-config
+  data:
+    enabled: false
+    type: pvc
+    mountPath: /data
+    readOnly: false
+    storageClass: zfs-vm-pool-tdarr-data
+    accessMode: ReadWriteOnce
+  media:
+    enabled: false
+    type: pvc
+    mountPath: /
+    readOnly: false
+    storageClass: zfs-tank-tdarr
+    accessMode: ReadWriteOnce
+    size: 25Gi
+
+# podSecurityContext:
+#   runAsUser: 1000
+#   runAsGroup: 1000
+#   fsGroup: 1000
+
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - host: tdarr.home.arpa
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - tdarr.home.arpa
+        secretName: tdarr-mkcert-tls

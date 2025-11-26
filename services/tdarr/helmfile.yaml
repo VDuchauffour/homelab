@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: tdarr
+    namespace: media-center
+    createNamespace: true
+    chart: k8s-home-lab/tdarr
+    version: 5.0.1
+    values:
+      - values.yaml
