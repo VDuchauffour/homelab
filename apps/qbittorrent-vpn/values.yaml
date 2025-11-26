@@ -1,0 +1,57 @@
+---
+gluetun:
+  enabled: true
+  vpn:
+    provider: protonvpn
+    type: openvpn
+    serverCountries: Switzerland
+    openvpn:
+      PROTONVPN_TIER: '2'  # 0 is free, 2 is paid (Plus/Visionary)
+      SERVER_FEATURES: p2p  # For torrent support
+  credentials:
+    create: false
+    existingSecret: qbittorrent-vpn-proton
+    usernameKey: username
+    passwordKey: password
+  settings:
+    VPN_PORT_FORWARDING: 'on'
+    STATUS_FILE: /gluetun-status.json
+  persistence:
+    enabled: true
+    existingClaim: false
+    storageClass: zfs-vm-pool-qbittorrent-vpn
+    size: 100Mi
+qbittorrent:
+  persistence:
+    config:
+      enabled: true
+      existingClaim: false
+      storageClass: zfs-vm-pool-qbittorrent-vpn
+      size: 2Gi
+    downloads:
+      enabled: true
+      existingClaim: false
+      storageClass: zfs-tank-qbittorrent-vpn
+      size: 200Gi
+  env:
+    - name: PUID
+      value: 1000
+    - name: PGID
+      value: 1000
+    - name: TZ
+      value: Europe/Paris
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: qbittorrent.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - qbittorrent.home.arpa
+      secretName: qbittorrent-mkcert-tls
