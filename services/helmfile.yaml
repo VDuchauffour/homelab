@@ -1,6 +1,13 @@
 helmfiles:
   - path: bazarr/helmfile.yaml
-  - path: cert-manager/helmfile.yaml
+  - path: homarr/helmfile.yaml
+  - path: immich/helmfile.yaml
   - path: jellyfin/helmfile.yaml
   - path: jellyseerr/helmfile.yaml
+  - path: linkwarden/helmfile.yaml
   - path: qbittorrent-vpn/helmfile.yaml
+  - path: radarr/helmfile.yaml
+  - path: sonarr/helmfile.yaml
+  - path: stirling-pdf/helmfile.yaml
+  - path: tdarr/helmfile.yaml
+  - path: uptime-kuma/helmfile.yaml

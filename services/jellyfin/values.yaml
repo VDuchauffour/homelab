@@ -3,7 +3,6 @@ service:
   port: 8096
   nodePort: 30096
 
-
 persistence:
   config:
     enabled: true
@@ -31,9 +30,9 @@ podSecurityContext:
 securityContext:
   capabilities:
     add:
-      - "SYS_ADMIN"
+      - SYS_ADMIN
     drop:
-      - "ALL"
+      - ALL
   privileged: false
 
 extraVolumes:
@@ -56,15 +55,15 @@ extraVolumeMounts:
 ingress:
   enabled: true
   className: traefik
-  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
     - host: jellyfin.home.arpa
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - host: jellyfin.home.arpa
-      paths:
-        - path: /
-          pathType: Prefix
-
+    - hosts:
+        - jellyfin.home.arpa
+      secretName: jellyfin-mkcert-tls

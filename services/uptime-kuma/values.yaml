@@ -19,20 +19,18 @@
 #     existingSecretUsernameKey: username
 #     existingSecretPasswordKey: token
 
-secretName: uptime-kuma-tls
 ingress:
   enabled: true
   className: traefik
-  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
     - host: status.home.arpa
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - host: status.home.arpa
-      paths:
-        - path: /
-          pathType: Prefix
-
-
+    - hosts:
+        - status.home.arpa
+      secretName: uptime-kuma-mkcert-tls
