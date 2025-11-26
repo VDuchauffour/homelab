@@ -23,19 +23,20 @@ podSecurityContext:
   fsGroup: 1000
 
 ingress:
- main:
+  main:
     enabled: true
     primary: true
-    annotations: {}
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
     labels: {}
     ingressClassName: traefik
     hosts:
       - host: bazarr.home.arpa
         paths:
-          - 
-            path: /
+          - path: /
             pathType: Prefix
     tls:
-     - secretName: bazarr-tls
-       hosts:
-         - bazarr.home.arpa
+      - hosts:
+          - bazarr.home.arpa
+        secretName: bazarr-mkcert-tls

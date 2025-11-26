@@ -6,11 +6,12 @@ envSecrets:
     existingSecret: homarr-db-encryption
     key: db-encryption-key
 
-secretName: homarr-tls
 ingress:
   enabled: true
-  ingressClassName: "traefik"
-  annotations: {}
+  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
     - host: dashboard.home.arpa
       paths:
@@ -19,4 +20,4 @@ ingress:
   tls:
     - hosts:
         - dashboard.home.arpa
-
+      secretName: homarr-mkcert-tls
