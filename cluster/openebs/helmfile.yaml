@@ -1,9 +1,0 @@
-repositories:
-  - name: openebs
-    url: https://openebs.github.io/openebs
-releases:
-  - name: openebs
-    namespace: openebs
-    createNamespace: true
-    chart: openebs/openebs
-    version: 4.3.3

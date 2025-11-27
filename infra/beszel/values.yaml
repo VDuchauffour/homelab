@@ -1,0 +1,18 @@
+---
+persistence:
+  enabled: false
+  size: 1Gi
+  accessMode: ReadWriteOnce
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: beszel.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: beszel-tls
+      hosts:
+        - beszel.home.arpa
