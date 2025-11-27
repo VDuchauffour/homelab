@@ -1,0 +1,26 @@
+---
+authentik:
+  secret_key: ref+file://_secret.yaml#/authentik/authentik/secret_key
+  # This sends anonymous usage-data, stack traces on errors and
+  # performance data to authentik.error-reporting.a7k.io, and is fully opt-in
+  error_reporting:
+    enabled: true
+  postgresql:
+    password: ref+file://_secret.yaml#/authentik/authentik/postgresql/password
+postgresql:
+  enabled: true
+  auth:
+    password: ref+file://_secret.yaml#/authentik/postgresql/auth/password
+server:
+  ingress:
+    enabled: true
+    annotations: {}
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - authentik.home.arpa
+    pathType: Prefix
+    tls:
+      - secretName: authentik-tls
+        hosts:
+          - authentik.home.arpa
