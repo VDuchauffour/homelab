@@ -5,7 +5,7 @@ repositories:
 
 releases:
   - name: sonarr
-    namespace: media-center
+    namespace: arr
     createNamespace: true
     chart: k8s-home-lab/sonarr
     version: 17.1.1

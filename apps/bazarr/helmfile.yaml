@@ -5,7 +5,7 @@ repositories:
 
 releases:
   - name: bazarr
-    namespace: media-center
+    namespace: arr
     createNamespace: true
     chart: k8s-home-lab/bazarr
     version: 11.1.2
