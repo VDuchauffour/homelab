@@ -1,0 +1,35 @@
+---
+env:
+  TZ: Europe/Paris
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath: /config
+    readOnly: false
+    storageClass: zfs-vm-pool-prowlarr-config
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - host: prowlarr.home.arpa
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - prowlarr.home.arpa
+        secretName: prowlarr-mkcert-tls
