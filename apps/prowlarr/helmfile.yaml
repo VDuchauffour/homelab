@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: prowlarr
+    namespace: arr
+    createNamespace: true
+    chart: k8s-home-lab/prowlarr
+    version: 5.1.2
+    values:
+      - values.yaml
