@@ -10,7 +10,7 @@ persistence:
     readOnly: false
     storageClass: zfs-vm-pool-radarr-config
   media:
-    enabled: false
+    enabled: true
     type: pvc
     mountPath: /
     readOnly: false
