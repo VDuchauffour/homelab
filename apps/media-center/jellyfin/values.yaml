@@ -23,12 +23,16 @@ volumeMounts:
     mountPath: /cache
 
 podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
+  supplementalGroups:
+    - 993
+  fsGroup: 993
 
 # for hardware acceleration
 securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  supplementalGroups:
+    - 993
   capabilities:
     add:
       - SYS_ADMIN
@@ -45,13 +49,11 @@ extraVolumeMounts:
   - name: hwa
     mountPath: /dev/dri
 
-# resources:
-#   limits:
-#     cpu: 1000m
-#     memory: 2Gi
-#   requests:
-#     cpu: 200m
-#     memory: 512Mi
+resources:
+  limits:
+    gpu.intel.com/i915: '1'
+  requests:
+    gpu.intel.com/i915: '1'
 
 ingress:
   enabled: true
