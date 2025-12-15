@@ -32,6 +32,10 @@ or
 openssl rand -base64 32
 ```
 
+## Misc
+
+To check the usage of iGPU (through Intel QSV or VAAPI) use the command `intel_gpu_top` from the package `intel-gpu-tools`.
+
 ## Acknowledgments
 
 - Some charts are inspired by [rtomik's helm-charts repo](https://github.com/rtomik/helm-charts)
