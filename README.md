@@ -34,7 +34,11 @@ openssl rand -base64 32
 
 ## Misc
 
-To check the usage of iGPU (through Intel QSV or VAAPI) use the command `intel_gpu_top` from the package `intel-gpu-tools`.
+To watch the usage of iGPU (through Intel QSV or VAAPI) use the command `intel_gpu_top` from the package `intel-gpu-tools`.
+
+You can also check supported VAAPI profiles with `vainfo` from the package `libva-utils`.
+
+You can uerify OpenCL availability with `clinfo` from the package `clinfo`.
 
 ## Acknowledgments
 
