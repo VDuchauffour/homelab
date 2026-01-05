@@ -10,9 +10,8 @@ persistence:
     readOnly: false
     storageClass: zfs-vm-pool-sonarr-config
   media:
-    enabled: false
+    enabled: true
     type: pvc
-    mountPath: /
     readOnly: false
     storageClass: zfs-tank-sonarr
     accessMode: ReadWriteOnce
