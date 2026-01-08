@@ -1,0 +1,20 @@
+---
+users:
+  - name: k
+    groups: sudo
+    shell: /bin/bash
+    sudo:
+      - ALL=(ALL) ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdRMmR7Z03n6gPsWDfi2Qw803Y+Y1R0lcMszg75LOup
+        pris-scaleway
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2CfCFUxOIOkbnutTnHyC1jv3mnmhGCSDlAJC/OZJsX
+        pris-github
+package_update: true
+package_upgrade: true
+
+packages:
+  - vim
+  - git
+  - htop
