@@ -1,5 +1,9 @@
 # homelab
 
+## Scaleway proxy
+
+The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. The resource provision is made with `terraform` and is defined in the `scaleway-proxy` folder. You'll need to define a [config file](https://cli.scaleway.com/config/) to provide the resources.
+
 ## Recreate CA for local network
 
 ```shell
