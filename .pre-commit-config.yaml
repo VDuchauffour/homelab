@@ -27,9 +27,10 @@ repos:
         types:
           - json
   - repo: https://github.com/lyz-code/yamlfix
-    rev: 1.19.0
+    rev: 1.19.1
     hooks:
       - id: yamlfix
+        exclude: ^scaleway-proxy/
     # Formatter for Toml files
   - repo: https://github.com/ComPWA/mirrors-taplo
     rev: v0.9.3
@@ -53,3 +54,12 @@ repos:
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
+  # Linter for cloud-init
+  - repo: local
+    hooks:
+      - id: cloud-init-lint
+        name: Cloud-init linting
+        entry: cloud-init schema -c scaleway-proxy/cloud-init.yaml
+        language: system
+        pass_filenames: false
+        # stages: [pre-commit]
