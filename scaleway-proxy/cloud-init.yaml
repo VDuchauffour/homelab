@@ -30,3 +30,4 @@ runcmd:
   - mkdir -p /home/k/.ssh
   - cp /root/.ssh/authorized_keys /home/k/.ssh/authorized_keys
   - chown -R k:k /home/k/.ssh
+  - git clone https://github.com/VDuchauffour/nix-config.git
