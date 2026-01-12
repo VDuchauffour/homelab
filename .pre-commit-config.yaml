@@ -28,7 +28,7 @@ repos:
     rev: 1.19.1
     hooks:
       - id: yamlfix
-        exclude: ^scaleway-proxy/
+        exclude: ^.*cloud-init.yaml
     # Formatter for Toml files
   - repo: https://github.com/ComPWA/mirrors-taplo
     rev: v0.9.3
@@ -57,7 +57,7 @@ repos:
     hooks:
       - id: cloud-init-lint
         name: Cloud-init linting
-        entry: cloud-init schema -c scaleway-proxy/cloud-init.yaml
+        entry: cloud-init schema -c infra/modules/scaleway-proxy/cloud-init.yaml
         language: system
         pass_filenames: false
         # stages: [pre-commit]
