@@ -91,6 +91,4 @@ runcmd:
   - mkdir -p /home/k/.ssh
   - cp /root/.ssh/authorized_keys /home/k/.ssh/authorized_keys
   - chown -R k:k /home/k/.ssh
-  # - mkdir -p /home/k/.config/nix && echo 'experimental-features = "nix-command flakes"' > /home/k/.config/nix/nix.conf
-  # - nix run home-manager -- switch --flake github:VDuchauffour/nix-config#pris
   - /home/k/init.sh
