@@ -34,13 +34,8 @@ resource "scaleway_instance_server" "dev" {
   }
 }
 
-resource "scaleway_domain_zone" "main" {
-  domain    = var.domain_name
-  subdomain = ""
-}
-
 resource "scaleway_domain_record" "apex" {
-  dns_zone = scaleway_domain_zone.main.id
+  dns_zone = var.domain_name
   name     = ""
   type     = "A"
   data     = scaleway_instance_ip.public_ip.address
@@ -48,7 +43,7 @@ resource "scaleway_domain_record" "apex" {
 }
 
 resource "scaleway_domain_record" "wildcard" {
-  dns_zone = scaleway_domain_zone.main.id
+  dns_zone = var.domain_name
   name     = "*"
   type     = "A"
   data     = scaleway_instance_ip.public_ip.address
