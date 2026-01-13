@@ -1,10 +1,29 @@
 # homelab
 
-## Scaleway proxy
+## Infrastructure
 
-The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. Resources are provisioned using `terraform` and are defined in the `scaleway-proxy` folder. You'll need to define a [config file](https://cli.scaleway.com/config/) to provide the resources.
+### Reverse proxy
 
-## Recreate CA for local network
+The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. Resources are provisioned using `terraform` and are defined in the `scaleway-proxy` folder. You'll need to define a [config file](https://cli.scaleway.com/config/) to provide the resources and modify the `domain_name` to your needs.
+
+You can use the following command to overwrite the default values.
+
+```shell
+INSTANCE_NAME=instance-name
+DOMAIN_NAME=example.com
+cd ./infra/modules/scaleway-proxy \
+  && terraform plan \
+  && terraform apply \
+      -auto-approve \
+      -var "instance_name=$INSTANCE_NAME" \
+      -var "domain_name=$DOMAIN_NAME"
+```
+
+## Kubernetes
+
+The entire homelab is managed with Kubernetes.
+
+### Recreate CA for local network
 
 ```shell
 CERT_DIR=$(mkcert -CAROOT)
@@ -28,15 +47,7 @@ ingress:
     cert-manager.io/cluster-issuer: mkcert-ca
 ```
 
-## Password generation recommandation
-
-```shell
-pwgen -scyn 32 1
-or
-openssl rand -base64 32
-```
-
-## GPUs management
+### GPUs management
 
 To watch the usage of iGPU (through Intel QSV or VAAPI) use the command `intel_gpu_top` from the package `intel-gpu-tools`.
 
@@ -51,6 +62,14 @@ k get gpudeviceplugins
 ```
 
 You can get more info about that [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd/gpu_plugin/README.html).
+
+## Password generation recommandation
+
+```shell
+pwgen -scyn 32 1
+or
+openssl rand -base64 32
+```
 
 ## Acknowledgments
 

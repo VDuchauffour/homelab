@@ -33,3 +33,24 @@ resource "scaleway_instance_server" "dev" {
     size_in_gb = var.root_volume_size
   }
 }
+
+resource "scaleway_domain_zone" "main" {
+  domain    = var.domain_name
+  subdomain = ""
+}
+
+resource "scaleway_domain_record" "apex" {
+  dns_zone = scaleway_domain_zone.main.id
+  name     = ""
+  type     = "A"
+  data     = scaleway_instance_ip.public_ip.address
+  ttl      = 3600
+}
+
+resource "scaleway_domain_record" "wildcard" {
+  dns_zone = scaleway_domain_zone.main.id
+  name     = "*"
+  type     = "A"
+  data     = scaleway_instance_ip.public_ip.address
+  ttl      = 3600
+}

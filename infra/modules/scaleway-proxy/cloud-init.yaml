@@ -1,5 +1,13 @@
 #cloud-config
 ---
+ssh_pwauth: true
+chpasswd:
+  expire: true  # it will be asked to change the password on the first login
+  users:
+    - name: k
+      password: $6$85TwbaK8n1LgsSlZ$iG./J3MN4LlmRvMYuJRw0CO6ouQF9g8ANZijpb0i/6ZbXEvlQgK1fZ3IkapIbSWAC9cdr9R98didFrXtb4tCy1
+      type: hash
+
 users:
   - default
   - name: k
@@ -24,10 +32,62 @@ packages:
   - curl
   - sudo
   - zsh
+  - apt-utils
+  - ufw
+
+write_files:
+  - path: /home/k/init.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      #!/bin/bash
+      USERNAME="k"
+      HOME_DIR="/home/$USERNAME"
+
+      FRP_VERSION=0.66.0
+      cd "$HOME_DIR"
+      wget https://github.com/fatedier/frp/releases/download/v"$FRP_VERSION"/frp_"$FRP_VERSION"_linux_amd64.tar.gz
+      tar -xzvf frp_"$FRP_VERSION"_linux_amd64.tar.gz
+      rm -rf frp
+      mv frp_"$FRP_VERSION"_linux_amd64 frp
+      rm -rf frp_"$FRP_VERSION"_linux_amd64.tar.gz
+      chown -R "$USERNAME:$USERNAME" "$HOME_DIR/frp"
+
+      cat >"$HOME_DIR/frp/frps.toml" <<EOL
+      bindPort = 7000
+      vhostHTTPPort = 8080
+      EOL
+
+      cat > /etc/systemd/system/frps.service <<EOL
+      [Unit]
+      Description=FRP Server
+      After=network.target syslog.target
+      Wants=network.target
+
+      [Service]
+      ExecStart=/home/$USERNAME/frp/frps -c /home/$USERNAME/frp/frps.toml
+      Restart=always
+      RestartSec=5
+      User=$USERNAME
+      WorkingDirectory=/home/$USERNAME/frp
+
+      [Install]
+      WantedBy=multi-user.target
+      EOL
+
+      systemctl daemon-reload
+      systemctl enable frps.service
+      systemctl start frps.service
+
+      ufw allow 22
+      ufw allow 80
+      ufw allow 443
+      ufw allow 7000
+      echo "y" | ufw enable
 
 runcmd:
   - chsh -s /bin/zsh k
   - mkdir -p /home/k/.ssh
   - cp /root/.ssh/authorized_keys /home/k/.ssh/authorized_keys
   - chown -R k:k /home/k/.ssh
-  - git clone https://github.com/VDuchauffour/nix-config.git
+  - /home/k/init.sh
