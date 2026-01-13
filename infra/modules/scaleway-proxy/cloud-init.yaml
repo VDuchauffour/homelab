@@ -5,8 +5,8 @@ chpasswd:
   expire: true  # it will be asked to change the password on the first login
   users:
     - name: k
-      password: password1
-      type: text
+      password: $6$85TwbaK8n1LgsSlZ$iG./J3MN4LlmRvMYuJRw0CO6ouQF9g8ANZijpb0i/6ZbXEvlQgK1fZ3IkapIbSWAC9cdr9R98didFrXtb4tCy1
+      type: hash
 
 users:
   - default
