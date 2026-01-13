@@ -70,7 +70,7 @@ You can uerify OpenCL availability with `clinfo` from the package `clinfo`.
 With the Intel GPU devices and operator, you can info the GPU status with the command:
 
 ```shell
-k get gpudeviceplugins
+kubectl get gpudeviceplugins
 ```
 
 You can get more info about that [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd/gpu_plugin/README.html).
