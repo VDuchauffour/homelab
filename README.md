@@ -9,12 +9,14 @@ The homelab is exposed to the Internet through a reverse proxy hosted on Scalewa
 You can use the following command to overwrite the default values.
 
 ```shell
+INSTANCE_NAME=instance-name
+DOMAIN_NAME=example.com
 cd ./infra/modules/scaleway-proxy \
   && terraform plan \
   && terraform apply \
       -auto-approve \
-      -var 'instance_name=""' \
-      -var 'domain_name=""'
+      -var "instance_name=$INSTANCE_NAME" \
+      -var "domain_name=$DOMAIN_NAME"
 ```
 
 ## Kubernetes
