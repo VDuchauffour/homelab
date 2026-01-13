@@ -6,17 +6,29 @@
 
 The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. Resources are provisioned using `terraform` and are defined in the `scaleway-proxy` folder. You'll need to define a [config file](https://cli.scaleway.com/config/) to provide the resources and modify the `domain_name` to your needs.
 
-You can use the following command to overwrite the default values.
+You can use the following command to overwrite the default values:
 
 ```shell
-INSTANCE_NAME=instance-name
-DOMAIN_NAME=example.com
-cd ./infra/modules/scaleway-proxy \
-  && terraform plan \
-  && terraform apply \
-      -auto-approve \
-      -var "instance_name=$INSTANCE_NAME" \
-      -var "domain_name=$DOMAIN_NAME"
+INSTANCE_NAME="instance-name"
+DOMAIN_NAME="example.com"
+
+cd ./infra/modules/scaleway-proxy
+
+terraform plan \
+  -var "instance_name=$INSTANCE_NAME" \
+  -var "domain_name=$DOMAIN_NAME"
+
+terraform apply \
+  -auto-approve \
+  -var "instance_name=$INSTANCE_NAME" \
+  -var "domain_name=$DOMAIN_NAME"
+```
+
+And this one to destroy the resources:
+
+```shell
+cd ./infra/modules/scaleway-proxy
+terraform destroy -auto-approve
 ```
 
 ## Kubernetes
