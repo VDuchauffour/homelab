@@ -61,7 +61,8 @@ write_files:
       cat > /etc/systemd/system/frps.service <<EOL
       [Unit]
       Description=FRP Server
-      After=network.target
+      After=network.target syslog.target
+      Wants=network.target
 
       [Service]
       ExecStart=/home/$USERNAME/frp/frps -c /home/$USERNAME/frp/frps.toml
