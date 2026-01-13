@@ -14,11 +14,6 @@ output "ssh_command" {
 }
 
 output "dns_zone" {
-  description = "DNS zone ID"
-  value       = scaleway_domain_zone.main.id
-}
-
-output "dns_nameservers" {
-  description = "DNS nameservers for the zone"
-  value       = scaleway_domain_zone.main.ns
+  description = "DNS zone"
+  value       = var.domain_name
 }
