@@ -39,3 +39,8 @@ variable "tags" {
   type        = list(string)
   default     = ["terraform", "dev"]
 }
+
+variable "domain_name" {
+  description = "Domain name to manage DNS for"
+  type        = string
+}
