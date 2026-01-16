@@ -1,0 +1,48 @@
+{
+    email ${acme_email}
+    acme_ca https://acme.zerossl.com/v2/DV90
+    crowdsec {
+        api_url http://crowdsec:8080
+        api_key ${crowdsec_api_key}
+    }
+}
+
+frp.${domain_name} {
+    route {
+        crowdsec
+        reverse_proxy frps:7500
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+jellyfin.${domain_name} {
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+jellyseerr.${domain_name} {
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+qbittorrent.${domain_name} {
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}

@@ -72,6 +72,16 @@ write_files:
     owner: root:root
     content: |
       ${indent(6, dockerfile_frps)}
+  - path: /home/${username}/proxy/Dockerfile.caddy
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, dockerfile_caddy)}
+  - path: /home/${username}/proxy/crowdsec/acquis.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, acquis_yaml)}
 
 runcmd:
   - chsh -s /bin/zsh ${username}

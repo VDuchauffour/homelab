@@ -68,3 +68,14 @@ variable "frp_dashboard_password" {
   type        = string
   sensitive   = true
 }
+
+variable "crowdsec_api_key" {
+  description = "CrowdSec bouncer API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "acme_email" {
+  description = "Email for ACME certificate registration"
+  type        = string
+}

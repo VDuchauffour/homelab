@@ -7,6 +7,7 @@
 The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. The stack runs entirely in Docker:
 
 - **Caddy** handles TLS termination and reverse proxying (auto HTTPS via Let's Encrypt)
+- **CrowdSec** provides collaborative security with IP reputation and behavior analysis
 - **FRP server** (frps) receives tunneled connections from homelab services
 
 Resources are provisioned using Terraform and are defined in `infra/modules/scaleway-proxy/`. You'll need a [Scaleway config file](https://cli.scaleway.com/config/) and to modify `ssh_authorized_keys` in `cloud-init.yaml.tftpl`.
@@ -34,6 +35,8 @@ USERNAME="username"
 PASSWORD_HASH=$(mkpasswd -m sha-512 'your-password')
 AUTH_TOKEN="your-frp-auth-token"
 FRP_DASHBOARD_PASSWORD="frp-dashboard-password"
+CROWDSEC_API_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
+ACME_EMAIL="email@example.com"
 
 terraform plan \
   -var "instance_name=$INSTANCE_NAME" \
@@ -41,7 +44,9 @@ terraform plan \
   -var "username=$USERNAME" \
   -var "password_hash=$PASSWORD_HASH" \
   -var "auth_token=$AUTH_TOKEN" \
-  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD"
+  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
+  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
+  -var "acme_email=$ACME_EMAIL"
 
 terraform apply \
   -auto-approve \
@@ -50,7 +55,9 @@ terraform apply \
   -var "username=$USERNAME" \
   -var "password_hash=$PASSWORD_HASH" \
   -var "auth_token=$AUTH_TOKEN" \
-  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD"
+  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
+  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
+  -var "acme_email=$ACME_EMAIL"
 ```
 
 #### Destroy
