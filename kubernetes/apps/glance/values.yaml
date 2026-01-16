@@ -1,0 +1,134 @@
+---
+replicaCount: 1
+
+image:
+  repository: glanceapp/glance
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: dashboard.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - dashboard.home.arpa
+      secretName: homarr-mkcert-tls
+
+persistence:
+  enabled: false
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  TZ: Europe/Paris
+config: |-
+  server:
+    port: 8080
+
+  theme:
+    background-color: 240 8 9
+    primary-color: 43 50 70
+    contrast-multiplier: 1.1
+
+  pages:
+    - name: Home
+      columns:
+        - size: small
+          widgets:
+            - type: calendar
+              first-day-of-week: monday
+            - type: weather
+              location: Paris, France
+              units: metric
+              hour-format: 24h
+            - type: to-do
+
+        - size: full
+          widgets:
+            - type: bookmarks
+              groups:
+                - title: Media
+                  links:
+                    - title: Jellyfin
+                      url: https://jellyfin.${DOMAIN_NAME}
+                      icon: di:jellyfin
+                    - title: Jellyseerr
+                      url: https://jellyseerr.${DOMAIN_NAME}
+                      icon: di:jellyseerr
+                    - title: Immich
+                      url: https://immich.${DOMAIN_NAME}
+                      icon: di:immich
+
+                - title: Downloads
+                  links:
+                    - title: qBittorrent
+                      url: https://qbittorrent.${DOMAIN_NAME}
+                      icon: di:qbittorrent
+                    - title: Prowlarr
+                      url: https://prowlarr.${DOMAIN_NAME}
+                      icon: di:prowlarr
+                    - title: Radarr
+                      url: https://radarr.${DOMAIN_NAME}
+                      icon: di:radarr
+                    - title: Sonarr
+                      url: https://sonarr.${DOMAIN_NAME}
+                      icon: di:sonarr
+                    - title: Bazarr
+                      url: https://bazarr.${DOMAIN_NAME}
+                      icon: di:bazarr
+
+                - title: Tools
+                  links:
+                    - title: Uptime Kuma
+                      url: https://status.${DOMAIN_NAME}
+                      icon: di:uptime-kuma
+                    - title: FRP dashboard
+                      url: https://frp.${DOMAIN_NAME}
+                      icon: di:frp
+                    - title: Stirling PDF
+                      url: https://stirling-pdf.${DOMAIN_NAME}
+                      icon: sh:stirling-pdf
+                    - title: Linkwarden
+                      url: https://linkwarden.${DOMAIN_NAME}
+                      icon: sh:linkwarden
+                    - title: n8n
+                      url: https://n8n.${DOMAIN_NAME}
+                      icon: di:n8n
+                    - title: pgAdmin
+                      url: https://pgadmin.${DOMAIN_NAME}
+                      icon: di:postgresql
+
+            - type: hacker-news
+              limit: 10
+              collapse-after: 5
+
+        - size: small
+          widgets:
+            - type: server-stats
+              servers:
+                - type: local
+                  name: Services
+            - type: releases
+              cache: 1d
+              repositories:
+                - jellyfin/jellyfin
+                - immich-app/immich
+                - glanceapp/glance
+                - usememos/memos

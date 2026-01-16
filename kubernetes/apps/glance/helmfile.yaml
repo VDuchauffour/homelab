@@ -1,0 +1,8 @@
+---
+releases:
+  - name: glance
+    namespace: glance
+    createNamespace: true
+    chart: ./charts/glance
+    values:
+      - values.yaml
