@@ -119,7 +119,7 @@ config: |-
                   links:
                     - title: Vibe-kanban
                       url: https://vibe-kanban.off-world-technology.com
-                      icon: auto-invert https://github.com/VDuchauffour/homelab/blob/main/kubernetes/apps/glance/favicon.png
+                      icon: auto-invert https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
 
             - type: hacker-news
               limit: 10
