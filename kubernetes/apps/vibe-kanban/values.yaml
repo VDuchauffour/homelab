@@ -1,0 +1,28 @@
+---
+replicaCount: 1
+
+image:
+  repository: tei1988/vibe-kanban
+  pullPolicy: IfNotPresent
+  tag: 0.0.127
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 5Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: vibe-kanban.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - vibe-kanban.home.arpa
+      secretName: vibe-kanban-mkcert-tls
