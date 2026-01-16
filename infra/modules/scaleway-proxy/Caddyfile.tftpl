@@ -5,9 +5,21 @@
         api_url http://crowdsec:8080
         api_key ${crowdsec_api_key}
     }
+    order rate_limit before basicauth
+}
+
+(rate_limit) {
+    rate_limit {
+        zone dynamic {
+            key {remote_host}
+            events 1000
+            window 10s
+        }
+    }
 }
 
 frp.${domain_name} {
+    import rate_limit
     route {
         crowdsec
         reverse_proxy frps:7500
@@ -18,6 +30,7 @@ frp.${domain_name} {
 }
 
 jellyfin.${domain_name} {
+    import rate_limit
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -28,6 +41,7 @@ jellyfin.${domain_name} {
 }
 
 jellyseerr.${domain_name} {
+    import rate_limit
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -38,6 +52,7 @@ jellyseerr.${domain_name} {
 }
 
 qbittorrent.${domain_name} {
+    import rate_limit
     route {
         crowdsec
         reverse_proxy frps:8080
