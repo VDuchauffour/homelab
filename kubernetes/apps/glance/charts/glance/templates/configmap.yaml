@@ -6,4 +6,4 @@ metadata:
     {{- include "glance.labels" . | nindent 4 }}
 data:
   glance.yml: |
-    {{- .Values.config | nindent 4 }}
+    {{- .Values.config | replace "${GLUETUN_URL}" .Values.gluetunUrl | replace "${GLUETUN_API_KEY}" .Values.gluetunApiKey | replace "${QBITTORRENT_URL}" .Values.qbittorrentUrl | replace "${UPTIME_KUMA_URL}" .Values.uptimeKumaUrl | replace "${UPTIME_KUMA_STATUS_SLUG}" .Values.uptimeKumaStatusSlug | nindent 4 }}

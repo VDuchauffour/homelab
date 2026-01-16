@@ -6,3 +6,8 @@ releases:
     chart: ./charts/glance
     values:
       - values.yaml
+      - gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
+      - gluetunApiKey: ref+file://../../../_secret.yaml#/gluetun/API_KEY
+      - qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
+      - uptimeKumaUrl: http://uptime-kuma.monitoring.svc.cluster.local
+      - uptimeKumaStatusSlug: homelab
