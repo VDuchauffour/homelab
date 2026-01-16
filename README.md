@@ -1,4 +1,6 @@
-# homelab
+# An opinionated Kubernetes-based homelab
+
+This repository contains all the declarations necessary for the operation of my homelab. It uses Kubernetes as applications orchestrator.
 
 ## Infrastructure
 
