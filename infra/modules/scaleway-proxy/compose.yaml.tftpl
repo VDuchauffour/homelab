@@ -1,28 +1,5 @@
 ---
 services:
-  caddy:
-    build:
-      context: .
-      dockerfile: Dockerfile.caddy
-      target: caddy
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-logs:/var/log/caddy
-      - caddy-data:/data
-      - caddy-config:/config
-    networks:
-      - crowdsec
-    depends_on:
-      - frps
-      - crowdsec
-
   crowdsec:
     image: docker.io/crowdsecurity/crowdsec:latest
     restart: unless-stopped
@@ -52,6 +29,29 @@ services:
       - -c
       - /etc/frp/frps.toml
     networks:
+      - crowdsec
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+      target: caddy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-logs:/var/log/caddy
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - crowdsec
+    depends_on:
+      - frps
       - crowdsec
 
 volumes:
