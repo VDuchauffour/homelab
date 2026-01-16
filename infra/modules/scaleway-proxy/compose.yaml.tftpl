@@ -1,0 +1,66 @@
+---
+services:
+  crowdsec:
+    image: docker.io/crowdsecurity/crowdsec:latest
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - GID=1000
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
+      - BOUNCER_KEY_CADDY=${crowdsec_api_key}
+    volumes:
+      - crowdsec-db:/var/lib/crowdsec/data/
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - caddy-logs:/var/log/caddy:ro
+    networks:
+      - crowdsec
+
+  frps:
+    build:
+      context: .
+      dockerfile: Dockerfile.frps
+    restart: unless-stopped
+    ports:
+      - 6000:6000
+      - 7000:7000
+    volumes:
+      - ./frps.toml:/etc/frp/frps.toml:ro
+    command:
+      - -c
+      - /etc/frp/frps.toml
+    networks:
+      - crowdsec
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+      target: caddy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-logs:/var/log/caddy
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - crowdsec
+    depends_on:
+      - frps
+      - crowdsec
+
+volumes:
+  caddy-data:
+  caddy-config:
+  caddy-logs:
+  crowdsec-db:
+
+networks:
+  crowdsec:
+    driver: bridge

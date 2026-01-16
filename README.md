@@ -4,27 +4,72 @@
 
 ### Reverse proxy
 
-The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. Resources are provisioned using `terraform` and are defined in the `scaleway-proxy` folder. You'll need to define a [config file](https://cli.scaleway.com/config/) to provide the resources and modify the `domain_name` to your needs.
+The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. The stack runs entirely in Docker:
 
-You can use the following command to overwrite the default values:
+- **Caddy** handles TLS termination and reverse proxying (auto HTTPS via Let's Encrypt)
+- **CrowdSec** provides collaborative security with IP reputation and behavior analysis
+- **FRP server** (frps) receives tunneled connections from homelab services
+
+Resources are provisioned using Terraform and are defined in `infra/modules/scaleway-proxy/`. You'll need a [Scaleway config file](https://cli.scaleway.com/config/) and to modify `ssh_authorized_keys` in `cloud-init.yaml.tftpl`.
+
+#### Architecture
+
+```
+Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
+                                 ↑
+                            frps:7000 ← homelab frpc clients
+```
+
+The FRP dashboard is accessible at `https://frp.<domain>`.
+
+Once the instance is setup, `ssh` into it and run `cd "$HOME_DIR"/proxy && docker compose up -d`.
+
+To use docker without `sudo` run login as user and run `newgrp docker`.
+
+#### Deployment
 
 ```shell
+cd ./infra/modules/scaleway-proxy
+
 INSTANCE_NAME="instance-name"
 DOMAIN_NAME="example.com"
-
-cd ./infra/modules/scaleway-proxy
+USERNAME="username"
+PASSWORD_HASH=$(mkpasswd -m sha-512 'your-password')
+AUTH_TOKEN="your-frp-auth-token"
+FRP_DASHBOARD_PASSWORD="frp-dashboard-password"
+CROWDSEC_API_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
+ACME_EMAIL="email@example.com"
 
 terraform plan \
   -var "instance_name=$INSTANCE_NAME" \
-  -var "domain_name=$DOMAIN_NAME"
+  -var "domain_name=$DOMAIN_NAME" \
+  -var "username=$USERNAME" \
+  -var "password_hash=$PASSWORD_HASH" \
+  -var "auth_token=$AUTH_TOKEN" \
+  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
+  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
+  -var "acme_email=$ACME_EMAIL"
 
 terraform apply \
   -auto-approve \
   -var "instance_name=$INSTANCE_NAME" \
-  -var "domain_name=$DOMAIN_NAME"
+  -var "domain_name=$DOMAIN_NAME" \
+  -var "username=$USERNAME" \
+  -var "password_hash=$PASSWORD_HASH" \
+  -var "auth_token=$AUTH_TOKEN" \
+  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
+  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
+  -var "acme_email=$ACME_EMAIL"
 ```
 
-And this one to destroy the resources:
+Once the instance is ready, run:
+
+```shell
+cd "$HOME_DIR/proxy"
+docker compose up -d --build
+```
+
+#### Destroy
 
 ```shell
 cd ./infra/modules/scaleway-proxy
@@ -85,4 +130,5 @@ openssl rand -base64 32
 
 ## Acknowledgments
 
-- Some charts are inspired by [rtomik's helm-charts repo](https://github.com/rtomik/helm-charts)
+- Some charts are inspired by [rtomik's helm-charts repository](https://github.com/rtomik/helm-charts)
+- The FRP server setup is inspired by [jpfranca-br's repository](https://github.com/jpfranca-br/frps-setup)
