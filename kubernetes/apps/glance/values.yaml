@@ -71,6 +71,18 @@ config: |-
           widgets:
             - type: bookmarks
               groups:
+                - title: Tools
+                  links:
+                    - title: Stirling PDF
+                      url: https://stirling-pdf.${DOMAIN_NAME}
+                      icon: sh:stirling-pdf
+                    - title: Linkwarden
+                      url: https://linkwarden.${DOMAIN_NAME}
+                      icon: sh:linkwarden
+                    - title: n8n
+                      url: https://n8n.${DOMAIN_NAME}
+                      icon: di:n8n
+
                 - title: Media
                   links:
                     - title: Jellyfin
@@ -101,7 +113,7 @@ config: |-
                       url: https://bazarr.${DOMAIN_NAME}
                       icon: di:bazarr
 
-                - title: Tools
+                - title: Tech
                   links:
                     - title: Uptime Kuma
                       url: https://status.${DOMAIN_NAME}
@@ -109,24 +121,15 @@ config: |-
                     - title: FRP dashboard
                       url: https://frp.${DOMAIN_NAME}
                       icon: di:frp
-                    - title: Stirling PDF
-                      url: https://stirling-pdf.${DOMAIN_NAME}
-                      icon: sh:stirling-pdf
-                    - title: Linkwarden
-                      url: https://linkwarden.${DOMAIN_NAME}
-                      icon: sh:linkwarden
-                    - title: n8n
-                      url: https://n8n.${DOMAIN_NAME}
-                      icon: di:n8n
                     - title: pgAdmin
                       url: https://pgadmin.${DOMAIN_NAME}
                       icon: di:postgresql
-
-                - title: Programming
-                  links:
+                    - title: dozzle
+                      url: https://dozzle.${DOMAIN_NAME}
+                      icon: di:dozzle
                     - title: Vibe-kanban
                       url: https://vibe-kanban.${DOMAIN_NAME}
-                      icon: auto-invert https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
+                      icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
 
             - type: hacker-news
               limit: 10
