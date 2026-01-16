@@ -1,0 +1,82 @@
+#cloud-config
+---
+ssh_pwauth: true
+chpasswd:
+  expire: false
+  users:
+    - name: ${username}
+      password: ${password_hash}
+      type: hash
+
+users:
+  - default
+  - name: ${username}
+    groups:
+      - sudo
+      - users
+      - docker
+    shell: /bin/zsh
+    sudo:
+      - ALL=(ALL) ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdRMmR7Z03n6gPsWDfi2Qw803Y+Y1R0lcMszg75LOup
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - vim
+  - git
+  - htop
+  - curl
+  - sudo
+  - zsh
+  - apt-utils
+  - ufw
+
+write_files:
+  - path: /home/${username}/init.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      ${indent(6, init_script)}
+  - path: /home/${username}/proxy/Caddyfile
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, caddyfile)}
+  - path: /home/${username}/proxy/frps.toml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      bindPort = 7000
+      vhostHTTPPort = 8080
+
+      [webServer]
+      addr = "0.0.0.0"
+      port = 7500
+      user = "admin"
+      password = "${frp_dashboard_password}"
+
+      [auth]
+      method = "token"
+      token = "${auth_token}"
+  - path: /home/${username}/proxy/compose.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, compose_file)}
+  - path: /home/${username}/proxy/Dockerfile.frps
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, dockerfile_frps)}
+
+runcmd:
+  - chsh -s /bin/zsh ${username}
+  - mkdir -p /home/${username}/.ssh
+  - cp /root/.ssh/authorized_keys /home/${username}/.ssh/authorized_keys
+  - chown -R ${username}:${username} /home/${username}/.ssh
+  - chown -R ${username}:${username} /home/${username}/proxy
+  - /home/${username}/init.sh ${username}

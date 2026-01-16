@@ -25,7 +25,17 @@ resource "scaleway_instance_server" "dev" {
 
   ip_id = scaleway_instance_ip.public_ip.id
 
-  cloud_init = file("cloud-init.yaml")
+  cloud_init = templatefile("cloud-init.yaml.tftpl", {
+    init_script            = file("init.sh")
+    compose_file           = file("compose.yaml")
+    dockerfile_frps        = file("Dockerfile.frps")
+    caddyfile              = templatefile("Caddyfile", { DOMAIN_NAME = var.domain_name })
+    domain_name            = var.domain_name
+    username               = var.username
+    password_hash          = var.password_hash
+    auth_token             = var.auth_token
+    frp_dashboard_password = var.frp_dashboard_password
+  })
 
   tags = var.tags
 

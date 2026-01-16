@@ -1,0 +1,15 @@
+frp.${DOMAIN_NAME} {
+    reverse_proxy frps:7500
+}
+
+jellyfin.${DOMAIN_NAME} {
+    reverse_proxy frps:8080
+}
+
+jellyseerr.${DOMAIN_NAME} {
+    reverse_proxy frps:8080
+}
+
+qbittorrent.${DOMAIN_NAME} {
+    reverse_proxy frps:8080
+}
