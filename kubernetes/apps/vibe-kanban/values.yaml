@@ -8,8 +8,8 @@ image:
 
 persistence:
   enabled: true
-  storageClass: ''
-  size: 5Gi
+  storageClass: zfs-vm-pool-vibe-kanban
+  size: 2Gi
 
 ingress:
   enabled: true
