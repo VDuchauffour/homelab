@@ -17,13 +17,56 @@ resource "scaleway_instance_ip" "public_ip" {
   zone = var.zone
 }
 
+resource "scaleway_instance_security_group" "proxy" {
+  name                    = "${var.instance_name}-sg"
+  zone                    = var.zone
+  inbound_default_policy  = "drop"
+  outbound_default_policy = "accept"
+
+  # SSH
+  inbound_rule {
+    action   = "accept"
+    port     = 22
+    protocol = "TCP"
+  }
+
+  # HTTP
+  inbound_rule {
+    action   = "accept"
+    port     = 80
+    protocol = "TCP"
+  }
+
+  # HTTPS
+  inbound_rule {
+    action   = "accept"
+    port     = 443
+    protocol = "TCP"
+  }
+
+  # HTTPS UDP (HTTP/3 / QUIC)
+  inbound_rule {
+    action   = "accept"
+    port     = 443
+    protocol = "UDP"
+  }
+
+  # FRP tunnel
+  inbound_rule {
+    action   = "accept"
+    port     = 7000
+    protocol = "TCP"
+  }
+}
+
 resource "scaleway_instance_server" "dev" {
   name  = var.instance_name
   type  = var.instance_type
   image = var.image_id
   zone  = var.zone
 
-  ip_id = scaleway_instance_ip.public_ip.id
+  ip_id             = scaleway_instance_ip.public_ip.id
+  security_group_id = scaleway_instance_security_group.proxy.id
 
   cloud_init = templatefile("cloud-init.yaml.tftpl", {
     init_script = file("init.sh")
