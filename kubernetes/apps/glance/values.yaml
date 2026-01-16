@@ -41,11 +41,18 @@ env:
 config: |-
   server:
     port: 8080
+    proxied: true
 
   theme:
     background-color: 240 8 9
     primary-color: 43 50 70
-    contrast-multiplier: 1.1
+    contrast-multiplier: 1.3
+
+  auth:
+    secret-key:
+    users:
+      admin:
+        password:
 
   pages:
     - name: Home
