@@ -115,6 +115,12 @@ config: |-
                       url: https://pgadmin.${DOMAIN_NAME}
                       icon: di:postgresql
 
+                - title: Programming
+                  links:
+                    - title: Vibe-kanban
+                      url: https://vibe-kanban.${DOMAIN_NAME}
+                      icon: auto-invert https://github.com/VDuchauffour/homelab/blob/main/kubernetes/apps/glance/favicon.png
+
             - type: hacker-news
               limit: 10
               collapse-after: 5
