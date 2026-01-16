@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: vibe-kanban
+description: Vibe Kanban - AI coding agent orchestration tool
+type: application
+version: 0.1.0
+appVersion: latest
