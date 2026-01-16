@@ -6,3 +6,4 @@ region           = "fr-par"
 root_volume_size = 20
 tags             = []
 domain_name      = "example.com"
+acme_email       = "your-email@example.com"
