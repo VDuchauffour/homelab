@@ -1,0 +1,52 @@
+---
+replicaCount: 1
+
+image:
+  repository: amir20/dozzle
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: dozzle.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - dozzle.home.arpa
+      secretName: dozzle-mkcert-tls
+
+resources:
+  requests:
+    memory: 64Mi
+    cpu: 50m
+  limits:
+    memory: 128Mi
+    cpu: 200m
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceAccount:
+  create: true
+  name: ''
+
+rbac:
+  create: true
+
+env:
+  DOZZLE_MODE: k8s
+  DOZZLE_NO_ANALYTICS: 'true'
+  DOZZLE_LEVEL: info

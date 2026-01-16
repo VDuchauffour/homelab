@@ -103,12 +103,6 @@ config: |-
 
                 - title: Tools
                   links:
-                    - title: Uptime Kuma
-                      url: https://status.off-world-technology.com
-                      icon: di:uptime-kuma
-                    - title: FRP dashboard
-                      url: https://frp.off-world-technology.com
-                      icon: di:frp
                     - title: Stirling PDF
                       url: https://stirling-pdf.off-world-technology.com
                       icon: sh:stirling-pdf
@@ -118,15 +112,24 @@ config: |-
                     - title: n8n
                       url: https://n8n.off-world-technology.com
                       icon: di:n8n
+
+                - title: Tech
+                  links:
+                    - title: Uptime Kuma
+                      url: https://status.off-world-technology.com
+                      icon: di:uptime-kuma
+                    - title: FRP dashboard
+                      url: https://frp.off-world-technology.com
+                      icon: di:frp
                     - title: pgAdmin
                       url: https://pgadmin.off-world-technology.com
                       icon: di:postgresql
-
-                - title: Programming
-                  links:
+                    - title: dozzle
+                      url: https://dozzle.off-world-technology.com
+                      icon: di:dozzle
                     - title: Vibe-kanban
                       url: https://vibe-kanban.off-world-technology.com
-                      icon: auto-invert https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
+                      icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
 
             - type: hacker-news
               limit: 10
