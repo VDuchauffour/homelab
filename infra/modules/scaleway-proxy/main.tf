@@ -57,6 +57,13 @@ resource "scaleway_instance_security_group" "proxy" {
     port     = 7000
     protocol = "TCP"
   }
+
+  # FRP SSH proxy
+  inbound_rule {
+    action   = "accept"
+    port     = 6000
+    protocol = "TCP"
+  }
 }
 
 resource "scaleway_instance_server" "dev" {

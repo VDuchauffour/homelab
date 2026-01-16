@@ -25,5 +25,6 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
+ufw allow 6000/tcp
 ufw allow 7000/tcp
 ufw --force enable
