@@ -29,6 +29,28 @@ frp.${domain_name} {
     }
 }
 
+dashboard.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+status.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
 jellyfin.${domain_name} {
     import rate_limit
     route {
@@ -62,17 +84,6 @@ qbittorrent.${domain_name} {
     }
 }
 
-dashboard.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
 immich.${domain_name} {
     import rate_limit
     route {
@@ -85,17 +96,6 @@ immich.${domain_name} {
 }
 
 stirling-pdf.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-status.${domain_name} {
     import rate_limit
     route {
         crowdsec
@@ -151,6 +151,17 @@ prowlarr.${domain_name} {
 }
 
 tdarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+vibe-kanban.${domain_name} {
     import rate_limit
     route {
         crowdsec
