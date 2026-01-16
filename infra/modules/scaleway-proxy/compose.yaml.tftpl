@@ -22,6 +22,7 @@ services:
       dockerfile: Dockerfile.frps
     restart: unless-stopped
     ports:
+      - 6000:6000
       - 7000:7000
     volumes:
       - ./frps.toml:/etc/frp/frps.toml:ro
