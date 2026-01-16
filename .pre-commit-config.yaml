@@ -56,12 +56,12 @@ repos:
         args:
           - --args=-json
           - --args=-no-color
-  # Linter for cloud-init
+  # Linter for cloud-init - tftpl can't be used directly
   - repo: local
     hooks:
       - id: cloud-init-lint
         name: Cloud-init linting
-        entry: cloud-init schema -c infra/modules/scaleway-proxy/cloud-init.yaml
+        entry: bash -c 'sed -e "s/\${[^}]*}/placeholder/g" -e "s/%{[^}]*}//g" infra/modules/scaleway-proxy/cloud-init.yaml.tftpl
+          > /tmp/cloud-init.yaml && cloud-init schema -c /tmp/cloud-init.yaml'
         language: system
         pass_filenames: false
-        # stages: [pre-commit]

@@ -44,3 +44,38 @@ variable "domain_name" {
   description = "Domain name to manage DNS for"
   type        = string
 }
+
+variable "username" {
+  description = "Username for the instance"
+  type        = string
+  default     = "username"
+}
+
+variable "password_hash" {
+  description = "SHA-512 hashed password for the user (generate with: mkpasswd -m sha-512 'password')"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_token" {
+  description = "FRP authentication token"
+  type        = string
+  sensitive   = true
+}
+
+variable "frp_dashboard_password" {
+  description = "FRP dashboard password"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_api_key" {
+  description = "CrowdSec bouncer API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "acme_email" {
+  description = "Email for ACME certificate registration"
+  type        = string
+}

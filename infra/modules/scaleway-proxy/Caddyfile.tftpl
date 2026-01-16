@@ -1,0 +1,173 @@
+{
+    email ${acme_email}
+    acme_ca https://acme.zerossl.com/v2/DV90
+    crowdsec {
+        api_url http://crowdsec:8080
+        api_key ${crowdsec_api_key}
+    }
+    order rate_limit before basicauth
+}
+
+(rate_limit) {
+    rate_limit {
+        zone dynamic {
+            key {remote_host}
+            events 1000
+            window 10s
+        }
+    }
+}
+
+frp.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:7500
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+dashboard.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+status.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+jellyfin.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+jellyseerr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+qbittorrent.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+immich.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+stirling-pdf.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+bazarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+radarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+sonarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+prowlarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+tdarr.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+vibe-kanban.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
