@@ -1,0 +1,49 @@
+{
+  "skills": [
+    {
+      "name": "deploy-helmfile-app",
+      "description": "Deploy or update a Kubernetes application using Helmfile",
+      "file": "skills/deploy-helmfile-app.md"
+    },
+    {
+      "name": "new-helmfile-app",
+      "description": "Scaffold a new application with Helmfile following project conventions",
+      "file": "skills/new-helmfile-app.md"
+    },
+    {
+      "name": "new-custom-helm-chart",
+      "description": "Create a custom Helm chart when no upstream chart exists",
+      "file": "skills/new-custom-helm-chart.md"
+    },
+    {
+      "name": "terraform-scaleway",
+      "description": "Manage Scaleway reverse proxy infrastructure with Terraform",
+      "file": "skills/terraform-scaleway.md"
+    },
+    {
+      "name": "debug-pod",
+      "description": "Troubleshoot Kubernetes pod issues",
+      "file": "skills/debug-pod.md"
+    },
+    {
+      "name": "add-gpu-support",
+      "description": "Configure Intel iGPU hardware acceleration for a pod",
+      "file": "skills/add-gpu-support.md"
+    },
+    {
+      "name": "configure-ingress-tls",
+      "description": "Set up Traefik ingress with TLS certificates",
+      "file": "skills/configure-ingress-tls.md"
+    },
+    {
+      "name": "cloudnative-pg",
+      "description": "Manage PostgreSQL databases using CloudNativePG operator",
+      "file": "skills/cloudnative-pg.md"
+    },
+    {
+      "name": "storage-classes",
+      "description": "Configure persistent storage for applications",
+      "file": "skills/storage-classes.md"
+    }
+  ]
+}
