@@ -40,6 +40,8 @@ qbittorrent:
       value: 1000
     - name: TZ
       value: Europe/Paris
+    - name: WEBUI_HOST_HEADER_VALIDATION_DOMAINS
+      value: dashboard.home.arpa,dashboard.off-world-technology.com
 ingress:
   enabled: true
   className: traefik
