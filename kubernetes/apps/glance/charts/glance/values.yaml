@@ -1,0 +1,34 @@
+---
+replicaCount: 1
+
+image:
+  repository: glanceapp/glance
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: false
+  storageClass: ''
+  size: 1Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  TZ: Europe/Paris
