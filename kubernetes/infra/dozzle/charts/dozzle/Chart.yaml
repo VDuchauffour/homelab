@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: dozzle
+description: Dozzle - Real-time log viewer for Kubernetes pods
+type: application
+version: 0.1.0
+appVersion: latest

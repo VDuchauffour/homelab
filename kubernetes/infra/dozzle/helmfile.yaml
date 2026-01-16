@@ -1,0 +1,8 @@
+---
+releases:
+  - name: dozzle
+    namespace: dozzle
+    createNamespace: true
+    chart: ./charts/dozzle
+    values:
+      - values.yaml

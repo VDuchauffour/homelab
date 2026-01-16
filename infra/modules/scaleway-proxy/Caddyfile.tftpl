@@ -51,6 +51,17 @@ status.${domain_name} {
     }
 }
 
+dozzle.${domain_name} {
+    import rate_limit
+    route {
+        crowdsec
+        reverse_proxy frps:8080
+    }
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
 jellyfin.${domain_name} {
     import rate_limit
     route {
