@@ -1,0 +1,8 @@
+---
+releases:
+  - name: vibe-kanban
+    namespace: vibe-kanban
+    createNamespace: true
+    chart: ./charts/vibe-kanban
+    values:
+      - values.yaml
