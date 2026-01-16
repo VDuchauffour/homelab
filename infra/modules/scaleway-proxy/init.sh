@@ -22,9 +22,6 @@ echo \
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-cd "$HOME_DIR/proxy"
-docker compose up -d --build
-
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp

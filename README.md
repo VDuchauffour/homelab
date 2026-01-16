@@ -60,6 +60,13 @@ terraform apply \
   -var "acme_email=$ACME_EMAIL"
 ```
 
+Once the instance is ready, run:
+
+```shell
+cd "$HOME_DIR/proxy"
+docker compose up -d --build
+```
+
 #### Destroy
 
 ```shell
