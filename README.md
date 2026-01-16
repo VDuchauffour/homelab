@@ -22,6 +22,8 @@ Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
 
 The FRP dashboard is accessible at `https://frp.<domain>`.
 
+Once the instance is setup, `ssh` into it and run `cd "$HOME_DIR"/proxy && docker compose up -d`.
+
 To use docker without `sudo` run login as user and run `newgrp docker`.
 
 #### Deployment
