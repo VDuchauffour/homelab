@@ -137,7 +137,7 @@ config: |-
                       icon: di:dozzle
                     - title: Vibe-kanban
                       url: https://vibe-kanban.${DOMAIN_NAME}
-                      icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/favicon.png
+                      icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
 
             - type: hacker-news
               limit: 10
