@@ -6,6 +6,7 @@ gluetunApiKey: ''
 qbittorrentUrl: ''
 uptimeKumaUrl: ''
 uptimeKumaStatusSlug: ''
+domainName: ''
 
 image:
   repository: glanceapp/glance

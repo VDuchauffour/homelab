@@ -11,3 +11,4 @@ releases:
       - qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
       - uptimeKumaUrl: http://uptime-kuma.monitoring.svc.cluster.local
       - uptimeKumaStatusSlug: homelab
+      - domainName: ref+file://../../../_secret.yaml#/DOMAIN_NAME
