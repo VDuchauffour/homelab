@@ -1,0 +1,38 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kanbn/kan
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+kan:
+  baseUrl: http://localhost:3000
+  authSecret: ''
+  allowCredentials: 'true'
+
+postgres:
+  host: localhost
+  port: 5432
+  database: kan_db
+  user: kan_user
+  password: ''

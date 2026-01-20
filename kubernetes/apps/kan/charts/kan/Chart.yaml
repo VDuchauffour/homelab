@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: kan
+description: Kan - The open source Trello alternative
+type: application
+version: 0.1.0
+appVersion: latest
