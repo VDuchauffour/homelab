@@ -94,6 +94,7 @@ resource "scaleway_instance_server" "dev" {
     auth_token             = var.auth_token
     frp_dashboard_password = var.frp_dashboard_password
     crowdsec_api_key       = var.crowdsec_api_key
+    ssh_public_keys        = var.ssh_public_keys
   })
 
   tags = var.tags

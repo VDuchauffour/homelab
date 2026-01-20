@@ -12,7 +12,7 @@ The homelab is exposed to the Internet through a reverse proxy hosted on Scalewa
 - **CrowdSec** provides collaborative security with IP reputation and behavior analysis
 - **FRP server** (frps) receives tunneled connections from homelab services
 
-Resources are provisioned using Terraform and are defined in `infra/modules/scaleway-proxy/`. You'll need a [Scaleway config file](https://cli.scaleway.com/config/) and to modify `ssh_authorized_keys` in `cloud-init.yaml.tftpl`.
+Resources are provisioned using Terraform and are defined in `infra/`. You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
 
 #### Architecture
 
@@ -33,35 +33,27 @@ To use docker without `sudo` run login as user and run `newgrp docker`.
 ```shell
 cd ./infra/modules/scaleway-proxy
 
-INSTANCE_NAME="instance-name"
-DOMAIN_NAME="example.com"
-USERNAME="username"
-PASSWORD_HASH=$(mkpasswd -m sha-512 'your-password')
-AUTH_TOKEN="your-frp-auth-token"
-FRP_DASHBOARD_PASSWORD="frp-dashboard-password"
-CROWDSEC_API_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
-ACME_EMAIL="email@example.com"
+cat  <<EOF > terraform.tfvars
+zone                   = "fr-par-1"
+region                 = "fr-par"
+instance_name          = "instance-name"
+instance_type          = "DEV1-S"
+image_id               = "ubuntu_noble"
+root_volume_size       = 20
+tags                   = []
+domain_name            = "example.com"
+username               = "username"
+password_hash          = "foo"                      # Generate with: mkpasswd -m sha-512 'password'
+ssh_public_keys        = ["ssh-ed25519 AAAA..."]
+auth_token             = "foo"
+frp_dashboard_password = "foo"
+crowdsec_api_key       = "foo"                      # Generate with: tr -dc A-Za-z0-9 </dev/urandom | head -c 32
+acme_email             = "your-email@example.com"
+EOF
 
-terraform plan \
-  -var "instance_name=$INSTANCE_NAME" \
-  -var "domain_name=$DOMAIN_NAME" \
-  -var "username=$USERNAME" \
-  -var "password_hash=$PASSWORD_HASH" \
-  -var "auth_token=$AUTH_TOKEN" \
-  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
-  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
-  -var "acme_email=$ACME_EMAIL"
-
-terraform apply \
-  -auto-approve \
-  -var "instance_name=$INSTANCE_NAME" \
-  -var "domain_name=$DOMAIN_NAME" \
-  -var "username=$USERNAME" \
-  -var "password_hash=$PASSWORD_HASH" \
-  -var "auth_token=$AUTH_TOKEN" \
-  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
-  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
-  -var "acme_email=$ACME_EMAIL"
+terraform init
+terraform plan
+terraform apply
 ```
 
 Once the instance is ready, run:
@@ -75,7 +67,7 @@ docker compose up -d --build
 
 ```shell
 cd ./infra/modules/scaleway-proxy
-terraform destroy -auto-approve
+terraform destroy
 ```
 
 ## Kubernetes
