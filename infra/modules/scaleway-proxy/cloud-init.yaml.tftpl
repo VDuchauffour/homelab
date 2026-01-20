@@ -94,3 +94,7 @@ runcmd:
   - chown -R ${username}:${username} /home/${username}/.ssh
   - chown -R ${username}:${username} /home/${username}/proxy
   - /home/${username}/init.sh ${username}
+
+power_state:
+  mode: reboot
+  message: Restarting after VM configuration
