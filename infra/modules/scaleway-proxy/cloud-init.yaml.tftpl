@@ -20,7 +20,9 @@ users:
       - ALL=(ALL) ALL
     lock_passwd: false
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdRMmR7Z03n6gPsWDfi2Qw803Y+Y1R0lcMszg75LOup
+%{ for key in ssh_public_keys ~}
+      - ${key}
+%{ endfor ~}
 
 package_update: true
 package_upgrade: true

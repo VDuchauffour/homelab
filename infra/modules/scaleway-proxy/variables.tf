@@ -57,6 +57,11 @@ variable "password_hash" {
   sensitive   = true
 }
 
+variable "ssh_public_keys" {
+  description = "List of SSH public keys to authorize"
+  type        = list(string)
+}
+
 variable "auth_token" {
   description = "FRP authentication token"
   type        = string
