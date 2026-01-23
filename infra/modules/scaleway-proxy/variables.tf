@@ -84,3 +84,15 @@ variable "acme_email" {
   description = "Email for ACME certificate registration"
   type        = string
 }
+
+variable "basic_auth_hash" {
+  description = "Bcrypt hash for basic auth (generate with: caddy hash-password)"
+  type        = string
+  sensitive   = true
+}
+
+variable "basic_auth_user" {
+  description = "Username for basic auth"
+  type        = string
+  default     = "admin"
+}
