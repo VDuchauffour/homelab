@@ -83,11 +83,13 @@ resource "scaleway_instance_server" "dev" {
     dockerfile_caddy = file("Dockerfile.caddy")
     acquis_yaml      = file("crowdsec/acquis.yaml")
     caddyfile = templatefile("Caddyfile.tftpl", {
-      domain_name      = var.domain_name
-      crowdsec_api_key = var.crowdsec_api_key
-      acme_email       = var.acme_email
-      basic_auth_user  = var.basic_auth_user
-      basic_auth_hash  = var.basic_auth_hash
+      domain_name                   = var.domain_name
+      crowdsec_api_key              = var.crowdsec_api_key
+      acme_email                    = var.acme_email
+      basic_auth_user               = var.basic_auth_user
+      basic_auth_hash               = var.basic_auth_hash
+      subdomains_with_basic_auth    = var.subdomains_with_basic_auth
+      subdomains_without_basic_auth = var.subdomains_without_basic_auth
     })
     domain_name            = var.domain_name
     username               = var.username

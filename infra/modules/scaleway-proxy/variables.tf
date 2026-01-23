@@ -96,3 +96,15 @@ variable "basic_auth_user" {
   type        = string
   default     = "admin"
 }
+
+variable "subdomains_with_basic_auth" {
+  description = "List of subdomains that require basic auth"
+  type        = list(string)
+  default     = []
+}
+
+variable "subdomains_without_basic_auth" {
+  description = "List of subdomains that do NOT require basic auth (have their own auth)"
+  type        = list(string)
+  default     = []
+}
