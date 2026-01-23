@@ -35,29 +35,8 @@ frp.${domain_name} {
     }
 }
 
-dashboard.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-status.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-dozzle.${domain_name} {
+%{ for subdomain in subdomains_with_basic_auth ~}
+${subdomain}.${domain_name} {
     import rate_limit
     import basic_auth
     route {
@@ -69,7 +48,9 @@ dozzle.${domain_name} {
     }
 }
 
-jellyfin.${domain_name} {
+%{ endfor ~}
+%{ for subdomain in subdomains_without_basic_auth ~}
+${subdomain}.${domain_name} {
     import rate_limit
     route {
         crowdsec
@@ -80,120 +61,4 @@ jellyfin.${domain_name} {
     }
 }
 
-jellyseerr.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-qbittorrent.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-kan.${domain_name} {
-    import rate_limit
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-stirling-pdf.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-bazarr.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-radarr.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-sonarr.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-prowlarr.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-tdarr.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
-
-vibe-kanban.${domain_name} {
-    import rate_limit
-    import basic_auth
-    route {
-        crowdsec
-        reverse_proxy frps:8080
-    }
-    log {
-        output file /var/log/caddy/access.log
-    }
-}
+%{ endfor ~}

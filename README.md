@@ -24,25 +24,13 @@ Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
 
 The FRP dashboard is accessible at `https://frp.<domain>`.
 
-#### Basic Auth
-
-Most external subdomains are protected with HTTP basic auth. The following are excluded (they have their own authentication):
-
-- `dashboard` (Glance)
-- `jellyfin`
-- `jellyseerr`
-- `status` (Uptime Kuma)
-- `frp` (FRP dashboard)
-
 Generate the password hash with:
 
 ```shell
 docker run --rm caddy:2-alpine caddy hash-password --plaintext 'your-password'
 ```
 
-Then set `basic_auth_user` and `basic_auth_hash` in your `terraform.tfvars`.
-
-Once the instance is setup, `ssh` into it and run `cd "$HOME_DIR"/proxy && docker compose up -d`.
+Then set `basic_auth_user`, `basic_auth_hash`, `subdomains_with_basic_auth` and `subdomains_without_basic_auth` in your `terraform.tfvars`.
 
 To use docker without `sudo` run login as user and run `newgrp docker`.
 
