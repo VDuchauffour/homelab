@@ -297,11 +297,11 @@ data:
                   {{`{{ end }}`}}
               - type: custom-api
                 title: Uptime Kuma
-                title-url: http://{{ $.Values.uptimeKumaUrl }}
-                url: http://{{ $.Values.uptimeKumaUrl }}/api/status-page/{{ $.Values.uptimeKumaStatusSlug }}
+                title-url: {{ $.Values.uptimeKumaUrl }}
+                url: {{ $.Values.uptimeKumaUrl }}/api/status-page/{{ $.Values.uptimeKumaStatusSlug }}
                 subrequests:
                   heartbeats:
-                    url: http://{{ $.Values.uptimeKumaUrl }}/api/status-page/heartbeat/{{ $.Values.uptimeKumaStatusSlug }}
+                    url: {{ $.Values.uptimeKumaUrl }}/api/status-page/heartbeat/{{ $.Values.uptimeKumaStatusSlug }}
                 cache: 10m
                 template: |
                   {{`{{ $hb := .Subrequest "heartbeats" }}`}}
@@ -318,7 +318,7 @@ data:
                     {{`{{ $id := .String "id" }}`}}
                     {{`{{ $hbArray := $hb.JSON.Array (print "heartbeatList." $id) }}`}}
                     <div class="flex items-center gap-12">
-                      <a class="size-title-dynamic color-highlight text-truncate block grow" href="http://{{ $.Values.uptimeKumaUrl }}/dashboard/{{`{{ $id }}`}}"
+                      <a class="size-title-dynamic color-highlight text-truncate block grow" href="{{ $.Values.uptimeKumaUrl }}/dashboard/{{`{{ $id }}`}}"
                         target="_blank" rel="noreferrer">
                         {{`{{ .String "name" }}`}} </a>
 
