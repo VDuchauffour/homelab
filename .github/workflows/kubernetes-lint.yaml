@@ -31,6 +31,7 @@ jobs:
         uses: helmfile/helmfile-action@v1.9.1
         with:
           helmfile-version: v0.169.1
+          helmfile-args: --verify=false
           helm-plugins: >
             https://github.com/databus23/helm-diff
 
