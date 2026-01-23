@@ -24,7 +24,7 @@ spec:
               protocol: TCP
           env:
             - name: NEXT_PUBLIC_BASE_URL
-              value: {{ .Values.kan.baseUrl | quote }}
+              value: https://kan.{{ .Values.domainName }}"
             - name: BETTER_AUTH_SECRET
               value: {{ .Values.kan.authSecret | quote }}
             - name: POSTGRES_URL
@@ -32,7 +32,7 @@ spec:
             - name: NEXT_PUBLIC_ALLOW_CREDENTIALS
               value: {{ .Values.kan.allowCredentials | quote }}
             - name: BETTER_AUTH_TRUSTED_ORIGINS
-              value: {{ .Values.kan.baseUrl | quote }}
+              value: "{{ .Values.kan.baseUrl }},https://kan.{{ .Values.domainName }}"
           livenessProbe:
             httpGet:
               path: /

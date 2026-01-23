@@ -6,7 +6,7 @@ gluetunApiKey: ''
 qbittorrentUrl: ''
 uptimeKumaUrl: ''
 uptimeKumaStatusSlug: ''
-domainName: ''
+domainName: '{{ .Values.domainName }}'
 localDomain: home.arpa
 
 image:

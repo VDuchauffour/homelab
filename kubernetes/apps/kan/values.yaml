@@ -5,11 +5,12 @@ image:
   repository: ghcr.io/kanbn/kan
   pullPolicy: IfNotPresent
   tag: latest
+domainName: '{{ .Values.domainName }}'
 
 kan:
   baseUrl: https://kan.home.arpa
   authSecret: ref+file://../../../_secret.yaml#/kan/authSecret
-  allowCredentials: 'true'
+  allowCredentials: true
 
 postgres:
   host: cnpg-database-cluster-rw.cnpg-database.svc.cluster.local
