@@ -1,0 +1,67 @@
+---
+name: Kubernetes Lint
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - kubernetes/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - kubernetes/**
+  workflow_dispatch:
+
+jobs:
+  helmfile-lint:
+    name: Helmfile Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Setup Helmfile
+        uses: helmfile/helmfile-action@v1.9.1
+        with:
+          helmfile-version: v0.169.1
+          helm-plugins: >
+            https://github.com/databus23/helm-diff
+
+      - name: Lint apps
+        run: |
+          for dir in kubernetes/apps/*/; do
+            if [ -f "${dir}helmfile.yaml" ]; then
+              echo "Linting ${dir}..."
+              helmfile -f "${dir}helmfile.yaml" lint || exit 1
+            fi
+          done
+
+      - name: Lint infra
+        run: |
+          for dir in kubernetes/infra/*/; do
+            if [ -f "${dir}helmfile.yaml" ]; then
+              echo "Linting ${dir}..."
+              helmfile -f "${dir}helmfile.yaml" lint || exit 1
+            fi
+          done
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Lint YAML files
+        run: |-
+          yamllint -c .yamllint.yaml kubernetes/ || true
