@@ -13,3 +13,5 @@ auth_token             = "foo"
 frp_dashboard_password = "foo"
 crowdsec_api_key       = "foo"                      # Generate with: tr -dc A-Za-z0-9 </dev/urandom | head -c 32
 acme_email             = "your-email@example.com"
+basic_auth_user        = "admin"
+basic_auth_hash        = "$2a$14$..."               # Generate with: caddy hash-password
