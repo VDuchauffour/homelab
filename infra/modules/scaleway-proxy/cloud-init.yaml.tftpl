@@ -71,11 +71,6 @@ write_files:
     owner: root:root
     content: |
       ${indent(6, compose_file)}
-  - path: /home/${username}/proxy/Dockerfile.frps
-    permissions: "0644"
-    owner: root:root
-    content: |
-      ${indent(6, dockerfile_frps)}
   - path: /home/${username}/proxy/Dockerfile.caddy
     permissions: "0644"
     owner: root:root

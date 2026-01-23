@@ -80,7 +80,6 @@ resource "scaleway_instance_server" "dev" {
     compose_file = templatefile("compose.yaml.tftpl", {
       crowdsec_api_key = var.crowdsec_api_key
     })
-    dockerfile_frps  = file("Dockerfile.frps")
     dockerfile_caddy = file("Dockerfile.caddy")
     acquis_yaml      = file("crowdsec/acquis.yaml")
     caddyfile = templatefile("Caddyfile.tftpl", {
