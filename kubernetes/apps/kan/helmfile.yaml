@@ -6,3 +6,4 @@ releases:
     chart: ./charts/kan
     values:
       - values.yaml
+      - domainName: ref+file://../../../_secret.yaml#/DOMAIN_NAME
