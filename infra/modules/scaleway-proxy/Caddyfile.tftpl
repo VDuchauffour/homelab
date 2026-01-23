@@ -18,6 +18,12 @@
     }
 }
 
+(basic_auth) {
+    basicauth {
+        ${basic_auth_user} ${basic_auth_hash}
+    }
+}
+
 frp.${domain_name} {
     import rate_limit
     route {
@@ -53,6 +59,7 @@ status.${domain_name} {
 
 dozzle.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -86,6 +93,7 @@ jellyseerr.${domain_name} {
 
 qbittorrent.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -95,7 +103,7 @@ qbittorrent.${domain_name} {
     }
 }
 
-immich.${domain_name} {
+kan.${domain_name} {
     import rate_limit
     route {
         crowdsec
@@ -108,6 +116,7 @@ immich.${domain_name} {
 
 stirling-pdf.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -119,6 +128,7 @@ stirling-pdf.${domain_name} {
 
 bazarr.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -130,6 +140,7 @@ bazarr.${domain_name} {
 
 radarr.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -141,6 +152,7 @@ radarr.${domain_name} {
 
 sonarr.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -152,6 +164,7 @@ sonarr.${domain_name} {
 
 prowlarr.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -163,6 +176,7 @@ prowlarr.${domain_name} {
 
 tdarr.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080
@@ -174,6 +188,7 @@ tdarr.${domain_name} {
 
 vibe-kanban.${domain_name} {
     import rate_limit
+    import basic_auth
     route {
         crowdsec
         reverse_proxy frps:8080

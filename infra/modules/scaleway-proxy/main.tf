@@ -86,6 +86,8 @@ resource "scaleway_instance_server" "dev" {
       domain_name      = var.domain_name
       crowdsec_api_key = var.crowdsec_api_key
       acme_email       = var.acme_email
+      basic_auth_user  = var.basic_auth_user
+      basic_auth_hash  = var.basic_auth_hash
     })
     domain_name            = var.domain_name
     username               = var.username
