@@ -33,23 +33,8 @@ To use docker without `sudo` run login as user and run `newgrp docker`.
 ```shell
 cd ./infra/modules/scaleway-proxy
 
-cat  <<EOF > terraform.tfvars
-zone                   = "fr-par-1"
-region                 = "fr-par"
-instance_name          = "instance-name"
-instance_type          = "DEV1-S"
-image_id               = "ubuntu_noble"
-root_volume_size       = 20
-tags                   = []
-domain_name            = "example.com"
-username               = "username"
-password_hash          = "foo"                      # Generate with: mkpasswd -m sha-512 'password'
-ssh_public_keys        = ["ssh-ed25519 AAAA..."]
-auth_token             = "foo"
-frp_dashboard_password = "foo"
-crowdsec_api_key       = "foo"                      # Generate with: tr -dc A-Za-z0-9 </dev/urandom | head -c 32
-acme_email             = "your-email@example.com"
-EOF
+cp ./terraform.tfvars.example ./terraform.tfvars
+# edit the file with the relevant values
 
 terraform init
 terraform plan

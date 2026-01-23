@@ -17,9 +17,7 @@ services:
       - crowdsec
 
   frps:
-    build:
-      context: .
-      dockerfile: Dockerfile.frps
+    image: snowdreamtech/frps:0.61
     restart: unless-stopped
     ports:
       - 6000:6000
