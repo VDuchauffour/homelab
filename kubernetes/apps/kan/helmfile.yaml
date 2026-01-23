@@ -1,0 +1,8 @@
+---
+releases:
+  - name: kan
+    namespace: kan
+    createNamespace: true
+    chart: ./charts/kan
+    values:
+      - values.yaml
