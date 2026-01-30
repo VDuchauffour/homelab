@@ -63,7 +63,14 @@ terraform destroy
 
 ## Kubernetes
 
-The entire homelab is managed with Kubernetes.
+The entire homelab is managed with Kubernetes. Here's the structure of the folder:
+
+```shell
+kubernetes
+├── apps      # user-facing application workloads
+├── cluster   # cluster-level configuration and shared resources
+└── infra     # cluster-wide infrastructure services
+```
 
 ### Recreate CA for local network
 
