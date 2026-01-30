@@ -1,0 +1,23 @@
+---
+helmfiles:
+  - path: bazarr/helmfile.yaml
+  - path: beszel/helmfile.yaml
+  - path: dozzle/helmfile.yaml
+  - path: glance/helmfile.yaml
+  - path: immich/helmfile.yaml
+  - path: jellyfin/helmfile.yaml
+  - path: jellyseerr/helmfile.yaml
+  - path: kan/helmfile.yaml
+  - path: kubernetes-dashboard/helmfile.yaml
+  - path: linkwarden/helmfile.yaml
+  - path: n8n/helmfile.yaml
+  - path: pgadmin/helmfile.yaml
+  - path: prowlarr/helmfile.yaml
+  - path: qbittorrent-vpn/helmfile.yaml
+  - path: radarr/helmfile.yaml
+  - path: slskd/helmfile.yaml
+  - path: sonarr/helmfile.yaml
+  - path: stirling-pdf/helmfile.yaml
+  - path: tdarr/helmfile.yaml
+  - path: uptime-kuma/helmfile.yaml
+  - path: vibe-kanban/helmfile.yaml
