@@ -22,11 +22,6 @@ volumeMounts:
   - name: jellyfin-cache
     mountPath: /cache
 
-podSecurityContext:
-  supplementalGroups:
-    - 993
-  fsGroup: 993
-
 # for hardware acceleration
 securityContext:
   runAsUser: 1000
