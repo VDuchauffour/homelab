@@ -51,12 +51,12 @@ glance:
   pages:
     - name: Public
       domain: DOMAIN_NAME
-      showFrp: true
     - name: Local
       domain: LOCAL_DOMAIN
-      showFrp: false
+    - name: Stats
+      domain: LOCAL_DOMAIN
 
-  bookmarkGroups:
+  commonBookmarkGroups:
     - title: Tools
       links:
         - title: Kan.sh
@@ -107,24 +107,31 @@ glance:
         - title: Uptime Kuma
           subdomain: status
           icon: di:uptime-kuma
-        - title: FRP dashboard
-          subdomain: frp
-          icon: di:frp
-          publicOnly: true
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
         - title: dozzle
           subdomain: dozzle
           icon: di:dozzle
-    - title: Tech
+
+    - title: AI
       links:
         - title: Vibe-kanban
           subdomain: vibe-kanban
           icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
 
+  publicOnlyBookmarkGroups:
+    - title: Proxy
+      links:
+        - title: FRP dashboard
+          subdomain: frp
+          icon: di:frp
+
   sharedWidgets:
-    smallColumnLeft:
+    glance:
+      - type: bookmarks
+
+    stats:
       - type: calendar
         firstDayOfWeek: monday
       - type: weather
@@ -132,11 +139,9 @@ glance:
         units: metric
         hourFormat: 24h
       - type: todo
-
-    fullColumn:
       - type: hackerNews
-        limit: 10
-        collapseAfter: 5
+        limit: 15
+        collapseAfter: 10
 
   auth:
     secretKey: ref+file://../../../_secret.yaml#/glance/auth/secret-key
