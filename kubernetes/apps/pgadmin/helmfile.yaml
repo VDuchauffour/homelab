@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: runix
+    url: https://helm.runix.net
+
+releases:
+  - name: pgadmin
+    namespace: pgadmin
+    chart: runix/pgadmin4
+    version: 1.57.0
+    values:
+      - values.yaml

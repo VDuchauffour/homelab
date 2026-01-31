@@ -13,10 +13,10 @@ kan:
   allowCredentials: true
 
 postgres:
-  host: cnpg-database-cluster-rw.cnpg-database.svc.cluster.local
+  host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
   port: 5432
-  database: kan_db
-  user: kan_user
+  database: kan
+  user: kan
   password: ref+file://../../../_secret.yaml#/kan/postgresUrl/password
 
 ingress:

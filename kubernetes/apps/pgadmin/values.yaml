@@ -1,0 +1,44 @@
+---
+existingSecret: pgadmin-admin
+secretKeys:
+  pgadminPasswordKey: password
+
+env:
+  email: admin@example.com
+
+envVarsExtra:
+  - name: PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY
+    value: "False"
+
+serverDefinitions:
+  enabled: true
+  resourceType: ConfigMap
+  servers:
+    cnpg-clusters:
+      Name: CloudNativePG Clusters
+      Group: Servers
+      Host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+      Port: "5432"
+      Username: admin
+      MaintenanceDB: postgres
+      SSLMode: prefer
+
+persistentVolume:
+  enabled: true
+  existingClaim: pvc-pgadmin-data
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: pgadmin.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - pgadmin.home.arpa
+      secretName: pgadmin-mkcert-tls
