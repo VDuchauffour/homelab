@@ -38,43 +38,40 @@ spec:
     size: 5Gi
     storageClass: zfs-vm-pool-cnpg
   bootstrap:
-    initdb: # init an empty cluster with a noop database
+    initdb:  # init an empty cluster with a noop database
       database: noop
       owner: noop
       secret:
         name: noop-cnpg-credentials
   managed:
     roles:
-    - name: admin
-      ensure: present
-      comment: admin
-      login: true
-      superuser: true
-      inRoles:
-        - pg_monitor
-        - pg_signal_backend
-      passwordSecret:
-        name: admin-cnpg-credentials
-    - name: kan
-      ensure: present
-      login: true
-      superuser: false
-      inRoles:
-        - pg_monitor
-        - pg_signal_backend
-      passwordSecret:
-        name: kan-cnpg-credentials
+      - name: admin
+        ensure: present
+        comment: admin
+        login: true
+        superuser: true
+        inRoles:
+          - pg_monitor
+          - pg_signal_backend
+        passwordSecret:
+          name: admin-cnpg-credentials
+      - name: kan
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: kan-cnpg-credentials
   postgresql:
     parameters:
-      shared_buffers: "256MB"
-      max_connections: "100"
+      shared_buffers: 256MB
+      max_connections: '100'
   resources:
     requests:
-      memory: "512Mi"
-      cpu: "250m"
+      memory: 512Mi
+      cpu: 250m
     limits:
-      memory: "1Gi"
-      cpu: "1"
+      memory: 1Gi
+      cpu: '1'
 ---
 apiVersion: v1
 kind: Secret
@@ -82,7 +79,7 @@ metadata:
   name: noop-cnpg-credentials
   namespace: cnpg-clusters
   labels:
-    cnpg.io/reload: "true"
+    cnpg.io/reload: 'true'
 type: kubernetes.io/basic-auth
 stringData:
   username: noop
@@ -94,7 +91,7 @@ metadata:
   name: admin-cnpg-credentials
   namespace: cnpg-clusters
   labels:
-    cnpg.io/reload: "true"
+    cnpg.io/reload: 'true'
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
@@ -106,7 +103,7 @@ metadata:
   name: kan-cnpg-credentials
   namespace: cnpg-clusters
   labels:
-    cnpg.io/reload: "true"
+    cnpg.io/reload: 'true'
 type: kubernetes.io/basic-auth
 stringData:
   username: kan
