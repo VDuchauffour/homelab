@@ -3,6 +3,11 @@ name: PR enhancement
 
 on:
   pull_request:
+    types:
+      - edited
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
