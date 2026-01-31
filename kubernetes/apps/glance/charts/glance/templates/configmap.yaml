@@ -24,7 +24,6 @@ data:
     pages:
     {{- range .Values.glance.pages }}
     {{- $pageDomain := .domain }}
-    {{- $showFrp := .showFrp }}
     {{- if eq $pageDomain "DOMAIN_NAME" }}
     {{- $pageDomain = $.Values.domainName }}
     {{- else if eq $pageDomain "LOCAL_DOMAIN" }}
@@ -32,35 +31,59 @@ data:
     {{- end }}
       - name: {{ .name }}
         columns:
-          - size: small
-            widgets:
-              - type: calendar
-                first-day-of-week: {{ $.Values.glance.sharedWidgets.smallColumnLeft | first | dig "firstDayOfWeek" "monday" }}
-              - type: weather
-                location: {{ (index $.Values.glance.sharedWidgets.smallColumnLeft 1).location }}
-                units: {{ (index $.Values.glance.sharedWidgets.smallColumnLeft 1).units }}
-                hour-format: {{ (index $.Values.glance.sharedWidgets.smallColumnLeft 1).hourFormat }}
-              - type: to-do
-
+          {{- if eq .name "Public" }}
           - size: full
             widgets:
               - type: bookmarks
                 groups:
-                {{- range $.Values.glance.bookmarkGroups }}
+                {{- range $.Values.glance.commonBookmarkGroups }}
                   - title: {{ .title }}
                     links:
                     {{- range .links }}
-                    {{- if and .publicOnly (not $showFrp) }}
-                    {{- else }}
                       - title: {{ .title }}
                         url: https://{{ .subdomain }}.{{ $pageDomain }}
                         icon: {{ .icon }}
                     {{- end }}
+                {{- end }}
+                {{- range $.Values.glance.publicOnlyBookmarkGroups }}
+                  - title: {{ .title }}
+                    links:
+                    {{- range .links }}
+                      - title: {{ .title }}
+                        url: https://{{ .subdomain }}.{{ $pageDomain }}
+                        icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+          {{- else if eq .name "Local" }}
+          - size: full
+            widgets:
+              - type: bookmarks
+                groups:
+                {{- range $.Values.glance.commonBookmarkGroups }}
+                  - title: {{ .title }}
+                    links:
+                    {{- range .links }}
+                      - title: {{ .title }}
+                        url: https://{{ .subdomain }}.{{ $pageDomain }}
+                        icon: {{ .icon }}
+                    {{- end }}
+                {{- end }}
+          {{- else if eq .name "Stats" }}
+          - size: small
+            widgets:
+              - type: calendar
+                first-day-of-week: {{ $.Values.glance.sharedWidgets.stats | first | dig "firstDayOfWeek" "monday" }}
+              - type: weather
+                location: {{ (index $.Values.glance.sharedWidgets.stats 1).location }}
+                units: {{ (index $.Values.glance.sharedWidgets.stats 1).units }}
+                hour-format: {{ (index $.Values.glance.sharedWidgets.stats 1).hourFormat }}
+              - type: to-do
+
+          - size: full
+            widgets:
               - type: hacker-news
-                limit: {{ ($.Values.glance.sharedWidgets.fullColumn | first).limit }}
-                collapse-after: {{ ($.Values.glance.sharedWidgets.fullColumn | first).collapseAfter }}
+                limit: {{ (index $.Values.glance.sharedWidgets.stats 3).limit }}
+                collapse-after: {{ (index $.Values.glance.sharedWidgets.stats 3).collapseAfter }}
 
           - size: small
             widgets:
@@ -356,4 +379,5 @@ data:
                     {{`{{ end }}`}}
                   </ul>
                   {{`{{ end }}`}}
+          {{- end }}
     {{- end }}
