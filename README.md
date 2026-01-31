@@ -72,6 +72,10 @@ kubernetes
 └── infra     # cluster-wide infrastructure services
 ```
 
+### Postgres
+
+All postgres database runs in a [CloudnativePG cluster](https://cloudnative-pg.io/). You can see the [kubectl plugin](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to help you to manage the Postgres cluster and databases.
+
 ### Recreate CA for local network
 
 ```shell
