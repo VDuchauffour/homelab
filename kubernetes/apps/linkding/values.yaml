@@ -19,7 +19,7 @@ secrets:
 
 persistence:
   enabled: true
-  storageClass: zfs-vm-pool-linkding
+  storageClass: zfs-vm-pool-dynamic
   size: 1Gi
 
 image:
