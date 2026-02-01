@@ -83,7 +83,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: noop
-  password: ref+file://_secret.yaml#/cloudnative-pg/noop/password
+  password: ref+envsubst://$CLOUDNATIVE_PG_NOOP_PASSWORD
 ---
 apiVersion: v1
 kind: Secret
@@ -95,7 +95,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
-  password: ref+file://_secret.yaml#/cloudnative-pg/admin/password
+  password: ref+envsubst://$CLOUDNATIVE_PG_ADMIN_PASSWORD
 ---
 apiVersion: v1
 kind: Secret
@@ -107,7 +107,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: kan
-  password: ref+file://_secret.yaml#/cloudnative-pg/kan/password
+  password: ref+envsubst://$CLOUDNATIVE_PG_KAN_PASSWORD
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
