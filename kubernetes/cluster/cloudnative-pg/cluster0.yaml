@@ -45,6 +45,16 @@ spec:
         name: noop-cnpg-credentials
   managed:
     roles:
+      - name: admin
+        ensure: present
+        comment: admin
+        login: true
+        superuser: true
+        inRoles:
+          - pg_monitor
+          - pg_signal_backend
+        passwordSecret:
+          name: admin-cnpg-credentials
       - name: kan
         ensure: present
         login: true
@@ -86,3 +96,15 @@ type: kubernetes.io/basic-auth
 stringData:
   username: noop
   password: ref+envsubst://$CLOUDNATIVE_PG_NOOP_PASSWORD
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: admin
+  password: ref+envsubst://$CLOUDNATIVE_PG_ADMIN_PASSWORD
