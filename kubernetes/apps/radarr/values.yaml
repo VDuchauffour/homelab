@@ -12,6 +12,7 @@ persistence:
   media:
     enabled: true
     type: pvc
+    mountPath: /media
     readOnly: false
     storageClass: zfs-tank-radarr
     accessMode: ReadWriteOnce
