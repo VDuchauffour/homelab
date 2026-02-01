@@ -8,7 +8,7 @@ persistence:
   config:
     enabled: true
     storageClass: zfs-vm-pool-dynamic
-    size: 5Gi
+    size: 20Gi
   media:
     enabled: true
     existingClaim: media-library
@@ -19,6 +19,9 @@ persistence:
     mountPath: /cache
 
 # for hardware acceleration
+podSecurityContext:
+  fsGroup: 1000
+
 securityContext:
   runAsUser: 1000
   runAsGroup: 1000
