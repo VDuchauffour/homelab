@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-bazarr-media
+  name: pv-media-library-arr
 spec:
-  storageClassName: zfs-tank-bazarr
+  storageClassName: zfs-tank-media-arr
   capacity:
-    storage: 25Gi
+    storage: 2Ti
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
@@ -21,6 +21,91 @@ spec:
               operator: In
               values:
                 - joi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: arr
+spec:
+  storageClassName: zfs-tank-media-arr
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-media-library-media-center
+spec:
+  storageClassName: zfs-tank-media-media-center
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: media-center
+spec:
+  storageClassName: zfs-tank-media-media-center
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-media-library-qbittorrent
+spec:
+  storageClassName: zfs-tank-media-qbittorrent
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: qbittorrent-vpn
+spec:
+  storageClassName: zfs-tank-media-qbittorrent
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -48,55 +133,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-jellyfin-media
+  name: pv-downloads
 spec:
-  storageClassName: zfs-tank-jellyfin
-  capacity:
-    storage: 25Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-lidarr-media
-spec:
-  storageClassName: zfs-tank-lidarr
-  capacity:
-    storage: 25Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-qbittorrent-vpn-downloads
-spec:
-  storageClassName: zfs-tank-qbittorrent-vpn
+  storageClassName: zfs-tank-downloads
   capacity:
     storage: 500Gi
   accessModes:
@@ -104,7 +143,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
-    path: /mnt/tank/downloads
+    path: /mnt/tank/media/downloads
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -115,70 +154,14 @@ spec:
                 - joi
 ---
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: pv-radarr-media
+  name: downloads
+  namespace: qbittorrent-vpn
 spec:
-  storageClassName: zfs-tank-radarr
-  capacity:
-    storage: 25Gi
+  storageClassName: zfs-tank-downloads
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-sonarr-media
-spec:
-  storageClassName: zfs-tank-sonarr
-  capacity:
-    storage: 25Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-tdarr-media
-spec:
-  storageClassName: zfs-tank-tdarr
-  capacity:
-    storage: 25Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  resources:
+    requests:
+      storage: 500Gi

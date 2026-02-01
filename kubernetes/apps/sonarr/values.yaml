@@ -15,9 +15,7 @@ persistence:
     type: pvc
     mountPath: /media
     readOnly: false
-    storageClass: zfs-tank-sonarr
-    accessMode: ReadWriteOnce
-    size: 25Gi
+    existingClaim: media-library
 
 podSecurityContext:
   runAsUser: 1000

@@ -9,7 +9,7 @@ parameters:
   fstype: zfs
   recordsize: 128k
   compression: lz4
-  dedup: false
+  dedup: 'off'
 provisioner: zfs.csi.openebs.io
-reclaimPolicy: Delete
+reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer

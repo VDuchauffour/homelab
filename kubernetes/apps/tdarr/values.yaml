@@ -30,11 +30,9 @@ persistence:
   media:
     enabled: false
     type: pvc
-    mountPath: /
+    mountPath: /media
     readOnly: false
-    storageClass: zfs-tank-tdarr
-    accessMode: ReadWriteOnce
-    size: 25Gi
+    existingClaim: media-library
 
 # podSecurityContext:
 #   runAsUser: 1000

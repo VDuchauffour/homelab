@@ -30,9 +30,7 @@ qbittorrent:
       size: 2Gi
     downloads:
       enabled: true
-      existingClaim: false
-      storageClass: zfs-tank-qbittorrent-vpn
-      size: 200Gi
+      existingClaim: downloads
   env:
     - name: PUID
       value: 1000
