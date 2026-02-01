@@ -8,3 +8,5 @@ releases:
     createNamespace: true
     chart: openebs/openebs
     version: 4.3.3
+    values:
+      - values.yaml
