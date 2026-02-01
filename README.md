@@ -110,7 +110,7 @@ kubernetes
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | cloudnative-pg | PostgreSQL operator for K8s |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Intel_logo_2023.svg/1280px-Intel_logo_2023.svg.png" width="24"> | intel-device-plugins | GPU and device plugin for Intel hardware |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="24"> | kube-prometheus-stack | Monitoring and alerting stack |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/minio.png" width="24"> | minio | High-performance blob storage |
+| <img src="https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true" width="24"> | minio | High-performance blob storage |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="24"> | openebs | Container-native storage solution |
 
