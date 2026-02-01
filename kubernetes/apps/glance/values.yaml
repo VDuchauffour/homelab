@@ -123,7 +123,7 @@ glance:
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
-        - title: MiniO
+        - title: MinIO
           subdomain: minio-console
           icon: di:minio
 
