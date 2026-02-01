@@ -101,6 +101,9 @@ glance:
         - title: Bazarr
           subdomain: bazarr
           icon: di:bazarr
+        - title: Lidarr
+          subdomain: lidarr
+          icon: di:lidarr
 
     - title: Back-office
       links:

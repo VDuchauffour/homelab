@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: lidarr
+    namespace: arr
+    createNamespace: true
+    chart: k8s-home-lab/lidarr
+    version: 15.1.1
+    values:
+      - values.yaml
