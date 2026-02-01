@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "linkding.fullname" . }}-config
+  labels:
+    {{- include "linkding.labels" . | nindent 4 }}
+data:
+  TZ: {{ .Values.config.TZ | quote }}
+  {{- if .Values.config.LD_DISABLE_BACKGROUND_TASKS }}
+  LD_DISABLE_BACKGROUND_TASKS: {{ .Values.config.LD_DISABLE_BACKGROUND_TASKS | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_SUPERVISOR_MANAGED }}
+  LD_SUPERVISOR_MANAGED: {{ .Values.config.LD_SUPERVISOR_MANAGED | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_DISABLE_URL_VALIDATION }}
+  LD_DISABLE_URL_VALIDATION: {{ .Values.config.LD_DISABLE_URL_VALIDATION | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_REQUEST_MAX_CONTENT_LENGTH }}
+  LD_REQUEST_MAX_CONTENT_LENGTH: {{ .Values.config.LD_REQUEST_MAX_CONTENT_LENGTH | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_REQUEST_TIMEOUT }}
+  LD_REQUEST_TIMEOUT: {{ .Values.config.LD_REQUEST_TIMEOUT | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_SERVER_HOST }}
+  LD_SERVER_HOST: {{ .Values.config.LD_SERVER_HOST | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_SERVER_PORT }}
+  LD_SERVER_PORT: {{ .Values.config.LD_SERVER_PORT | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_CONTEXT_PATH }}
+  LD_CONTEXT_PATH: {{ .Values.config.LD_CONTEXT_PATH | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_ENABLE_AUTH_PROXY }}
+  LD_ENABLE_AUTH_PROXY: {{ .Values.config.LD_ENABLE_AUTH_PROXY | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_AUTH_PROXY_USERNAME_HEADER }}
+  LD_AUTH_PROXY_USERNAME_HEADER: {{ .Values.config.LD_AUTH_PROXY_USERNAME_HEADER | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_AUTH_PROXY_LOGOUT_URL }}
+  LD_AUTH_PROXY_LOGOUT_URL: {{ .Values.config.LD_AUTH_PROXY_LOGOUT_URL | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_ENABLE_OIDC }}
+  LD_ENABLE_OIDC: {{ .Values.config.LD_ENABLE_OIDC | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_OP_AUTHORIZATION_ENDPOINT }}
+  OIDC_OP_AUTHORIZATION_ENDPOINT: {{ .Values.config.OIDC_OP_AUTHORIZATION_ENDPOINT | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_OP_TOKEN_ENDPOINT }}
+  OIDC_OP_TOKEN_ENDPOINT: {{ .Values.config.OIDC_OP_TOKEN_ENDPOINT | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_OP_USER_ENDPOINT }}
+  OIDC_OP_USER_ENDPOINT: {{ .Values.config.OIDC_OP_USER_ENDPOINT | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_OP_JWKS_ENDPOINT }}
+  OIDC_OP_JWKS_ENDPOINT: {{ .Values.config.OIDC_OP_JWKS_ENDPOINT | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_RP_CLIENT_ID }}
+  OIDC_RP_CLIENT_ID: {{ .Values.config.OIDC_RP_CLIENT_ID | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_RP_SIGN_ALGO }}
+  OIDC_RP_SIGN_ALGO: {{ .Values.config.OIDC_RP_SIGN_ALGO | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_USE_PKCE }}
+  OIDC_USE_PKCE: {{ .Values.config.OIDC_USE_PKCE | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_VERIFY_SSL }}
+  OIDC_VERIFY_SSL: {{ .Values.config.OIDC_VERIFY_SSL | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_RP_SCOPES }}
+  OIDC_RP_SCOPES: {{ .Values.config.OIDC_RP_SCOPES | quote }}
+  {{- end }}
+  {{- if .Values.config.OIDC_USERNAME_CLAIM }}
+  OIDC_USERNAME_CLAIM: {{ .Values.config.OIDC_USERNAME_CLAIM | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_DISABLE_LOGIN_FORM }}
+  LD_DISABLE_LOGIN_FORM: {{ .Values.config.LD_DISABLE_LOGIN_FORM | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_CSRF_TRUSTED_ORIGINS }}
+  LD_CSRF_TRUSTED_ORIGINS: {{ .Values.config.LD_CSRF_TRUSTED_ORIGINS | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_USE_X_FORWARDED_HOST }}
+  LD_USE_X_FORWARDED_HOST: {{ .Values.config.LD_USE_X_FORWARDED_HOST | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_LOG_X_FORWARDED_FOR }}
+  LD_LOG_X_FORWARDED_FOR: {{ .Values.config.LD_LOG_X_FORWARDED_FOR | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_FAVICON_PROVIDER }}
+  LD_FAVICON_PROVIDER: {{ .Values.config.LD_FAVICON_PROVIDER | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_SINGLEFILE_TIMEOUT_SEC }}
+  LD_SINGLEFILE_TIMEOUT_SEC: {{ .Values.config.LD_SINGLEFILE_TIMEOUT_SEC | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_SINGLEFILE_OPTIONS }}
+  LD_SINGLEFILE_OPTIONS: {{ .Values.config.LD_SINGLEFILE_OPTIONS | quote }}
+  {{- end }}
+  {{- if .Values.config.LD_DISABLE_REQUEST_LOGS }}
+  LD_DISABLE_REQUEST_LOGS: {{ .Values.config.LD_DISABLE_REQUEST_LOGS | quote }}
+  {{- end }}
+  {{- if .Values.config.database.engine }}
+  LD_DB_ENGINE: {{ .Values.config.database.engine | quote }}
+  {{- end }}
+  {{- if .Values.config.database.name }}
+  LD_DB_DATABASE: {{ .Values.config.database.name | quote }}
+  {{- end }}
+  {{- if .Values.config.database.user }}
+  LD_DB_USER: {{ .Values.config.database.user | quote }}
+  {{- end }}
+  {{- if .Values.config.database.host }}
+  LD_DB_HOST: {{ .Values.config.database.host | quote }}
+  {{- end }}
+  {{- if .Values.config.database.port }}
+  LD_DB_PORT: {{ .Values.config.database.port | quote }}
+  {{- end }}
+  {{- if .Values.config.database.options }}
+  LD_DB_OPTIONS: {{ .Values.config.database.options | quote }}
+  {{- end }}

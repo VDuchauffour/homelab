@@ -1,0 +1,8 @@
+---
+releases:
+  - name: linkding
+    namespace: linkding
+    createNamespace: true
+    chart: ./charts/linkding
+    values:
+      - values.yaml
