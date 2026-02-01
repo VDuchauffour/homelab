@@ -35,6 +35,7 @@ data:
           - size: full
             widgets:
               - type: bookmarks
+                hide-header: true
                 groups:
                 {{- range $.Values.glance.commonBookmarkGroups }}
                   - title: {{ .title }}
@@ -45,6 +46,11 @@ data:
                         icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+          - size: small
+            widgets:
+              - type: bookmarks
+                hide-header: true
+                groups:
                 {{- range $.Values.glance.publicOnlyBookmarkGroups }}
                   - title: {{ .title }}
                     links:
@@ -58,6 +64,7 @@ data:
           - size: full
             widgets:
               - type: bookmarks
+                hide-header: true
                 groups:
                 {{- range $.Values.glance.commonBookmarkGroups }}
                   - title: {{ .title }}
@@ -68,6 +75,11 @@ data:
                         icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+          - size: small
+            widgets:
+              - type: bookmarks
+                hide-header: true
+                groups:
                 {{- range $.Values.glance.localOnlyBookmarkGroups }}
                   - title: {{ .title }}
                     links:
