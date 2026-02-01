@@ -72,6 +72,8 @@ kubernetes
 └── infra     # cluster-wide infrastructure services
 ```
 
+### Deployed components
+
 <details>
 <summary>Apps</summary>
 
