@@ -1,0 +1,14 @@
+---
+repositories:
+  - name: 8gears
+    url: 8gears.container-registry.com/library
+    oci: true
+
+releases:
+  - name: n8n
+    namespace: n8n
+    createNamespace: true
+    chart: 8gears/n8n
+    version: 2.0.1
+    values:
+      - values.yaml

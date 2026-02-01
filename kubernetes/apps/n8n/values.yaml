@@ -1,0 +1,41 @@
+---
+main:
+  secret:
+    n8n:
+      encryption_key: ref+envsubst://$N8N_ENCRYPTION_KEY
+  config:
+    db:
+      type: postgresdb
+      postgresdb:
+        host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+        database: n8n
+        user: n8n
+  extraEnv:
+    DB_POSTGRESDB_PASSWORD:
+      valueFrom:
+        secretKeyRef:
+          name: n8n-cnpg-credentials
+          key: password
+  persistence:
+    enabled: true
+    type: pvc
+    readOnly: false
+    storageClass: zfs-vm-pool-n8n
+    accessMode: ReadWriteOnce
+    size: 2Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: n8n.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - n8n.home.arpa
+      secretName: n8n-mkcert-tls
