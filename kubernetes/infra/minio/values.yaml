@@ -1,0 +1,36 @@
+---
+mode: standalone
+
+existingSecret: minio-credentials
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 50Gi
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 512Mi
+
+buckets:
+  - name: cnpg-backups
+    policy: none
+    purge: false
+
+consoleIngress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - minio-console.home.arpa
+  tls:
+    - secretName: minio-console-tls
+      hosts:
+        - minio-console.home.arpa
+
+ingress:
+  enabled: false
