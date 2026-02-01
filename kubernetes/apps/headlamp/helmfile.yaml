@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: headlamp
+    url: https://kubernetes-sigs.github.io/headlamp/
+releases:
+  - name: headlamp
+    namespace: kube-system
+    createNamespace: false
+    chart: headlamp/headlamp
+    version: 0.39.0
+    values:
+      - values.yaml

@@ -1,0 +1,20 @@
+---
+serviceAccount:
+  create: true
+  annotations: {}
+  name: headlamp-admin
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: headlamp.home.arpa
+      paths:
+        - path: /
+          type: Prefix
+  tls:
+    - hosts:
+        - headlamp.home.arpa
+      secretName: headlamp-mkcert-tls

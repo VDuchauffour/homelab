@@ -116,6 +116,14 @@ kubectl get gpudeviceplugins
 
 You can get more info about that [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd/gpu_plugin/README.html).
 
+### Headlamp
+
+Generate an admin token to log in:
+
+```shell
+kubectl create token headlamp-admin -n kube-system
+```
+
 ## Password generation recommandation
 
 ```shell
