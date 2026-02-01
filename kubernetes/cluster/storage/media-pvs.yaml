@@ -1,0 +1,184 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-bazarr-media
+spec:
+  storageClassName: zfs-tank-bazarr
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-immich-library
+spec:
+  storageClassName: zfs-tank-immich-library
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/immich
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-jellyfin-media
+spec:
+  storageClassName: zfs-tank-jellyfin
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-lidarr-media
+spec:
+  storageClassName: zfs-tank-lidarr
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-qbittorrent-vpn-downloads
+spec:
+  storageClassName: zfs-tank-qbittorrent-vpn
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/downloads
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-radarr-media
+spec:
+  storageClassName: zfs-tank-radarr
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-sonarr-media
+spec:
+  storageClassName: zfs-tank-sonarr
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-tdarr-media
+spec:
+  storageClassName: zfs-tank-tdarr
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: /mnt/tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - joi
