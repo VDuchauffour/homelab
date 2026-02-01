@@ -35,7 +35,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
-    path: /mnt/tank/immich
+    path: /mnt/tank/media/photos/immich
   nodeAffinity:
     required:
       nodeSelectorTerms:
