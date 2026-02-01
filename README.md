@@ -79,25 +79,25 @@ kubernetes
 
 | | App | Description |
 |:--:|-----|-------------|
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="16"> | bazarr | Subtitle management for media |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="16"> | dozzle | Real-time log viewer for containers |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="16"> | glance | Personal dashboard |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="16"> | headlamp | Kubernetes web UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/helm-dashboard.png" width="16"> | helm-dashboard | Helm charts management UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="16"> | jellyfin | Media server with live TV |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="16"> | jellyseerr | Media request management |
-| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="16"> | kan | Notes and kanban board |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="16"> | lidarr | Music collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="16"> | n8n | Workflow automation platform |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="16"> | pgadmin | PostgreSQL management UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="16"> | prowlarr | Indexer manager for arr suite |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="16"> | qbittorrent-vpn | BitTorrent client with VPN |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="16"> | radarr | Movie collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="16"> | sonarr | TV show collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="16"> | stirling-pdf | PDF manipulation toolkit |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="16"> | tdarr | Media transcoding optimizer |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="16"> | uptime-kuma | Uptime monitoring dashboard |
-| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="16"> | vibe-kanban | Kanban project management for vibe coding |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="24"> | bazarr | Subtitle management for media |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="24"> | dozzle | Real-time log viewer for containers |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="24"> | glance | Personal dashboard |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="24"> | headlamp | Kubernetes web UI |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/helm-dashboard.png" width="24"> | helm-dashboard | Helm charts management UI |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="24"> | jellyfin | Media server with live TV |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="24"> | jellyseerr | Media request management |
+| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Notes and kanban board |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="24"> | lidarr | Music collection manager |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="24"> | n8n | Workflow automation platform |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="24"> | pgadmin | PostgreSQL management UI |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="24"> | prowlarr | Indexer manager for arr suite |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="24"> | qbittorrent-vpn | BitTorrent client with VPN |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="24"> | radarr | Movie collection manager |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="24"> | sonarr | TV show collection manager |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="24"> | stirling-pdf | PDF manipulation toolkit |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="24"> | tdarr | Media transcoding optimizer |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24"> | uptime-kuma | Uptime monitoring dashboard |
+| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="24"> | vibe-kanban | Kanban project management for vibe coding |
 
 </details>
 
@@ -106,13 +106,13 @@ kubernetes
 
 | | Tool | Description |
 |:--:|------|-------------|
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cert-manager.png" width="16"> | cert-manager | TLS certificate automation |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudnative-pg.png" width="16"> | cloudnative-pg | PostgreSQL operator for K8s |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/intel.png" width="16"> | intel-device-plugins | GPU and device plugin for Intel hardware |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="16"> | kube-prometheus-stack | Monitoring and alerting stack |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/minio.png" width="16"> | minio | High-performance blob storage |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="16"> | node-feature-discovery | Hardware feature discovery |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openebs.png" width="16"> | openebs | Container-native storage solution |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cert-manager.png" width="24"> | cert-manager | TLS certificate automation |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudnative-pg.png" width="24"> | cloudnative-pg | PostgreSQL operator for K8s |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/intel.png" width="24"> | intel-device-plugins | GPU and device plugin for Intel hardware |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="24"> | kube-prometheus-stack | Monitoring and alerting stack |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/minio.png" width="24"> | minio | High-performance blob storage |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openebs.png" width="24"> | openebs | Container-native storage solution |
 
 </details>
 
