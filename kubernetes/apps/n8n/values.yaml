@@ -18,9 +18,9 @@ main:
           key: password
   persistence:
     enabled: true
-    type: pvc
+    type: dynamic
     readOnly: false
-    storageClass: zfs-vm-pool-n8n
+    storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
     size: 2Gi
 
