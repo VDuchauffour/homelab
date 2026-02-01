@@ -32,7 +32,7 @@ ingress:
   tls:
     - hosts:
         - dashboard.home.arpa
-      secretName: homarr-mkcert-tls
+      secretName: glance-mkcert-tls
 
 persistence:
   enabled: false
