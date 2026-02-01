@@ -59,6 +59,9 @@ glance:
   commonBookmarkGroups:
     - title: Tools
       links:
+        - title: qBittorrent
+          subdomain: qbittorrent
+          icon: di:qbittorrent
         - title: Kan.sh
           subdomain: kan
           icon: https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/docs/favicon.png
@@ -68,9 +71,6 @@ glance:
         - title: Linkwarden
           subdomain: linkwarden
           icon: sh:linkwarden
-        - title: n8n
-          subdomain: n8n
-          icon: di:n8n
 
     - title: Media
       links:
@@ -84,11 +84,8 @@ glance:
           subdomain: immich
           icon: di:immich
 
-    - title: Downloads
+    - title: Arr
       links:
-        - title: qBittorrent
-          subdomain: qbittorrent
-          icon: di:qbittorrent
         - title: Prowlarr
           subdomain: prowlarr
           icon: di:prowlarr
@@ -107,6 +104,9 @@ glance:
 
     - title: AI
       links:
+        - title: n8n
+          subdomain: n8n
+          icon: di:n8n
         - title: Vibe-kanban
           subdomain: vibe-kanban
           icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
