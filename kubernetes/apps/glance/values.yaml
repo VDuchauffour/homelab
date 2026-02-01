@@ -59,9 +59,6 @@ glance:
   commonBookmarkGroups:
     - title: Tools
       links:
-        - title: qBittorrent
-          subdomain: qbittorrent
-          icon: di:qbittorrent
         - title: Kan.sh
           subdomain: kan
           icon: https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/docs/favicon.png
@@ -86,6 +83,9 @@ glance:
         - title: Immich
           subdomain: immich
           icon: di:immich
+        - title: qBittorrent
+          subdomain: qbittorrent
+          icon: di:qbittorrent
 
     - title: Arr
       links:
@@ -106,7 +106,7 @@ glance:
           icon: di:prowlarr
         - title: Tdarr
           subdomain: tdarr
-          icon: di:tdarr
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tdarr.png
 
     - title: AI
       links:
