@@ -123,6 +123,9 @@ glance:
         - title: Headlamp
           subdomain: headlamp
           icon: di:headlamp
+        - title: Helm Dashboard
+          subdomain: helm-dashboard
+          icon: di:helm
         - title: Dozzle
           subdomain: dozzle
           icon: di:dozzle
