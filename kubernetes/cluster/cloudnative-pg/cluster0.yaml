@@ -73,6 +73,12 @@ spec:
         superuser: false
         passwordSecret:
           name: linkwarden-cnpg-credentials
+      - name: linkding
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: linkding-cnpg-credentials
   postgresql:
     parameters:
       shared_buffers: 256MB

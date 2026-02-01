@@ -1,0 +1,45 @@
+---
+config:
+  TZ: Europe/Paris
+  LD_CSRF_TRUSTED_ORIGINS: https://linkding.home.arpa
+  LD_ENABLE_AUTH_PROXY: false
+  LD_DISABLE_LOGIN_FORM: false
+  database:
+    host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+
+secrets:
+  LD_SUPERUSER_NAME: ref+envsubst://$LINKDING_SUPERUSER_NAME
+  LD_SUPERUSER_PASSWORD: ref+envsubst://$LINKDING_SUPERUSER_PASSWORD
+  LD_SECRET_KEY: ref+envsubst://$LINKDING_SECRET_KEY
+  database:
+    password: ref+envsubst://$CLOUDNATIVE_PG_LINKDING_PASSWORD
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-linkding
+  size: 1Gi
+
+image:
+  repository: sissbruecker/linkding
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 9090
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: linkding.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - linkding.home.arpa
+      secretName: linkding-mkcert-tls

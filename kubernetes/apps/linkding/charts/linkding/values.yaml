@@ -1,0 +1,79 @@
+---
+replicaCount: 1
+
+image:
+  repository: sissbruecker/linkding
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 9090
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 1Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  TZ: UTC
+  LD_DISABLE_BACKGROUND_TASKS: 'False'
+  LD_SUPERVISOR_MANAGED: 'False'
+  LD_DISABLE_URL_VALIDATION: 'False'
+  LD_REQUEST_MAX_CONTENT_LENGTH: ''
+  LD_REQUEST_TIMEOUT: '60'
+  LD_SERVER_HOST: '[::]'
+  LD_SERVER_PORT: '9090'
+  LD_CONTEXT_PATH: ''
+  LD_ENABLE_AUTH_PROXY: 'False'
+  LD_AUTH_PROXY_USERNAME_HEADER: ''
+  LD_AUTH_PROXY_LOGOUT_URL: ''
+  LD_ENABLE_OIDC: 'False'
+  OIDC_OP_AUTHORIZATION_ENDPOINT: ''
+  OIDC_OP_TOKEN_ENDPOINT: ''
+  OIDC_OP_USER_ENDPOINT: ''
+  OIDC_OP_JWKS_ENDPOINT: ''
+  OIDC_RP_CLIENT_ID: ''
+  OIDC_RP_SIGN_ALGO: RS256
+  OIDC_USE_PKCE: 'True'
+  OIDC_VERIFY_SSL: 'True'
+  OIDC_RP_SCOPES: openid email profile
+  OIDC_USERNAME_CLAIM: email
+  LD_DISABLE_LOGIN_FORM: 'False'
+  LD_CSRF_TRUSTED_ORIGINS: ''
+  LD_USE_X_FORWARDED_HOST: 'false'
+  LD_LOG_X_FORWARDED_FOR: 'false'
+  LD_FAVICON_PROVIDER: 'https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={url}&size=32'
+  LD_SINGLEFILE_TIMEOUT_SEC: '60'
+  LD_SINGLEFILE_OPTIONS: ''
+  LD_DISABLE_REQUEST_LOGS: 'false'
+  database:
+    engine: postgres
+    name: linkding
+    user: linkding
+    host: localhost
+    port: '5432'
+    options: ''
+
+secrets:
+  LD_SUPERUSER_NAME: ''
+  LD_SUPERUSER_PASSWORD: ''
+  LD_SECRET_KEY: ''
+  OIDC_RP_CLIENT_SECRET: ''
+  database:
+    password: ''

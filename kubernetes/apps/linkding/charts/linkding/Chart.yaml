@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: linkding
+description: linkding - A self-hosted bookmark manager
+type: application
+version: 0.1.0
+appVersion: latest
