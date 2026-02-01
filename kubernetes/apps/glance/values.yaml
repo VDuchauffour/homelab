@@ -123,6 +123,9 @@ glance:
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
+        - title: MiniO
+          subdomain: minio-console
+          icon: di:minio
 
     - title: Monitoring
       links:
