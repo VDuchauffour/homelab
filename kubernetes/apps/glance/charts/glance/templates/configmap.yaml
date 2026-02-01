@@ -68,6 +68,15 @@ data:
                         icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+                {{- range $.Values.glance.localOnlyBookmarkGroups }}
+                  - title: {{ .title }}
+                    links:
+                    {{- range .links }}
+                      - title: {{ .title }}
+                        url: https://{{ .subdomain }}.{{ $pageDomain }}
+                        icon: {{ .icon }}
+                    {{- end }}
+                {{- end }}
           {{- else if eq .name "Stats" }}
           - size: small
             widgets:

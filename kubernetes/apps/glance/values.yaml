@@ -110,15 +110,22 @@ glance:
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
-        - title: dozzle
-          subdomain: dozzle
-          icon: di:dozzle
 
     - title: AI
       links:
         - title: Vibe-kanban
           subdomain: vibe-kanban
           icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
+
+  localOnlyBookmarkGroups:
+    - title: Cluster
+      links:
+        - title: Headlamp
+          subdomain: headlamp
+          icon: di:headlamp
+        - title: Dozzle
+          subdomain: dozzle
+          icon: di:dozzle
 
   publicOnlyBookmarkGroups:
     - title: Proxy
