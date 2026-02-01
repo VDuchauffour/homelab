@@ -83,7 +83,7 @@ kubernetes
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="24"> | dozzle | Real-time log viewer for containers |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="24"> | glance | Personal dashboard |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="24"> | headlamp | Kubernetes web UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/helm-dashboard.png" width="24"> | helm-dashboard | Helm charts management UI |
+| <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="24"> | helm-dashboard | Helm charts management UI |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="24"> | jellyfin | Media server with live TV |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="24"> | jellyseerr | Media request management |
 | <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Notes and kanban board |
@@ -107,12 +107,12 @@ kubernetes
 | | Tool | Description |
 |:--:|------|-------------|
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cert-manager.png" width="24"> | cert-manager | TLS certificate automation |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cloudnative-pg.png" width="24"> | cloudnative-pg | PostgreSQL operator for K8s |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/intel.png" width="24"> | intel-device-plugins | GPU and device plugin for Intel hardware |
+| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | cloudnative-pg | PostgreSQL operator for K8s |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Intel_logo_2023.svg/1280px-Intel_logo_2023.svg.png" width="24"> | intel-device-plugins | GPU and device plugin for Intel hardware |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="24"> | kube-prometheus-stack | Monitoring and alerting stack |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/minio.png" width="24"> | minio | High-performance blob storage |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openebs.png" width="24"> | openebs | Container-native storage solution |
+| <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="24"> | openebs | Container-native storage solution |
 
 </details>
 
