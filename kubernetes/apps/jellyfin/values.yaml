@@ -23,6 +23,9 @@ volumeMounts:
     mountPath: /cache
 
 # for hardware acceleration
+podSecurityContext:
+  fsGroup: 1000
+
 securityContext:
   runAsUser: 1000
   runAsGroup: 1000
