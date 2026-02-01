@@ -1,0 +1,25 @@
+---
+name: JSON Schema Check
+
+on:
+  push:
+    paths:
+      - ./.github/renovate.json
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+      - name: Fetch renovate schema
+        shell: bash
+        run: |
+          set -ex
+          mkdir -p schemas
+          curl -s -o schemas/schema.json https://docs.renovatebot.com/renovate-schema.json
+      - name: json-yaml-validate
+        uses: GrantBirki/json-yaml-validate@v4
+        with:
+          json_schema: schemas/schema.json
+          ajv_strict_mode: false
