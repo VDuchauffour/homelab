@@ -106,7 +106,7 @@ glance:
           icon: di:prowlarr
         - title: Tdarr
           subdomain: tdarr
-          icon: di:tdarr
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tdarr.png
 
     - title: AI
       links:
