@@ -86,7 +86,7 @@ kubernetes
 | <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="24"> | helm-dashboard | Helm charts management UI |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="24"> | jellyfin | Media server with live TV |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="24"> | jellyseerr | Media request management |
-| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Notes and kanban board |
+| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Kanban board |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="24"> | lidarr | Music collection manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="24"> | n8n | Workflow automation platform |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="24"> | pgadmin | PostgreSQL management UI |
