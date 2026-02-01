@@ -105,15 +105,6 @@ glance:
           subdomain: lidarr
           icon: di:lidarr
 
-    - title: Back-office
-      links:
-        - title: Uptime Kuma
-          subdomain: status
-          icon: di:uptime-kuma
-        - title: pgAdmin
-          subdomain: pgadmin
-          icon: di:postgresql
-
     - title: AI
       links:
         - title: Vibe-kanban
@@ -129,6 +120,15 @@ glance:
         - title: Helm Dashboard
           subdomain: helm-dashboard
           icon: di:helm
+        - title: pgAdmin
+          subdomain: pgadmin
+          icon: di:postgresql
+
+    - title: Monitoring
+      links:
+        - title: Uptime Kuma
+          subdomain: status
+          icon: di:uptime-kuma
         - title: Dozzle
           subdomain: dozzle
           icon: di:dozzle
