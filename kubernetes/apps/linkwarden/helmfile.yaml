@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: linkwarden
+    url: https://soubenz.github.io/linkwarden-helm-chart/
+
+releases:
+  - name: linkwarden
+    namespace: linkwarden
+    createNamespace: true
+    chart: linkwarden/linkwarden
+    version: 1.0.1
+    values:
+      - values.yaml
