@@ -1,0 +1,30 @@
+---
+postgres:
+  enabled: false
+  external:
+    enabled: true
+    uri: ref+envsubst://$CLOUDNATIVE_PG_LINKWARDEN_URI
+
+configuration:
+  authentication:
+    disableRegistration: false
+    PublicCredentialsEnabled: true
+    disableNewSSOUsers: true
+    authURL: http://localhost:3000/api/v1/auth
+    authSecret: ref+envsubst://$LINKWARDEN_AUTHSECRET
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: linkwarden.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - linkwarden.home.arpa
+      secretName: linkwarden-mkcert-tls
