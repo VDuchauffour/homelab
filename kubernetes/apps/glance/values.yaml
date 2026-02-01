@@ -144,7 +144,7 @@ glance:
         collapseAfter: 10
 
   auth:
-    secretKey: ref+file://../../../_secret.yaml#/glance/auth/secret-key
+    secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
     users:
       admin:
-        password: ref+file://../../../_secret.yaml#/glance/auth/users/admin/password
+        password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD

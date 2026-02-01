@@ -9,7 +9,7 @@ domainName: '{{ .Values.domainName }}'
 
 kan:
   baseUrl: https://kan.home.arpa
-  authSecret: ref+file://../../../_secret.yaml#/kan/authSecret
+  authSecret: ref+envsubst://$KAN_AUTHSECRET
   allowCredentials: true
 
 postgres:
@@ -17,7 +17,7 @@ postgres:
   port: 5432
   database: kan
   user: kan
-  password: ref+file://../../../_secret.yaml#/kan/postgresUrl/password
+  password: ref+envsubst://$KAN_POSTGRESURL_PASSWORD
 
 ingress:
   enabled: true
