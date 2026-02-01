@@ -8,7 +8,7 @@ releases:
     namespace: qbittorrent-vpn
     createNamespace: true
     chart: rtomik-helm-charts/qbittorrent-vpn
-    version: 0.0.1
+    version: 0.0.2
     values:
       - values.yaml
     # hooks:
