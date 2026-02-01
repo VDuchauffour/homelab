@@ -46,6 +46,11 @@ data:
                         icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+          - size: small
+            widgets:
+              - type: bookmarks
+                hide-header: true
+                groups:
                 {{- range $.Values.glance.publicOnlyBookmarkGroups }}
                   - title: {{ .title }}
                     links:
@@ -70,6 +75,11 @@ data:
                         icon: {{ .icon }}
                     {{- end }}
                 {{- end }}
+          - size: small
+            widgets:
+              - type: bookmarks
+                hide-header: true
+                groups:
                 {{- range $.Values.glance.localOnlyBookmarkGroups }}
                   - title: {{ .title }}
                     links:
