@@ -1,5 +1,8 @@
 ---
 engines:
+  local:
+    zfs:
+      enabled: true
   replicated:
     mayastor:
       enabled: false
