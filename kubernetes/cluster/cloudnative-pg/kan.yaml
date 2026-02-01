@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kan-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: kan
+  password: ref+envsubst://$CLOUDNATIVE_PG_KAN_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: kan
+  namespace: cnpg-clusters
+spec:
+  name: kan
+  owner: kan
+  cluster:
+    name: cnpg-cluster0

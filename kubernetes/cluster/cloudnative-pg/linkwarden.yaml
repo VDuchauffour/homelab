@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: linkwarden-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: linkwarden
+  password: ref+envsubst://$CLOUDNATIVE_PG_LINKWARDEN_PASSWORD
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: linkwarden-cnpg-credentials
+  namespace: linkwarden
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: linkwarden
+  password: ref+envsubst://$CLOUDNATIVE_PG_LINKWARDEN_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: linkwarden
+  namespace: cnpg-clusters
+spec:
+  name: linkwarden
+  owner: linkwarden
+  cluster:
+    name: cnpg-cluster0
