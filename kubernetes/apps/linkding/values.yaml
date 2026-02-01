@@ -6,6 +6,9 @@ config:
   LD_DISABLE_LOGIN_FORM: false
   database:
     host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+    name: linkding
+    user: linkding
+    port: '5432'
 
 secrets:
   LD_SUPERUSER_NAME: ref+envsubst://$LINKDING_SUPERUSER_NAME
