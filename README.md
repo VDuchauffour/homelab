@@ -72,6 +72,47 @@ kubernetes
 └── infra     # cluster-wide infrastructure services
 ```
 
+<details>
+<summary>Apps</summary>
+
+| App | Description |
+|-----|-------------|
+| bazarr | Subtitle management for media |
+| dozzle | Real-time log viewer for containers |
+| glance | Personal dashboard |
+| headlamp | Kubernetes web UI |
+| helm-dashboard | Helm charts management UI |
+| jellyfin | Media server with live TV |
+| jellyseerr | Media request management |
+| kan | Notes and kanban board |
+| lidarr | Music collection manager |
+| n8n | Workflow automation platform |
+| pgadmin | PostgreSQL management UI |
+| prowlarr | Indexer manager for arr suite |
+| qbittorrent-vpn | BitTorrent client with VPN |
+| radarr | Movie collection manager |
+| sonarr | TV show collection manager |
+| stirling-pdf | PDF manipulation toolkit |
+| tdarr | Media transcoding optimizer |
+| uptime-kuma | Uptime monitoring dashboard |
+| vibe-kanban | Kanban project management for vibe coding |
+
+</details>
+
+<details>
+<summary>Infrastructure Tools</summary>
+
+| Tool | Description |
+|------|-------------|
+| cert-manager | TLS certificate automation |
+| cloudnative-pg | PostgreSQL operator for K8s |
+| intel-device-plugins | GPU and device plugin for Intel hardware |
+| kube-prometheus-stack | Monitoring and alerting stack |
+| node-feature-discovery | Hardware feature discovery |
+| openebs | Container-native storage solution |
+
+</details>
+
 ### Postgres
 
 All postgres database runs in a [CloudnativePG cluster](https://cloudnative-pg.io/). You can see the [kubectl plugin](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to help you to manage the Postgres cluster and databases.
