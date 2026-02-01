@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: komodorio
+    url: https://helm-charts.komodor.io
+releases:
+  - name: helm-dashboard
+    namespace: kube-system
+    createNamespace: false
+    chart: komodorio/helm-dashboard
+    version: 2.0.4
+    values:
+      - values.yaml
