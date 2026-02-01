@@ -1,0 +1,48 @@
+---
+env:
+  TZ: Europe/Paris
+
+image:
+  repository: linuxserver/lidarr
+  tag: latest
+  pullPolicy: IfNotPresent
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath: /config
+    readOnly: false
+    storageClass: zfs-vm-pool-lidarr-config
+  media:
+    enabled: true
+    type: pvc
+    mountPath: /media
+    readOnly: false
+    storageClass: zfs-tank-lidarr
+    accessMode: ReadWriteOnce
+    size: 25Gi
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - host: lidarr.home.arpa
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - lidarr.home.arpa
+        secretName: lidarr-mkcert-tls
