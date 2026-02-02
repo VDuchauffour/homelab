@@ -28,7 +28,7 @@ persistence:
     storageClass: zfs-vm-pool-tdarr-data
     accessMode: ReadWriteOnce
   media:
-    enabled: false
+    enabled: true
     type: pvc
     mountPath: /media
     readOnly: false
