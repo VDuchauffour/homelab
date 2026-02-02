@@ -14,17 +14,30 @@ Scaffold a new application following the project's conventions.
 kubernetes/apps/<app-name>/
 ├── helmfile.yaml       # Helmfile release definition
 ├── values.yaml         # Helm values override
-└── manifests/          # Optional: PVs, secrets, etc.
-    ├── pv.yaml
-    └── secret.yaml
+└── manifests/          # Optional: app-specific K8s resources only
 ```
+
+**Note:** Most apps don't need a `manifests/` folder. Use it only for app-specific resources that can't be configured via Helm values (e.g., extra Services, ConfigMaps).
+
+## What Goes Where
+
+| Resource Type | Location |
+|---------------|----------|
+| StorageClasses | `kubernetes/cluster/storageclasses/` |
+| Shared PVs (media) | `kubernetes/cluster/persistent-volumes/` |
+| CNPG Clusters | `kubernetes/cluster/cloudnative-pg/` |
+| Certificates | `kubernetes/cluster/certificates/` |
+| Namespaces | `kubernetes/cluster/namespaces/` |
+| App Secrets | `kubernetes/apps/<app>/manifests/secret.yaml` |
+| Infra Secrets | `kubernetes/infra/<component>/manifests/secret.yaml` |
+| App-specific extras | `kubernetes/apps/<app>/manifests/` |
 
 ## Steps
 
-1. Create the app directory structure:
+1. Create the app directory:
 
    ```shell
-   mkdir -p kubernetes/apps/<app-name>/manifests
+   mkdir -p kubernetes/apps/<app-name>
    ```
 
 2. Create `helmfile.yaml`:
@@ -49,13 +62,9 @@ kubernetes/apps/<app-name>/
 
    ```yaml
    ---
-   service:
-     type: ClusterIP
-     port: 8080
-
    persistence:
      enabled: true
-     storageClass: openebs-hostpath
+     storageClass: zfs-vm-pool-dynamic
 
    ingress:
      enabled: true
@@ -74,27 +83,51 @@ kubernetes/apps/<app-name>/
          secretName: <app-name>-mkcert-tls
    ```
 
-4. If using external storage, create `manifests/pv.yaml`:
+## Storage Patterns
 
-   ```yaml
-   apiVersion: v1
-   kind: PersistentVolume
-   metadata:
-     name: pv-<app-name>
-   spec:
-     capacity:
-       storage: 10Gi
-     accessModes:
-       - ReadWriteOnce
-     persistentVolumeReclaimPolicy: Retain
-     storageClassName: <storage-class>
-     hostPath:
-       path: /path/to/data
-   ```
+### App Config (most apps)
+
+Use dynamic provisioning - no manifests needed:
+
+```yaml
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
+```
+
+### Shared Media (arr apps, Jellyfin)
+
+Reference existing static PVC:
+
+```yaml
+persistence:
+  media:
+    enabled: true
+    existingClaim: media-library
+    mountPath: /media
+```
+
+### Database (CloudNativePG)
+
+Add cluster to `kubernetes/cluster/cloudnative-pg/`:
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: <app-name>-db
+  namespace: cnpg-clusters
+spec:
+  instances: 1
+  storage:
+    size: 5Gi
+    storageClass: zfs-vm-pool-dynamic
+```
 
 ## Conventions
 
-- Namespace: Use `<app-name>` or group namespaces like `media-center`
+- Namespace: Use `<app-name>` or group namespaces like `arr`, `media-center`
 - Domain: `<app-name>.home.arpa` for local access
-- TLS: Use `mkcert-ca` cluster issuer for local TLS
-- Storage: Prefer `openebs-hostpath` or ZFS storage classes
+- TLS: Use `mkcert-ca` cluster issuer
+- Storage: Use `zfs-vm-pool-dynamic` for configs, `media-library` PVC for shared media

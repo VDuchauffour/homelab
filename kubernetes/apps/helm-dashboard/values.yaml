@@ -1,4 +1,8 @@
 ---
+dashboard:
+  persistence:
+    storageClassName: zfs-vm-pool-dynamic
+
 ingress:
   enabled: true
   ingressClassName: traefik

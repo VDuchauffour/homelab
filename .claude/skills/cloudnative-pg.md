@@ -28,7 +28,7 @@ spec:
 
   storage:
     size: 10Gi
-    storageClass: openebs-hostpath
+    storageClass: zfs-vm-pool-dynamic
 
   bootstrap:
     initdb:

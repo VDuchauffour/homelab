@@ -4,23 +4,20 @@ kind: PersistentVolume
 metadata:
   name: pv-media-library-arr
 spec:
-  storageClassName: zfs-tank-media-arr
+  storageClassName: nfs-media-library
   capacity:
     storage: 2Ti
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-arr
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -28,7 +25,8 @@ metadata:
   name: media-library
   namespace: arr
 spec:
-  storageClassName: zfs-tank-media-arr
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-arr
   accessModes:
     - ReadWriteMany
   resources:
@@ -40,23 +38,20 @@ kind: PersistentVolume
 metadata:
   name: pv-media-library-media-center
 spec:
-  storageClassName: zfs-tank-media-media-center
+  storageClassName: nfs-media-library
   capacity:
     storage: 2Ti
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-media-center
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -64,7 +59,8 @@ metadata:
   name: media-library
   namespace: media-center
 spec:
-  storageClassName: zfs-tank-media-media-center
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-media-center
   accessModes:
     - ReadWriteMany
   resources:
@@ -76,23 +72,20 @@ kind: PersistentVolume
 metadata:
   name: pv-media-library-qbittorrent
 spec:
-  storageClassName: zfs-tank-media-qbittorrent
+  storageClassName: nfs-media-library
   capacity:
     storage: 2Ti
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-qbittorrent
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -100,7 +93,8 @@ metadata:
   name: media-library
   namespace: qbittorrent-vpn
 spec:
-  storageClassName: zfs-tank-media-qbittorrent
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-qbittorrent
   accessModes:
     - ReadWriteMany
   resources:
@@ -112,46 +106,40 @@ kind: PersistentVolume
 metadata:
   name: pv-immich-library
 spec:
-  storageClassName: zfs-tank-immich-library
+  storageClassName: nfs-immich-library
   capacity:
     storage: 500Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media/photos/immich
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-immich-library
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /photos/immich
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pv-downloads
 spec:
-  storageClassName: zfs-tank-downloads
+  storageClassName: nfs-downloads
   capacity:
     storage: 500Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /mnt/tank/media/downloads
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-downloads
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /downloads
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -159,9 +147,10 @@ metadata:
   name: downloads
   namespace: qbittorrent-vpn
 spec:
-  storageClassName: zfs-tank-downloads
+  storageClassName: nfs-downloads
+  volumeName: pv-downloads
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 500Gi

@@ -10,90 +10,96 @@ Configure persistent storage for applications.
 
 ## Available Storage Classes
 
-### OpenEBS (Dynamic Provisioning)
+| StorageClass | Backend | Access Mode | Use Case |
+|--------------|---------|-------------|----------|
+| `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
+| `nfs-tank-media` | NFS CSI | RWX | Shared media (dynamic) |
+| `nfs-media-library` | NFS CSI | RWX | Shared media (static) |
+
+All storage uses **Retain** reclaim policy.
+
+## ZFS-LocalPV (Default for Apps)
+
+High-performance local storage backed by ZFS. Use for app configs, databases, and any RWO workload.
 
 ```yaml
 persistence:
-  storageClass: openebs-hostpath
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
 ```
 
-- Default dynamic provisioner
-- Suitable for most applications
-- Data stored on node's filesystem
+Features:
 
-### ZFS Storage Classes
+- Compression (lz4)
+- Snapshots support
+- Dynamic provisioning
+- Data stored at `/vm-pool/<pvc-uuid>`
 
-Custom storage classes for ZFS pools:
+## NFS Storage (Shared Media)
+
+ReadWriteMany (RWX) volumes for media shared across pods.
+
+### Dynamic NFS PVC
+
+Creates subdirectory per PVC under NFS share:
 
 ```yaml
-# Example from jellyfin
 persistence:
-  config:
-    storageClass: zfs-vm-pool-jellyfin-config
   media:
-    storageClass: zfs-tank-jellyfin
+    enabled: true
+    storageClass: nfs-tank-media
+    accessMode: ReadWriteMany
+    size: 100Gi
 ```
 
-## Create PersistentVolume (Static)
+### Static NFS PVC (Existing Data)
 
-For pre-existing storage or specific paths:
+For apps that need the root of `/mnt/tank/media` (arr suite, Jellyfin):
 
 ```yaml
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-<app-name>
-spec:
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: <storage-class>
-  hostPath:
-    path: /path/to/data
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pvc-<app-name>
-  namespace: <namespace>
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: <storage-class>
-  resources:
-    requests:
-      storage: 10Gi
-  volumeName: pv-<app-name>
+persistence:
+  media:
+    enabled: true
+    existingClaim: media-library
 ```
+
+Static PVs are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
 ## Common Patterns
 
 ### Media Applications (Jellyfin, Sonarr, etc.)
 
-Separate config and media storage:
+Separate config (ZFS) and media (NFS) storage:
 
 ```yaml
 persistence:
   config:
     enabled: true
-    storageClass: openebs-hostpath
+    storageClass: zfs-vm-pool-dynamic
   media:
     enabled: true
-    storageClass: zfs-tank-media
-    existingClaim: pvc-media-shared
+    existingClaim: media-library
+    mountPath: /media
 ```
 
 ### Database Applications
 
-Use reliable storage:
+Use ZFS for performance:
 
 ```yaml
 persistence:
   enabled: true
-  storageClass: openebs-hostpath
+  storageClass: zfs-vm-pool-dynamic
   size: 10Gi
+```
+
+### CloudNativePG
+
+```yaml
+storage:
+  size: 10Gi
+  storageClass: zfs-vm-pool-dynamic
 ```
 
 ## Check Storage
@@ -102,18 +108,19 @@ persistence:
 # List storage classes
 kubectl get storageclass
 
-# List PVs
-kubectl get pv
+# List PVs with reclaim policy
+kubectl get pv -o custom-columns='NAME:.metadata.name,RECLAIM:.spec.persistentVolumeReclaimPolicy,SC:.spec.storageClassName'
 
 # List PVCs in namespace
 kubectl get pvc -n <namespace>
 
-# Describe PVC
-kubectl describe pvc -n <namespace> <pvc-name>
+# Fix reclaim policy if needed
+kubectl patch pv <pv-name> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 ```
 
-## Reference Apps
+## Reference
 
-- `kubernetes/apps/jellyfin/` - Multiple PVs for config/media/cache
-- `kubernetes/apps/sonarr/` - Static PV with hostPath
-- `kubernetes/infra/cloudnative-pg/` - Database storage
+- ZFS-LocalPV: `kubernetes/infra/openebs/`
+- NFS Server: `kubernetes/infra/nfs-server/`
+- NFS CSI Driver: `kubernetes/infra/nfs-csi-driver/`
+- Static Media PVs: `kubernetes/cluster/persistent-volumes/media.yaml`
