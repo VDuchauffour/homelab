@@ -1,10 +1,21 @@
 ---
+env:
+  HOST: 0.0.0.0
+  PORT: '3000'
+
 replicaCount: 1
 
 image:
   repository: ghcr.io/bloopai/vibe-kanban
   pullPolicy: IfNotPresent
   tag: latest
+
+persistence:
+  enabled: true
+  existingClaim: ''
+  storageClass: ''
+  accessMode: ReadWriteOnce
+  size: 5Gi
 
 service:
   type: ClusterIP
@@ -17,10 +28,6 @@ ingress:
   hosts: []
   tls: []
 
-persistence:
-  enabled: true
-  storageClass: ''
-  size: 1Gi
 resources: {}
 
 nodeSelector: {}
@@ -28,7 +35,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-env:
-  HOST: 0.0.0.0
-  PORT: '3000'

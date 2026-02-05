@@ -121,7 +121,7 @@ OpenEBS ZFS-LocalPV provides high-performance local storage backed by ZFS on the
 
 - **StorageClass**: `zfs-vm-pool-dynamic`
 - **Features**: Compression (lz4), snapshots, dynamic provisioning
-- **Location**: `/vm-pool/<pvc-uuid>` on joi node
+- **Location**: `/vm-pool/<pvc-uuid>` on single node
 
 ```yaml
 apiVersion: v1
@@ -146,7 +146,7 @@ Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
 
 - **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static)
 - **NFS Server**: `nfs-server.nfs-server.svc.cluster.local`
-- **Backend**: hostPath to `/mnt/tank/media` on joi node
+- **Backend**: hostPath to `/mnt/tank/media` on single node
 
 Static PVs for shared media are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 

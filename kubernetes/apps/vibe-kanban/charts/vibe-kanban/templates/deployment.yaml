@@ -54,7 +54,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "vibe-kanban.fullname" . }}
+            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{ else }}{{ include "vibe-kanban.fullname" . }}{{ end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -1,4 +1,7 @@
 ---
+env:
+  HOST: 0.0.0.0
+  PORT: '3000'
 replicaCount: 1
 
 image:
@@ -8,8 +11,10 @@ image:
 
 persistence:
   enabled: true
-  storageClass: zfs-vm-pool-dynamic
-  size: 2Gi
+  existingClaim: ''
+  storageClass: sc-vibe-kanban
+  accessMode: ReadWriteOnce
+  size: 5Gi
 
 ingress:
   enabled: true

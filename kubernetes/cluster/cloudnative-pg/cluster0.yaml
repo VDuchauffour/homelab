@@ -25,7 +25,7 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - joi
+                - ref+envsubst://$SINGLE_NODE_NAME
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster

@@ -15,7 +15,7 @@ spec:
         role: nfs-server
     spec:
       nodeSelector:
-        kubernetes.io/hostname: joi
+        kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
       volumes:
         - name: nfs-vol
           hostPath:
