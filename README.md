@@ -78,7 +78,7 @@ kubernetes
 
 ### Postgres
 
-All postgres database runs in a [CloudnativePG cluster](https://cloudnative-pg.io/). You can see the [kubectl plugin](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to help you to manage the Postgres cluster and databases.
+All postgres database runs in a [CloudnativePG cluster](https://cloudnative-pg.io/). You can see the [kubectl plugin for cnpg](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to help you to manage the Postgres cluster and databases.
 
 ### Recreate CA for local network
 
@@ -113,7 +113,7 @@ The cluster uses two storage backends optimized for different use cases:
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
 
-All storage uses **Retain** reclaim policy to prevent accidental data loss.
+All storage uses **Retain** reclaim policy to prevent accidental data loss. You can see the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help you to manage the storage volumes.
 
 #### ZFS-LocalPV (App Configs)
 
