@@ -21,11 +21,11 @@ persistence:
     storageClass: zfs-vm-pool-dynamic
     size: 1Gi
   data:
-    enabled: false
+    enabled: true
     type: pvc
-    mountPath: /data
+    mountPath: /server
     readOnly: false
-    storageClass: zfs-vm-pool-tdarr-data
+    storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
   media:
     enabled: true
