@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-media-library-arr
+spec:
+  storageClassName: nfs-media-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-arr
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: arr
+spec:
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-arr
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-media-library-media-center
+spec:
+  storageClassName: nfs-media-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-media-center
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: media-center
+spec:
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-media-center
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-media-library-qbittorrent
+spec:
+  storageClassName: nfs-media-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-qbittorrent
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: qbittorrent-vpn
+spec:
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-qbittorrent
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-immich-library
+spec:
+  storageClassName: nfs-immich-library
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-immich-library
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /photos/immich
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-downloads
+spec:
+  storageClassName: nfs-downloads
+  capacity:
+    storage: 500Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-downloads
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /downloads
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: downloads
+  namespace: qbittorrent-vpn
+spec:
+  storageClassName: nfs-downloads
+  volumeName: pv-downloads
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Gi

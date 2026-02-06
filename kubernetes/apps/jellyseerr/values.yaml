@@ -5,7 +5,8 @@ env:
 
 persistence:
   enabled: true
-  existingClaim: pvc-jellyseerr
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
 
 ingress:
   enabled: true

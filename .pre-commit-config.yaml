@@ -72,3 +72,9 @@ repos:
           > /tmp/cloud-init.yaml && cloud-init schema -c /tmp/cloud-init.yaml'
         language: system
         pass_filenames: false
+      - id: check-readme
+        name: README tables up to date
+        entry: make check-readme
+        language: system
+        pass_filenames: false
+        files: ^(kubernetes/(apps|infra)/|README\.md)

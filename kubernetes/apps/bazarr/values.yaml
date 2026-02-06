@@ -8,15 +8,14 @@ persistence:
     type: pvc
     mountPath: /config
     readOnly: false
-    storageClass: zfs-vm-pool-bazarr-config
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
   media:
     enabled: true
     type: pvc
     mountPath: /media
     readOnly: false
-    storageClass: zfs-tank-bazarr
-    accessMode: ReadWriteOnce
-    size: 25Gi
+    existingClaim: media-library
 
 podSecurityContext:
   runAsUser: 1000

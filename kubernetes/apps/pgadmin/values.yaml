@@ -8,7 +8,7 @@ env:
 
 envVarsExtra:
   - name: PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY
-    value: "False"
+    value: 'False'
 
 serverDefinitions:
   enabled: true
@@ -18,14 +18,15 @@ serverDefinitions:
       Name: CloudNativePG Clusters
       Group: Servers
       Host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
-      Port: "5432"
+      Port: '5432'
       Username: admin
       MaintenanceDB: postgres
       SSLMode: prefer
 
 persistentVolume:
   enabled: true
-  existingClaim: pvc-pgadmin-data
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
 
 ingress:
   enabled: true

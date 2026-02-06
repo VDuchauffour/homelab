@@ -4,45 +4,29 @@ kind: Namespace
 metadata:
   name: cnpg-clusters
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv-cnpg
-spec:
-  storageClassName: zfs-vm-pool-cnpg
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  volumeMode: Filesystem
-  local:
-    path: /vm-pool/cnpg
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - joi
----
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: cnpg-cluster0
   namespace: cnpg-clusters
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: enabled
 spec:
   instances: 1
   storage:
-    size: 5Gi
-    storageClass: zfs-vm-pool-cnpg
+    size: 10Gi
+    storageClass: zfs-vm-pool-dynamic
   bootstrap:
-    initdb:  # init an empty cluster with a noop database
+    initdb:
       database: noop
       owner: noop
       secret:
         name: noop-cnpg-credentials
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: cnpg-minio-store
   managed:
     roles:
       - name: admin

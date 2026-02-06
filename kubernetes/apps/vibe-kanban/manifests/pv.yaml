@@ -4,15 +4,15 @@ kind: PersistentVolume
 metadata:
   name: pv-vibe-kanban
 spec:
-  storageClassName: zfs-vm-pool-vibe-kanban
+  storageClassName: sc-vibe-kanban
   capacity:
-    storage: 2Gi
+    storage: 5Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
-    path: /home/k/projects
+    path: ref+envsubst://$VIBE_KANBAN_PATH
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -20,4 +20,4 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - joi
+                - ref+envsubst://$SINGLE_NODE_NAME
