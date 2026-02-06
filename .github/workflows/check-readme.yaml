@@ -1,0 +1,30 @@
+---
+name: Check README
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - kubernetes/apps/**
+      - kubernetes/infra/**
+      - README.md
+  pull_request:
+    branches:
+      - main
+    paths:
+      - kubernetes/apps/**
+      - kubernetes/infra/**
+      - README.md
+  workflow_dispatch:
+
+jobs:
+  check-readme:
+    name: README tables up to date
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check all apps and infra are listed in README
+        run: make check-readme

@@ -46,6 +46,7 @@ kubernetes
 | <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Kanban board |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="24"> | lidarr | Music collection manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkding.png" width="24"> | linkding | Minimal bookmark manager |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkwarden.png" width="24"> | linkwarden | Collaborative bookmark manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="24"> | n8n | Workflow automation platform |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="24"> | pgadmin | PostgreSQL management UI |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="24"> | prowlarr | Indexer manager for arr suite |
