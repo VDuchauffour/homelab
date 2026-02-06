@@ -13,7 +13,7 @@ This repository contains all the declarations necessary for the operation of my 
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
-| Monitoring | kube-prometheus-stack, Beszel |
+| Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
 | External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
 | IaC | Terraform |
