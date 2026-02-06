@@ -52,7 +52,7 @@ app-name/
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
 | Storage | OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
-| Database | CloudNativePG (PostgreSQL) |
+| Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
@@ -168,6 +168,40 @@ cd kubernetes/infra/nfs-csi-driver && helmfile apply
 
 - **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent to share the same `/mnt/tank/media` root
 - **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC, useful for isolated app data
+
+## Database (CloudNativePG)
+
+The cluster runs a single CloudNativePG instance (`cnpg-cluster0`) in namespace `cnpg-clusters` with dynamically provisioned ZFS storage (`zfs-vm-pool-dynamic`, 10Gi).
+
+- **Operator**: `kubernetes/infra/cloudnative-pg/` (Helmfile, chart v0.26.1)
+- **Cluster + Secrets**: `kubernetes/cluster/cloudnative-pg/cluster0.yaml`
+- **Database CRs**: `kubernetes/cluster/cloudnative-pg/{kan,n8n,linkwarden,linkding}.yaml`
+- **Backup config**: `kubernetes/cluster/cloudnative-pg/backup.yaml` (ObjectStore + ScheduledBackup + MinIO credentials)
+
+### Backups
+
+Backups use the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) (`kubernetes/infra/plugin-barman-cloud/`):
+
+- **WAL archiving**: Continuous to MinIO with gzip compression
+- **Base backups**: Daily at 2:00 AM UTC via `ScheduledBackup` CR
+- **Destination**: MinIO bucket `cnpg-backups` at `http://minio.minio.svc.cluster.local:9000`
+- **Retention**: 30 days
+- **Credentials**: Secret `minio-cnpg-credentials` in `cnpg-clusters` namespace (keys: `ACCESS_KEY_ID`, `ACCESS_SECRET_KEY`)
+
+Check backup status:
+
+```shell
+kubectl cnpg status cnpg-cluster0 -n cnpg-clusters
+kubectl get backup -n cnpg-clusters
+kubectl get scheduledbackup -n cnpg-clusters
+kubectl get objectstore -n cnpg-clusters
+```
+
+### Adding a New Database
+
+1. Create a credentials secret + `Database` CR in `kubernetes/cluster/cloudnative-pg/<app>.yaml`
+2. Add a managed role in `cluster0.yaml` under `spec.managed.roles`
+3. Apply with `vals eval -f <file> | kubectl apply -f -`
 
 ### Reclaim Policy
 

@@ -9,7 +9,7 @@ This repository contains all the declarations necessary for the operation of my 
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
 | Storage | OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
-| Database | CloudNativePG (PostgreSQL) |
+| Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
@@ -73,12 +73,29 @@ kubernetes
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | nfs-server | In-cluster NFS server for shared media |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="24"> | openebs | Container-native storage solution |
+| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) |
 
 </details>
 
 ### Postgres
 
-All postgres database runs in a [CloudnativePG cluster](https://cloudnative-pg.io/). You can see the [kubectl plugin for cnpg](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to help you to manage the Postgres cluster and databases.
+All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-vm-pool-dynamic`).
+
+Backups are handled by the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) with WAL archiving and daily base backups to MinIO (`cnpg-backups` bucket). Configuration is in `kubernetes/cluster/cloudnative-pg/backup.yaml`.
+
+You can use the [kubectl plugin for cnpg](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to manage the cluster:
+
+```shell
+# Cluster status (includes backup info)
+kubectl cnpg status cnpg-cluster0 -n cnpg-clusters
+
+# List databases
+kubectl get database -n cnpg-clusters
+
+# Check backups
+kubectl get backup -n cnpg-clusters
+kubectl get scheduledbackup -n cnpg-clusters
+```
 
 ### Recreate CA for local network
 
