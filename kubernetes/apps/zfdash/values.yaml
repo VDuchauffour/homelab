@@ -1,0 +1,33 @@
+---
+replicaCount: 1
+
+image:
+  repository: ad4mts/zfdash
+  pullPolicy: IfNotPresent
+  tag: latest
+
+persistence:
+  data:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: zfdash.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - zfdash.home.arpa
+      secretName: zfdash-mkcert-tls

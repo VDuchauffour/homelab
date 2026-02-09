@@ -1,0 +1,8 @@
+---
+releases:
+  - name: zfdash
+    namespace: zfdash
+    createNamespace: true
+    chart: ./charts/zfdash
+    values:
+      - values.yaml
