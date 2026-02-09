@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zfdash.fullname" . }}
+  labels:
+    {{- include "zfdash.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "zfdash.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zfdash.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true
+          ports:
+            - name: http
+              containerPort: 5001
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: dev-zfs
+              mountPath: /dev/zfs
+            - name: host-etc
+              mountPath: /host-etc
+              readOnly: true
+            - name: host-udev
+              mountPath: /run/udev
+              readOnly: true
+            - name: host-disk
+              mountPath: /dev/disk
+              readOnly: true
+            {{- if .Values.persistence.data.enabled }}
+            - name: data
+              mountPath: /opt/zfdash/data
+            {{- end }}
+            {{- if .Values.persistence.config.enabled }}
+            - name: config
+              mountPath: /root/.config/ZfDash
+            {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: dev-zfs
+          hostPath:
+            path: /dev/zfs
+            type: CharDevice
+        - name: host-etc
+          hostPath:
+            path: /etc
+            type: Directory
+        - name: host-udev
+          hostPath:
+            path: /run/udev
+            type: Directory
+        - name: host-disk
+          hostPath:
+            path: /dev/disk
+            type: Directory
+        {{- if .Values.persistence.data.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "zfdash.fullname" . }}-data
+        {{- end }}
+        {{- if .Values.persistence.config.enabled }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "zfdash.fullname" . }}-config
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

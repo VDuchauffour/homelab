@@ -56,6 +56,7 @@ kubernetes
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="24"> | stirling-pdf | PDF manipulation toolkit |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="24"> | tdarr | Media transcoding optimizer |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24"> | uptime-kuma | Uptime monitoring dashboard |
+| <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="24"> | zfdash | ZFS monitoring dashboard |
 | <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="24"> | vibe-kanban | Kanban project management for vibe coding |
 
 </details>

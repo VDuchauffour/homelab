@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: zfdash
+description: ZfDash - ZFS management Web UI
+type: application
+version: 0.1.0
+appVersion: latest

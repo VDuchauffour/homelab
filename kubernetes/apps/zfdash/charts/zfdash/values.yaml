@@ -1,0 +1,36 @@
+---
+replicaCount: 1
+
+image:
+  repository: ad4mts/zfdash
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 5001
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  data:
+    enabled: true
+    storageClass: ''
+    size: 1Gi
+  config:
+    enabled: true
+    storageClass: ''
+    size: 1Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -141,6 +141,9 @@ glance:
         - title: Dozzle
           subdomain: dozzle
           icon: di:dozzle
+        - title: ZfDash
+          subdomain: zfdash
+          icon: https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png
 
   publicOnlyBookmarkGroups:
     - title: Proxy
