@@ -24,7 +24,7 @@ spec:
               protocol: TCP
           env:
             - name: NEXT_PUBLIC_BASE_URL
-              value: https://kan.{{ .Values.domainName }}"
+              value: "https://kan.{{ .Values.domainName }}"
             - name: BETTER_AUTH_SECRET
               value: {{ .Values.kan.authSecret | quote }}
             - name: POSTGRES_URL
