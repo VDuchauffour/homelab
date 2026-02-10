@@ -1,0 +1,8 @@
+---
+releases:
+  - name: scrutiny
+    namespace: scrutiny
+    createNamespace: true
+    chart: ./charts/scrutiny
+    values:
+      - values.yaml

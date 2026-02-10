@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scrutiny.fullname" . }}
+  labels:
+    {{- include "scrutiny.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "scrutiny.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "scrutiny.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - SYS_RAWIO
+                - SYS_ADMIN
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: udev
+              mountPath: /run/udev
+              readOnly: true
+            {{- if .Values.persistence.config.enabled }}
+            - name: config
+              mountPath: /opt/scrutiny/config
+            {{- end }}
+            {{- if .Values.persistence.influxdb.enabled }}
+            - name: influxdb
+              mountPath: /opt/scrutiny/influxdb
+            {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: udev
+          hostPath:
+            path: /run/udev
+            type: Directory
+        {{- if .Values.persistence.config.enabled }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "scrutiny.fullname" . }}-config
+        {{- end }}
+        {{- if .Values.persistence.influxdb.enabled }}
+        - name: influxdb
+          persistentVolumeClaim:
+            claimName: {{ include "scrutiny.fullname" . }}-influxdb
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,38 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/analogj/scrutiny
+  pullPolicy: IfNotPresent
+  tag: v0.8.1-omnibus
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  config:
+    enabled: true
+    storageClass: ''
+    size: 1Gi
+  influxdb:
+    enabled: true
+    storageClass: ''
+    size: 5Gi
+
+env: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

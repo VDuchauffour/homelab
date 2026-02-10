@@ -144,6 +144,9 @@ glance:
         - title: ZfDash
           subdomain: zfdash
           icon: https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png
+        - title: Scrutiny
+          subdomain: scrutiny
+          icon: di:scrutiny-light
 
   publicOnlyBookmarkGroups:
     - title: Proxy
