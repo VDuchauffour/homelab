@@ -8,7 +8,7 @@ This repository contains all the declarations necessary for the operation of my 
 |-----------|------------|
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
-| Storage | OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
+| Storage | Rancher Local path, OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
 | Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
@@ -107,10 +107,15 @@ The cluster uses two storage backends optimized for different use cases:
 
 | StorageClass | Backend | Access Mode | Use Case |
 |--------------|---------|-------------|----------|
+| `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss. You can see the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help you to manage the storage volumes.
+
+#### Local Path
+
+Rancher Local Path provides to utilize the local storage in each node. Installation instructions can be found [here](https://github.com/rancher/local-path-provisioner).
 
 #### ZFS-LocalPV (App Configs)
 
