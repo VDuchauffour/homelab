@@ -44,7 +44,7 @@ jobs:
           validateSingleCommit: true
           ignoreLabels: |
             dependencies
-  all-checks-passed:
+  pr-checks-passed:
     needs:
       - pr-labeler-with-branches
       - pr-labeler-with-paths
