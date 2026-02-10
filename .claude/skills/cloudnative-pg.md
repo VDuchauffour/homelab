@@ -12,7 +12,7 @@ Manage PostgreSQL databases using CloudNativePG operator with Barman Cloud Plugi
 
 - **Cluster**: `cnpg-cluster0` in `cnpg-clusters` namespace (1 instance)
 - **Storage**: `zfs-vm-pool-dynamic` (10Gi, dynamically provisioned ZFS)
-- **Databases**: kan, n8n, linkwarden, linkding
+- **Databases**: See `kubernetes/cluster/cloudnative-pg/*.yaml`
 - **Backups**: Barman Cloud Plugin to MinIO (`cnpg-backups` bucket), daily at 2:00 AM UTC, 30d retention
 
 ## Create Database Cluster
@@ -210,9 +210,11 @@ cat /tmp/cnpg-dumpall.sql | kubectl exec -i -n cnpg-clusters cnpg-cluster0-1 -c 
 
 ## Adding a New Database
 
-1. Create a credentials secret + `Database` CR in `kubernetes/cluster/cloudnative-pg/<app>.yaml`
-2. Add a managed role in `cluster0.yaml` under `spec.managed.roles`
-3. Apply with `vals eval -f <file> | kubectl apply -f -`
+1. Generate a password: `openssl rand -base64 32`
+2. Create a credentials secret + `Database` CR in `kubernetes/cluster/cloudnative-pg/<app>.yaml`
+3. Add a managed role in `cluster0.yaml` under `spec.managed.roles`
+4. Store the password as an environment variable (e.g. `CLOUDNATIVE_PG_<APP>_PASSWORD`)
+5. Apply with `vals eval -f <file> | kubectl apply -f -`
 
 ## Reference
 
@@ -220,5 +222,5 @@ cat /tmp/cnpg-dumpall.sql | kubectl exec -i -n cnpg-clusters cnpg-cluster0-1 -c 
 - Barman Cloud Plugin: `kubernetes/infra/plugin-barman-cloud/`
 - Cluster + Secrets: `kubernetes/cluster/cloudnative-pg/cluster0.yaml`
 - Backup config: `kubernetes/cluster/cloudnative-pg/backup.yaml`
-- Database CRs: `kubernetes/cluster/cloudnative-pg/{kan,n8n,linkwarden,linkding}.yaml`
+- Database CRs: `kubernetes/cluster/cloudnative-pg/<app>.yaml`
 - Example secret: `kubernetes/infra/cloudnative-pg/manifests/secret.yaml`

@@ -76,6 +76,7 @@ kubernetes
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | nfs-server | In-cluster NFS server for shared media |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="24"> | openebs | Container-native storage solution |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="24"> | passbolt | Team password manager |
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) |
 
 </details>
@@ -168,6 +169,14 @@ Generate an admin token to log in:
 
 ```shell
 kubectl create token headlamp-admin -n kube-system
+```
+
+### Passbolt
+
+Once the chart is apply, run the following command to set up an admin user:
+
+```shell
+kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt register_user -u <email> -f <firstname> -l <lastname> -r admin" -s /bin/bash www-data
 ```
 
 ### Recreate CA for local network

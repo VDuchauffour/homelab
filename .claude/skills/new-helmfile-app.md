@@ -125,6 +125,60 @@ spec:
     storageClass: zfs-vm-pool-dynamic
 ```
 
+## Secrets Management
+
+**NEVER hardcode secrets in charts or values.yaml.** Always use helmfile's [vals](https://github.com/helmfile/vals) value loader with `ref+envsubst://` references.
+
+### In values.yaml
+
+```yaml
+passboltEnv:
+  secret:
+    DATASOURCES_DEFAULT_PASSWORD: ref+envsubst://$CLOUDNATIVE_PG_MYAPP_PASSWORD
+```
+
+### In manifests (applied separately)
+
+```yaml
+stringData:
+  password: ref+envsubst://$MY_SECRET_PASSWORD
+```
+
+Manifests are applied with: `vals eval -f <file> | kubectl apply -f -`
+
+### Generating passwords
+
+```shell
+openssl rand -base64 32
+```
+
+## Update README
+
+After adding a new app or infra component, update `README.md` to include it in the deployed components tables.
+
+Check for missing entries:
+
+```shell
+make check-readme
+```
+
+The README has two tables inside `<details>` blocks:
+
+- `<details><summary>Apps</summary>` for `kubernetes/apps/`
+- `<details><summary>Infrastructure Tools</summary>` for `kubernetes/infra/`
+
+Each row follows the pattern:
+
+```
+| <img src="ICON_URL" width="24"> | name | Short description |
+```
+
+For icons, prefer in order:
+
+1. `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/<app-name>.png`
+2. Project's GitHub raw icon
+3. `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png` as fallback
+
 ## Conventions
 
 - Namespace: Use `<app-name>` or group namespaces like `arr`, `media-center`

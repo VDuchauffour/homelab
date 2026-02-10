@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: passbolt
+    url: https://download.passbolt.com/charts/passbolt
+
+releases:
+  - name: passbolt
+    namespace: passbolt
+    createNamespace: true
+    chart: passbolt/passbolt
+    version: 2.0.1
+    values:
+      - values.yaml

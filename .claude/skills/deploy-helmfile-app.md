@@ -24,10 +24,10 @@ Deploy or update a Kubernetes application using Helmfile.
    ls manifests/
    ```
 
-3. Apply any pre-requisite manifests:
+3. Apply any pre-requisite manifests (using vals for secret substitution):
 
    ```shell
-   kubectl apply -f manifests/
+   vals eval -f manifests/<file>.yaml | kubectl apply -f -
    ```
 
 4. Run helmfile diff to preview changes:

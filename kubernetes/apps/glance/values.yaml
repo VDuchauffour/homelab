@@ -126,6 +126,9 @@ glance:
         - title: Helm Dashboard
           subdomain: helm-dashboard
           icon: di:helm
+        - title: Passbolt
+          subdomain: passbolt
+          icon: di:passbolt
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
