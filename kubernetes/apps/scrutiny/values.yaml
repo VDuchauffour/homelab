@@ -1,0 +1,36 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/analogj/scrutiny
+  pullPolicy: IfNotPresent
+  tag: v0.8.1-omnibus
+
+persistence:
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+  influxdb:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+
+env:
+  COLLECTOR_CRON_SCHEDULE: 0 0 * * *
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: scrutiny.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - scrutiny.home.arpa
+      secretName: scrutiny-mkcert-tls

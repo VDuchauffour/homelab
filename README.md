@@ -53,6 +53,7 @@ kubernetes
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="24"> | qbittorrent-vpn | BitTorrent client with VPN |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="24"> | radarr | Movie collection manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="24"> | sonarr | TV show collection manager |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/scrutiny.png" width="24"> | scrutiny | Hard drive S.M.A.R.T health monitoring |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="24"> | stirling-pdf | PDF manipulation toolkit |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="24"> | tdarr | Media transcoding optimizer |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24"> | uptime-kuma | Uptime monitoring dashboard |
