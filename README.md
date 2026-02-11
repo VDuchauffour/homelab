@@ -20,7 +20,7 @@ All the configuration and manifests for running my homelab on Kubernetes.
 
 ## Environment Configuration
 
-This project uses [direnv](https://direnv.net/) to manage environment variables. Environment variables are required for various components like Passbolt integration and cluster configuration.
+This project uses [direnv](https://direnv.net/) to manage environment variables. Helmfile relies on [vals](https://github.com/helmfile/vals) to inject these variables into Helm values at deploy time.
 
 ### Setup
 
