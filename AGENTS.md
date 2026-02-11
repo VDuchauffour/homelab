@@ -51,12 +51,12 @@ app-name/
 |-----------|------------|
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
-| Storage | OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
+| Storage | Rancher Local Path, OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
 | Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
-| Monitoring | kube-prometheus-stack, Beszel |
+| Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
 | External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
 | IaC | Terraform |
@@ -102,10 +102,11 @@ intel_gpu_top  # On host
 
 ## Storage
 
-The cluster uses two storage backends optimized for different use cases:
+The cluster uses three storage backends optimized for different use cases:
 
 | StorageClass | Backend | Access Mode | Use Case |
 |--------------|---------|-------------|----------|
+| `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
 

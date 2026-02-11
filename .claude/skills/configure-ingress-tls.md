@@ -49,7 +49,7 @@ kubectl create secret tls mkcert-ca-key-pair \
   --cert=$CERT_DIR/rootCA.pem \
   --key=$CERT_DIR/rootCA-key.pem
 
-kubectl apply -f kubernetes/infra/cert-manager/manifests/mkcert-ca-issuer.yaml
+kubectl apply -f kubernetes/cluster/certificates/mkcert-ca-issuer.yaml
 ```
 
 ## Verify Certificate
@@ -69,5 +69,5 @@ kubectl describe certificate -n <namespace> <app-name>-tls
 
 Available issuers:
 
-- `mkcert-ca`: Local network certificates (defined in `kubernetes/infra/cert-manager/manifests/mkcert-ca-issuer.yaml`)
-- `letsencrypt-prod`: Public Let's Encrypt (defined in `kubernetes/infra/cert-manager/manifests/letsencrypt-ca-issuer.yaml`)
+- `mkcert-ca`: Local network certificates (defined in `kubernetes/cluster/certificates/mkcert-ca-issuer.yaml`)
+- `letsencrypt-prod`: Public Let's Encrypt (defined in `kubernetes/cluster/certificates/letsencrypt-ca-issuer.yaml`)
