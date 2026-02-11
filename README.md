@@ -2,13 +2,21 @@
 
 All the configuration and manifests for running my homelab on Kubernetes.
 
+## Architecture Overview
+
+```
+Internet → Scaleway Proxy (Caddy + CrowdSec + FRP) → Homelab K8s Cluster (Traefik Ingress)
+```
+
+Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using FRP. Everything else stays on the local network, secured with mkcert-issued TLS certificates.
+
 ## Key Technologies
 
 | Component | Technology |
 |-----------|------------|
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
-| Storage | Rancher Local path, OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
+| Storage | Rancher Local Path, OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
 | Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
@@ -18,11 +26,39 @@ All the configuration and manifests for running my homelab on Kubernetes.
 | External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
 | IaC | Terraform |
 
-## Environment Configuration
+## Project Structure
+
+```
+homelab/
+├── kubernetes/
+│   ├── apps/         # User-facing application workloads
+│   ├── infra/        # Cluster-wide infrastructure services
+│   └── cluster/      # Shared resources (namespaces, storage classes, certificates, CNPG definitions)
+│
+└── infra/
+    └── modules/
+        └── scaleway-proxy/   # Terraform for the external reverse proxy
+```
+
+- **`kubernetes/apps/`** — Each subdirectory is a user-facing application deployed via Helmfile (e.g. Jellyfin, Sonarr, n8n).
+- **`kubernetes/infra/`** — Cluster infrastructure services: storage backends, database operator, cert-manager, monitoring, GPU plugins. Also deployed via Helmfile (or kustomize for nfs-server).
+- **`kubernetes/cluster/`** — Cluster-level definitions that don't belong to a single app: namespaces, storage classes, certificate issuers, CloudNativePG cluster and database CRs, persistent volumes.
+- **`infra/`** — Terraform modules for resources outside the cluster (currently the Scaleway reverse proxy).
+
+## Getting Started
+
+### Prerequisites
+
+- A Kubernetes cluster
+- [Helm](https://helm.sh/) + [Helmfile](https://github.com/helmfile/helmfile)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [direnv](https://direnv.net/)
+- [vals](https://github.com/helmfile/vals)
+- [Terraform](https://www.terraform.io/) (only needed for the external reverse proxy)
+
+### Environment Configuration
 
 This project uses [direnv](https://direnv.net/) to manage environment variables. Helmfile relies on [vals](https://github.com/helmfile/vals) to inject these variables into Helm values at deploy time.
-
-### Setup
 
 1. Install direnv following the [official installation guide](https://direnv.net/docs/installation.html)
 
@@ -57,18 +93,9 @@ direnv allow
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
-## Kubernetes
+## Kubernetes — Applications
 
-The entire homelab is managed with Kubernetes. Here's the structure of the folder:
-
-```shell
-kubernetes
-├── apps      # user-facing application workloads
-├── cluster   # cluster-level configuration and shared resources
-└── infra     # cluster-wide infrastructure services
-```
-
-### Deployed components
+### Deployed Apps
 
 <details>
 <summary>Apps</summary>
@@ -101,6 +128,28 @@ kubernetes
 
 </details>
 
+### App-Specific Notes
+
+#### Headlamp
+
+Generate an admin token to log in:
+
+```shell
+kubectl create token headlamp-admin -n kube-system
+```
+
+#### Passbolt
+
+Once the chart is applied, run the following command to set up an admin user:
+
+```shell
+kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt register_user -u <email> -f <firstname> -l <lastname> -r admin" -s /bin/bash www-data
+```
+
+## Kubernetes — Infrastructure
+
+### Deployed Infrastructure
+
 <details>
 <summary>Infrastructure Tools</summary>
 
@@ -120,29 +169,9 @@ kubernetes
 
 </details>
 
-### Postgres
-
-All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-vm-pool-dynamic`).
-
-Backups are handled by the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) with WAL archiving and daily base backups to MinIO (`cnpg-backups` bucket). Configuration is in `kubernetes/cluster/cloudnative-pg/backup.yaml`.
-
-You can use the [kubectl plugin for cnpg](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to manage the cluster:
-
-```shell
-# Cluster status (includes backup info)
-kubectl cnpg status cnpg-cluster0 -n cnpg-clusters
-
-# List databases
-kubectl get database -n cnpg-clusters
-
-# Check backups
-kubectl get backup -n cnpg-clusters
-kubectl get scheduledbackup -n cnpg-clusters
-```
-
 ### Storage
 
-The cluster uses two storage backends optimized for different use cases:
+The cluster uses three storage backends optimized for different use cases:
 
 | StorageClass | Backend | Access Mode | Use Case |
 |--------------|---------|-------------|----------|
@@ -150,7 +179,7 @@ The cluster uses two storage backends optimized for different use cases:
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
 
-All storage uses **Retain** reclaim policy to prevent accidental data loss. You can see the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help you manage the storage volumes.
+All storage uses **Retain** reclaim policy to prevent accidental data loss. You can use the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help manage the storage volumes.
 
 #### Local Path
 
@@ -191,52 +220,44 @@ Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
 
 Static PVs for shared media are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
-### GPUs management
+### Database (PostgreSQL)
 
-To watch the usage of iGPU (through Intel QSV or VAAPI) use the command `intel_gpu_top` from the package `intel-gpu-tools`.
+All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-vm-pool-dynamic`).
 
-You can also check supported VAAPI profiles with `vainfo` from the package `libva-utils`.
+Backups are handled by the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) with WAL archiving and daily base backups to MinIO (`cnpg-backups` bucket). Configuration is in `kubernetes/cluster/cloudnative-pg/backup.yaml`.
 
-You can verify OpenCL availability with `clinfo` from the package `clinfo`.
-
-With the Intel GPU devices and operator, you can check the GPU status with the command:
+You can use the [kubectl plugin for cnpg](https://cloudnative-pg.io/documentation/1.20/kubectl-plugin/) to manage the cluster:
 
 ```shell
-kubectl get gpudeviceplugins
+# Cluster status (includes backup info)
+kubectl cnpg status cnpg-cluster0 -n cnpg-clusters
+
+# List databases
+kubectl get database -n cnpg-clusters
+
+# Check backups
+kubectl get backup -n cnpg-clusters
+kubectl get scheduledbackup -n cnpg-clusters
 ```
 
-You can get more info about that [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd/gpu_plugin/README.html).
+### TLS Certificates
 
-### Headlamp
+Local network services use TLS certificates issued by a mkcert CA through cert-manager. The CA secret and ClusterIssuer are defined in `kubernetes/cluster/certificates/`.
 
-Generate an admin token to log in:
-
-```shell
-kubectl create token headlamp-admin -n kube-system
-```
-
-### Passbolt
-
-Once the chart is applied, run the following command to set up an admin user:
-
-```shell
-kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt register_user -u <email> -f <firstname> -l <lastname> -r admin" -s /bin/bash www-data
-```
-
-### Recreate CA for local network
+To recreate the CA secret (e.g. after a fresh cluster install):
 
 ```shell
 CERT_DIR=$(mkcert -CAROOT)
 kubectl create secret tls mkcert-ca-key-pair -n cert-manager --cert=$CERT_DIR/rootCA.pem --key=$CERT_DIR/rootCA-key.pem
-kubectl apply -f cluster/cert-manager/manifests/mkcert-ca-issuer.yaml
+kubectl apply -f kubernetes/cluster/certificates/mkcert-ca-issuer.yaml
 ```
 
-In the ingress, adding the following annotation with cert-manager will:
+Adding the following annotation to an ingress will make cert-manager automatically:
 
 - Create a Certificate resource
 - Issue a leaf cert signed by your mkcert CA
 - Manage renewals automatically
-- Maintain the qbittorrent-mkcert-tls Secret
+- Maintain the TLS Secret
 
 ```yaml
 ingress:
@@ -247,19 +268,33 @@ ingress:
     cert-manager.io/cluster-issuer: mkcert-ca
 ```
 
-## Infrastructure
+Public-facing services get their TLS from Caddy (Let's Encrypt) on the Scaleway proxy — see [External Access](#external-access).
 
-### Reverse proxy
+### GPU
 
-The homelab is exposed to the Internet through a reverse proxy hosted on Scaleway. The stack runs entirely in Docker:
+Intel iGPU is available for hardware transcoding (Jellyfin, Tdarr) via the Intel Device Plugins operator.
 
-- **Caddy** handles TLS termination and reverse proxying (auto HTTPS via Let's Encrypt)
-- **CrowdSec** provides collaborative security with IP reputation and behavior analysis
-- **FRP server** (frps) receives tunneled connections from homelab services
+```shell
+kubectl get gpudeviceplugins
+```
 
-Resources are provisioned using Terraform and are defined in `infra/`. You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
+Host-level diagnostics:
 
-#### Architecture
+- `intel_gpu_top` (from `intel-gpu-tools`) — live GPU usage
+- `vainfo` (from `libva-utils`) — supported VAAPI profiles
+- `clinfo` (from `clinfo`) — OpenCL availability
+
+More info [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd/gpu_plugin/README.html).
+
+### Monitoring
+
+The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) for monitoring and alerting. Configuration is in `kubernetes/infra/kube-prometheus-stack/`.
+
+## External Access
+
+The homelab is exposed to the Internet through a reverse proxy hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance.
+
+### Architecture
 
 ```
 Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
@@ -267,9 +302,15 @@ Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
                             frps:7000 ← homelab frpc clients
 ```
 
-The FRP dashboard is accessible at `https://frp.<domain>`.
+### Components
 
-Generate the password hash with:
+- **Caddy** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination for all public-facing services.
+- **CrowdSec** — Collaborative security with IP reputation and behavior analysis.
+- **FRP server** (frps) — Receives tunneled connections from homelab services. The FRP dashboard is accessible at `https://frp.<domain>`.
+
+You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
+
+Generate the Caddy basic auth password hash with:
 
 ```shell
 docker run --rm caddy:2-alpine caddy hash-password --plaintext 'your-password'
@@ -279,7 +320,7 @@ Then set `basic_auth_user`, `basic_auth_hash`, `subdomains_with_basic_auth` and 
 
 To use docker without `sudo` run login as user and run `newgrp docker`.
 
-#### Deployment
+### Deployment
 
 ```shell
 cd ./infra/modules/scaleway-proxy
@@ -299,14 +340,16 @@ cd "$HOME_DIR/proxy"
 docker compose up -d --build
 ```
 
-#### Destroy
+### Destroy
 
 ```shell
 cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
 
-## Password generation recommendation
+## Useful Commands
+
+Generate a strong password:
 
 ```shell
 pwgen -scyn 32 1
