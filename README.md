@@ -1,6 +1,6 @@
 # An opinionated Kubernetes-based homelab
 
-This repository contains all the declarations necessary for the operation of my homelab. It uses Kubernetes as applications orchestrator.
+All the configuration and manifests for running my homelab on Kubernetes.
 
 ## Key Technologies
 
@@ -17,6 +17,45 @@ This repository contains all the declarations necessary for the operation of my 
 | Auth | TinyAuth |
 | External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
 | IaC | Terraform |
+
+## Environment Configuration
+
+This project uses [direnv](https://direnv.net/) to manage environment variables. Environment variables are required for various components like Passbolt integration and cluster configuration.
+
+### Setup
+
+1. Install direnv following the [official installation guide](https://direnv.net/docs/installation.html)
+
+2. Copy the example environment file:
+
+```shell
+cp .envrc.example .envrc
+```
+
+3. Edit `.envrc` and fill in the required values:
+
+```shell
+vim .envrc
+```
+
+4. Allow direnv to load the environment:
+
+```shell
+direnv allow
+```
+
+### Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `EMAIL_ADDRESS` | Your email address used for various services | `user@example.com` |
+| `DOMAIN_NAME` | Your homelab public domain name | `example.com` |
+| `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
+| `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.home.arpa` |
+| `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |
+| `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
+
+Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
 ## Kubernetes
 
@@ -111,11 +150,11 @@ The cluster uses two storage backends optimized for different use cases:
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
 
-All storage uses **Retain** reclaim policy to prevent accidental data loss. You can see the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help you to manage the storage volumes.
+All storage uses **Retain** reclaim policy to prevent accidental data loss. You can see the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help you manage the storage volumes.
 
 #### Local Path
 
-Rancher Local Path provides to utilize the local storage in each node. Installation instructions can be found [here](https://github.com/rancher/local-path-provisioner).
+Rancher Local Path utilizes the local storage in each node. Installation instructions can be found [here](https://github.com/rancher/local-path-provisioner).
 
 #### ZFS-LocalPV (App Configs)
 
@@ -160,7 +199,7 @@ You can also check supported VAAPI profiles with `vainfo` from the package `libv
 
 You can verify OpenCL availability with `clinfo` from the package `clinfo`.
 
-With the Intel GPU devices and operator, you can info the GPU status with the command:
+With the Intel GPU devices and operator, you can check the GPU status with the command:
 
 ```shell
 kubectl get gpudeviceplugins
@@ -178,7 +217,7 @@ kubectl create token headlamp-admin -n kube-system
 
 ### Passbolt
 
-Once the chart is apply, run the following command to set up an admin user:
+Once the chart is applied, run the following command to set up an admin user:
 
 ```shell
 kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt register_user -u <email> -f <firstname> -l <lastname> -r admin" -s /bin/bash www-data
@@ -267,7 +306,7 @@ cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
 
-## Password generation recommandation
+## Password generation recommendation
 
 ```shell
 pwgen -scyn 32 1
