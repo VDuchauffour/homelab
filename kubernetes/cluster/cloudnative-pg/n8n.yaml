@@ -9,7 +9,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: n8n
-  password: ref+envsubst://$CLOUDNATIVE_PG_N8N_PASSWORD
+  password: ref+passbolt://d1997ce8-1b15-4658-b057-8e8f82d1adb3#/custom_fields/CNPG_PASSWORD
 ---
 apiVersion: v1
 kind: Secret
@@ -21,7 +21,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: n8n
-  password: ref+envsubst://$CLOUDNATIVE_PG_N8N_PASSWORD
+  password: ref+passbolt://d1997ce8-1b15-4658-b057-8e8f82d1adb3#/custom_fields/CNPG_PASSWORD
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

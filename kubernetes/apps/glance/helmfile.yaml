@@ -7,7 +7,7 @@ releases:
     values:
       - values.yaml
       - gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
-      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
+      - gluetunApiKey: ref+passbolt://ddd2aa51-524e-411e-ad5f-aabe559471e0#/custom_fields/GLUETUN_API_KEY
       - qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
       - uptimeKumaUrl: http://uptime-kuma.monitoring.svc.cluster.local
       - uptimeKumaStatusSlug: homelab

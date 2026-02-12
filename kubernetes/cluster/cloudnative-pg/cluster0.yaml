@@ -91,7 +91,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: noop
-  password: ref+envsubst://$CLOUDNATIVE_PG_NOOP_PASSWORD
+  password: ref+passbolt://8aa635b5-a13a-4b41-8298-00a35b7ee2d7#/custom_fields/NOOP_PASSWORD
 ---
 apiVersion: v1
 kind: Secret
@@ -103,4 +103,4 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
-  password: ref+envsubst://$CLOUDNATIVE_PG_ADMIN_PASSWORD
+  password: ref+passbolt://8aa635b5-a13a-4b41-8298-00a35b7ee2d7#/custom_fields/ADMIN_PASSWORD

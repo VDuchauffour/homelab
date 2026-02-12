@@ -9,7 +9,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: passbolt
-  password: ref+envsubst://$CLOUDNATIVE_PG_PASSBOLT_PASSWORD
+  password: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/CNPG_PASSWORD
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

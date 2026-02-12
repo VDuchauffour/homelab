@@ -3,7 +3,7 @@ postgres:
   enabled: false
   external:
     enabled: true
-    uri: ref+envsubst://$CLOUDNATIVE_PG_LINKWARDEN_URI
+    uri: ref+passbolt://1211d9f5-8688-44ab-b149-b14e9559bd62#/custom_fields/CNPG_URI
 
 configuration:
   authentication:
@@ -11,7 +11,7 @@ configuration:
     PublicCredentialsEnabled: true
     disableNewSSOUsers: true
     authURL: http://localhost:3000/api/v1/auth
-    authSecret: ref+envsubst://$LINKWARDEN_AUTHSECRET
+    authSecret: ref+passbolt://1211d9f5-8688-44ab-b149-b14e9559bd62#/custom_fields/AUTHSECRET
 
 ingress:
   enabled: true

@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
   local:
-    path: ref+envsubst://$VIBE_KANBAN_PATH
+    path: ref+passbolt://21c07ae0-312f-4a0e-b409-81b638918d74#/custom_fields/PV_PATH
   nodeAffinity:
     required:
       nodeSelectorTerms:

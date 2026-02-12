@@ -30,15 +30,15 @@ passboltEnv:
     CACHE_CAKEMODEL_HOST: passbolt-redis-master
   secret:
     DATASOURCES_DEFAULT_USERNAME: passbolt
-    DATASOURCES_DEFAULT_PASSWORD: ref+envsubst://$CLOUDNATIVE_PG_PASSBOLT_PASSWORD
+    DATASOURCES_DEFAULT_PASSWORD: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/CNPG_PASSWORD
     DATASOURCES_DEFAULT_DATABASE: passbolt
-    CACHE_DEFAULT_PASSWORD: ref+envsubst://$PASSBOLT_REDIS_PASSWORD
-    CACHE_CAKECORE_PASSWORD: ref+envsubst://$PASSBOLT_REDIS_PASSWORD
-    CACHE_CAKEMODEL_PASSWORD: ref+envsubst://$PASSBOLT_REDIS_PASSWORD
+    CACHE_DEFAULT_PASSWORD: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/REDIS_PASSWORD
+    CACHE_CAKECORE_PASSWORD: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/REDIS_PASSWORD
+    CACHE_CAKEMODEL_PASSWORD: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/REDIS_PASSWORD
 
 redis:
   auth:
-    password: ref+envsubst://$PASSBOLT_REDIS_PASSWORD
+    password: ref+passbolt://ac982d03-b97f-43ed-80ed-a2d36d30d2ed#/custom_fields/REDIS_PASSWORD
   sentinel:
     enabled: false
 

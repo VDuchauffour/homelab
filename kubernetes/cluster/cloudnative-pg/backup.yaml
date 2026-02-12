@@ -6,8 +6,8 @@ metadata:
   namespace: cnpg-clusters
 type: Opaque
 stringData:
-  ACCESS_KEY_ID: ref+envsubst://$MINIO_ROOT_USER
-  ACCESS_SECRET_KEY: ref+envsubst://$MINIO_ROOT_PASSWORD
+  ACCESS_KEY_ID: ref+passbolt://9a61edf4-633a-4244-ba7f-cfe762b5fa85#/custom_fields/ROOT_USER
+  ACCESS_SECRET_KEY: ref+passbolt://9a61edf4-633a-4244-ba7f-cfe762b5fa85#/custom_fields/ROOT_PASSWORD
 ---
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore

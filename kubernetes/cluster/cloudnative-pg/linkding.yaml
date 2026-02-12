@@ -9,7 +9,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: linkding
-  password: ref+envsubst://$CLOUDNATIVE_PG_LINKDING_PASSWORD
+  password: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/CNPG_PASSWORD
 ---
 apiVersion: v1
 kind: Secret
@@ -21,7 +21,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: linkding
-  password: ref+envsubst://$CLOUDNATIVE_PG_LINKDING_PASSWORD
+  password: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/CNPG_PASSWORD
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

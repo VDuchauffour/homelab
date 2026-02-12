@@ -11,11 +11,11 @@ config:
     port: '5432'
 
 secrets:
-  LD_SUPERUSER_NAME: ref+envsubst://$LINKDING_SUPERUSER_NAME
-  LD_SUPERUSER_PASSWORD: ref+envsubst://$LINKDING_SUPERUSER_PASSWORD
-  LD_SECRET_KEY: ref+envsubst://$LINKDING_SECRET_KEY
+  LD_SUPERUSER_NAME: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/SUPERUSER_NAME
+  LD_SUPERUSER_PASSWORD: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/SUPERUSER_PASSWORD
+  LD_SECRET_KEY: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/SECRET_KEY
   database:
-    password: ref+envsubst://$CLOUDNATIVE_PG_LINKDING_PASSWORD
+    password: ref+passbolt://b94f5947-62fd-40d3-8afd-1eadae695fbb#/custom_fields/CNPG_PASSWORD
 
 persistence:
   enabled: true

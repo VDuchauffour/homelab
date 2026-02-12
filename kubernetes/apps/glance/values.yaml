@@ -175,7 +175,7 @@ glance:
         collapseAfter: 10
 
   auth:
-    secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
+    secretKey: ref+passbolt://4c13f0d4-e8e7-4ea8-acb2-ae3aacefc91d#/custom_fields/AUTH_SECRETKEY
     users:
       admin:
-        password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD
+        password: ref+passbolt://4c13f0d4-e8e7-4ea8-acb2-ae3aacefc91d#/custom_fields/ADMIN_PASSWORD
