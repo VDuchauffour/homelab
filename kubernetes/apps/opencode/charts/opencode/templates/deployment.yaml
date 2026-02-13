@@ -34,28 +34,16 @@ spec:
               {{- range .Values.postInstall }}
               {{ . }}
               {{- end }}
-              mkdir -p /bun-home/.local/share/opencode/bin
-              mkdir -p /bun-home/.ssh && chmod 700 /bun-home/.ssh
+              mkdir -p /config/.local/share/opencode/bin
+              mkdir -p /config/.ssh && chmod 700 /config/.ssh
           env:
             - name: HOME
-              value: /bun-home
+              value: /config
             - name: BUN_INSTALL_BIN
-              value: /bun-home/bin
+              value: /config/bin
           volumeMounts:
-            - name: bun-global
-              mountPath: /bun-home
             - name: config
-              mountPath: /bun-home/.config/opencode
-              subPath: opencode
-            - name: config
-              mountPath: /bun-home/.config/openchamber
-              subPath: openchamber
-            - name: config
-              mountPath: /bun-home/.local/share/opencode
-              subPath: data
-            - name: config
-              mountPath: /bun-home/.ssh
-              subPath: ssh
+              mountPath: /config
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -65,11 +53,11 @@ spec:
             - |
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client gh git-delta && rm -rf /var/lib/apt/lists/*
-              export PATH="/bun-home/bin:$PATH"
-              exec openchamber --port {{ .Values.openchamber.port }}
+              export PATH="/config/bin:$PATH"
+              exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
           env:
             - name: HOME
-              value: /bun-home
+              value: /config
             - name: SHELL
               value: /bin/bash
             - name: GIT_CONFIG_COUNT
@@ -102,36 +90,17 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           volumeMounts:
-            - name: bun-global
-              mountPath: /bun-home
             - name: config
-              mountPath: /bun-home/.config/opencode
-              subPath: opencode
-            - name: config
-              mountPath: /bun-home/.config/openchamber
-              subPath: openchamber
+              mountPath: /config
             - name: workdir
               mountPath: /projects
-            - name: config
-              mountPath: /bun-home/.local/share/opencode
-              subPath: data
-            - name: config
-              mountPath: /bun-home/.ssh
-              subPath: ssh
             - name: worktree
-              mountPath: /bun-home/.local/share/opencode/worktree
-            {{- if .Values.gitConfig.hostPath }}
-            - name: gitconfig
-              mountPath: /bun-home/.gitconfig
-              readOnly: true
-            {{- end }}
+              mountPath: /config/.local/share/opencode/worktree
           {{- with .Values.resources.openchamber }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        - name: bun-global
-          emptyDir: {}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "opencode.fullname" . }}-config
@@ -141,12 +110,6 @@ spec:
         - name: worktree
           persistentVolumeClaim:
             claimName: {{ include "opencode.fullname" . }}-worktree
-        {{- if .Values.gitConfig.hostPath }}
-        - name: gitconfig
-          hostPath:
-            path: {{ .Values.gitConfig.hostPath }}
-            type: ""
-        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

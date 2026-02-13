@@ -146,9 +146,8 @@ Requires the following host directories:
 
 - `$HOME_DIR/projects` — project working directory
 - `$HOME_DIR/worktrees` — git worktrees
-- `$HOME_DIR/.config/git/config` — git configuration (mounted read-only)
 
-Projects are available at `/projects` in the container. SSH keys (`/bun-home/.ssh/`) are persisted via the config PVC.
+Projects are available at `/projects` in the container. SSH keys (`/bun-home/.ssh/`) and git configuration (`/bun-home/.gitconfig`) are persisted via the config PVC and must be configured from within the container.
 
 #### Passbolt
 
