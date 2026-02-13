@@ -36,6 +36,7 @@ spec:
               {{- end }}
               mkdir -p /config/.local/share/opencode/bin
               mkdir -p /config/.ssh && chmod 700 /config/.ssh
+              chown -R 1000:1000 /config
           env:
             - name: HOME
               value: /config

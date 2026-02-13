@@ -142,12 +142,13 @@ kubectl create token headlamp-admin -n kube-system
 
 #### OpenCode
 
-Requires the following host directories:
+The following host directories will be created once the Helm chart is released. PVs will look at this locations for the projects data.
 
 - `$HOME_DIR/projects` — project working directory
 - `$HOME_DIR/worktrees` — git worktrees
 
-Projects are available at `/projects` in the container. SSH keys (`/bun-home/.ssh/`) and git configuration (`/bun-home/.gitconfig`) are persisted via the config PVC and must be configured from within the container.
+Projects are available at `/projects` in the container. The config (`/config`) are persisted via the config PVC and must be configured from within the container.
+You will need to add your SSH keys (`/config/.ssh/`) for GitHub and the git config (`/config/.gitconfig`).
 
 #### Passbolt
 
