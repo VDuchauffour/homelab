@@ -76,6 +76,12 @@ spec:
         superuser: true
         passwordSecret:
           name: immich-cnpg-credentials
+      - name: warden
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: warden-cnpg-credentials
   postgresql:
     shared_preload_libraries:
       - vchord.so

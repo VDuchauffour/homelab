@@ -1,0 +1,43 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/projecthelena/warden
+  pullPolicy: IfNotPresent
+  tag: latest
+
+config:
+  listenAddr: :9090
+  cookieSecure: true
+  trustProxy: true
+
+database:
+  type: postgres
+  external:
+    enabled: true
+    existingSecret: warden-db-url
+    existingSecretKey: db-url
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: warden.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - warden.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: warden-mkcert-tls
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
