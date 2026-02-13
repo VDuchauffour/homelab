@@ -1,0 +1,9 @@
+---
+releases:
+  - name: immich
+    namespace: immich
+    createNamespace: true
+    chart: oci://ghcr.io/immich-app/immich-charts/immich
+    version: 0.10.3
+    values:
+      - values.yaml
