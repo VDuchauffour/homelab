@@ -1,0 +1,33 @@
+---
+replicaCount: 1
+
+openchamber:
+  port: 3000
+
+postInstall:
+  - bunx oh-my-opencode install --no-tui --claude=no --openai=no --gemini=no --copilot=no
+
+persistence:
+  workdir:
+    storageClass: sc-opencode-workdir
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
+gitConfig:
+  hostPath: ref+envsubst://$HOME_DIR/.config/git
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: opencode.home.arpa
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - opencode.home.arpa
+      secretName: opencode-mkcert-tls

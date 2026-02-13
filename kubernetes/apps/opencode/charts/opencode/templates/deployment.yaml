@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opencode.fullname" . }}
+  labels:
+    {{- include "opencode.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "opencode.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "opencode.selectorLabels" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: install-packages
+          image: "{{ .Values.openchamber.initImage.repository }}:{{ .Values.openchamber.initImage.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.initImage.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update && apt-get install -y --no-install-recommends python3 make g++ git nodejs npm
+              npm install -g node-gyp
+              bun add -g {{ .Values.openchamber.package }} opencode-ai@latest
+              rm -rf /var/lib/apt/lists/*
+              {{- range .Values.postInstall }}
+              {{ . }}
+              {{- end }}
+          env:
+            - name: HOME
+              value: /bun-home
+            - name: BUN_INSTALL_BIN
+              value: /bun-home/bin
+          volumeMounts:
+            - name: bun-global
+              mountPath: /bun-home
+            - name: config
+              mountPath: /bun-home/.config/opencode
+      containers:
+        - name: openchamber
+          image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+              git config --file /bun-home/.gitconfig --add safe.directory '*'
+              export PATH="/bun-home/bin:$PATH"
+              exec openchamber --port {{ .Values.openchamber.port }}
+          env:
+            - name: HOME
+              value: /bun-home
+            - name: SHELL
+              value: /bin/bash
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          workingDir: /projects
+          ports:
+            - name: http
+              containerPort: {{ .Values.openchamber.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: bun-global
+              mountPath: /bun-home
+            - name: config
+              mountPath: /bun-home/.config/opencode
+            - name: workdir
+              mountPath: /projects
+            {{- if .Values.gitConfig.hostPath }}
+            - name: gitconfig
+              mountPath: /bun-home/.config/git
+              readOnly: true
+            {{- end }}
+          {{- with .Values.resources.openchamber }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: bun-global
+          emptyDir: {}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-config
+        - name: workdir
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-workdir
+        {{- if .Values.gitConfig.hostPath }}
+        - name: gitconfig
+          hostPath:
+            path: {{ .Values.gitConfig.hostPath }}
+            type: Directory
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

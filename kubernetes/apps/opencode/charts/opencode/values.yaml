@@ -1,0 +1,51 @@
+---
+replicaCount: 1
+
+openchamber:
+  image:
+    repository: oven/bun
+    pullPolicy: IfNotPresent
+    tag: debian
+  initImage:
+    repository: oven/bun
+    pullPolicy: IfNotPresent
+    tag: debian
+  package: "@openchamber/web"
+  port: 3000
+
+postInstall: []
+
+persistence:
+  workdir:
+    storageClass: sc-opencode-workdir
+    accessMode: ReadWriteOnce
+    size: 100Gi
+  config:
+    storageClass: zfs-vm-pool-dynamic
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources:
+  openchamber: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env: {}
+
+gitConfig:
+  hostPath: ""
