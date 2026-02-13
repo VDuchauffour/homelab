@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Compare monitors in Warden vs Kubernetes deployments.
-"""
 
 import os
 
@@ -19,13 +16,10 @@ log = get_logger(__name__)
 
 
 def main():
-    """Compare monitors in Warden vs Kubernetes deployments."""
     configure_log_level(False)
 
-    # Load kube config
     KubernetesConfig.load()
 
-    # Fetch from Kubernetes
     apps_v1 = client.AppsV1Api()
     deployments = apps_v1.list_deployment_for_all_namespaces()
 
@@ -116,14 +110,16 @@ def main():
             }.get(details["status"], "❓")
             status = f" [{status_emoji} {details['status']}] {details['url']}"
 
-        print(f"   {ns}/{name} (probe: {probe_type}{f' {probe_info}' if probe_info else ''}){status}")
+        print(
+            f"   {ns}/{name} (probe: {probe_type}{f' {probe_info}' if probe_info else ''}){status}"
+        )
 
-    print(f"\n🔍 Monitors in Warden NOT matching any deployment:")
+    print("\n🔍 Monitors in Warden NOT matching any deployment:")
     for group_name, monitor_name in sorted(warden_monitors):
-        if (
-            (group_name, monitor_name) not in k8s_with_http_probes
-            and (group_name, monitor_name) not in k8s_without_http_probes
-        ):
+        if (group_name, monitor_name) not in k8s_with_http_probes and (
+            group_name,
+            monitor_name,
+        ) not in k8s_without_http_probes:
             details = warden_details[(group_name, monitor_name)]
             status_emoji = {
                 "up": "🟢",
@@ -131,7 +127,9 @@ def main():
                 "degraded": "🟡",
                 "paused": "⏸️",
             }.get(details["status"], "❓")
-            print(f"   {group_name}/{monitor_name} [{status_emoji} {details['status']}]")
+            print(
+                f"   {group_name}/{monitor_name} [{status_emoji} {details['status']}]"
+            )
             print(f"      URL: {details['url']}")
 
     print("\n" + "=" * 80)
