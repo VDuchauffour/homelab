@@ -8,10 +8,10 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - name: stirling-pdf.home.arpa
+    - name: stirling-pdf.ref+envsubst://$LOCAL_DOMAIN_NAME
       path: /
       tls: false
-    - name: stirling-pdf.home.arpa
+    - name: stirling-pdf.ref+envsubst://$LOCAL_DOMAIN_NAME
       path: /
       tls: true
       tlsSecret: stirling-pdf-mkcert-tls

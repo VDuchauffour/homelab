@@ -32,11 +32,11 @@ ingress:
     labels: {}
     ingressClassName: traefik
     hosts:
-      - host: bazarr.home.arpa
+      - host: bazarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - bazarr.home.arpa
+          - bazarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         secretName: bazarr-mkcert-tls

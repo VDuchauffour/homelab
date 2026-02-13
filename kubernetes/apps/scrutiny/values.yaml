@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/analogj/scrutiny
   pullPolicy: IfNotPresent
-  tag: v0.8.1-omnibus
+  tag: v0.8.6-omnibus
 
 persistence:
   config:
@@ -26,11 +26,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: scrutiny.home.arpa
+    - host: scrutiny.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - scrutiny.home.arpa
+        - scrutiny.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: scrutiny-mkcert-tls

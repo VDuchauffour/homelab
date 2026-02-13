@@ -7,6 +7,21 @@ releases:
     namespace: monitoring
     createNamespace: true
     chart: prometheus-community/kube-prometheus-stack
-    version: 79.5.0
+    version: 81.6.7
     values:
       - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl delete -f -

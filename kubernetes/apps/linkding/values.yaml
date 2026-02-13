@@ -1,7 +1,7 @@
 ---
 config:
   TZ: Europe/Paris
-  LD_CSRF_TRUSTED_ORIGINS: https://linkding.home.arpa
+  LD_CSRF_TRUSTED_ORIGINS: https://linkding.ref+envsubst://$LOCAL_DOMAIN_NAME
   LD_ENABLE_AUTH_PROXY: false
   LD_DISABLE_LOGIN_FORM: false
   database:
@@ -38,11 +38,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: linkding.home.arpa
+    - host: linkding.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - linkding.home.arpa
+        - linkding.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: linkding-mkcert-tls

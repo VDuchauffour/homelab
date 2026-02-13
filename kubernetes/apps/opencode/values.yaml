@@ -1,0 +1,58 @@
+---
+replicaCount: 1
+
+openchamber:
+  port: 3000
+
+extraPackages:
+  - gh
+  - git-delta
+  - pre-commit
+config-json: |
+  {
+    "$schema": "https://opencode.ai/config.json",
+    "formatter": {
+      "ruff": {
+        "disabled": false
+      },
+      "uv": {
+        "disabled": false
+      }
+    },
+    "keybinds": {
+      "input_newline": "shift+return,ctrl+return,alt+return,ctrl+j"
+    },
+    "mcp": {},
+    "permission": {
+      "bash": "allow",
+      "edit": "allow"
+    },
+    "plugin": [
+      "oh-my-opencode@latest",
+      "@slkiser/opencode-quota",
+      "@simonwjackson/opencode-direnv",
+      "opencode-pty"
+    ]
+  }
+
+persistence:
+  workdir:
+    storageClass: sc-opencode-workdir
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: opencode.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - opencode.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: opencode-mkcert-tls

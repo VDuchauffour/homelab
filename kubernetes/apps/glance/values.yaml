@@ -4,10 +4,10 @@ replicaCount: 1
 gluetunUrl: ''
 gluetunApiKey: ''
 qbittorrentUrl: ''
-uptimeKumaUrl: ''
-uptimeKumaStatusSlug: ''
+wardenUrl: warden.warden.svc.cluster.local:9090
+wardenApiKey: ref+envsubst://$WARDEN_API_KEY
 domainName: '{{ .Values.domainName }}'
-localDomain: home.arpa
+localDomain: ref+envsubst://$LOCAL_DOMAIN_NAME
 
 image:
   repository: glanceapp/glance
@@ -25,13 +25,13 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: dashboard.home.arpa
+    - host: dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - dashboard.home.arpa
+        - dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: glance-mkcert-tls
 
 persistence:
@@ -50,10 +50,12 @@ env:
 glance:
   pages:
     - name: Public
-      domain: DOMAIN_NAME
+      domain: PUBLIC_DOMAIN_NAME
     - name: Local
       domain: LOCAL_DOMAIN
     - name: Stats
+      domain: LOCAL_DOMAIN
+    - name: Status
       domain: LOCAL_DOMAIN
 
   commonBookmarkGroups:
@@ -113,6 +115,9 @@ glance:
         - title: n8n
           subdomain: n8n
           icon: di:n8n
+        - title: OpenCode
+          subdomain: opencode
+          icon: di:opencode-light
         - title: Vibe-kanban
           subdomain: vibe-kanban
           icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
@@ -138,9 +143,9 @@ glance:
 
     - title: Monitoring
       links:
-        - title: Uptime Kuma
-          subdomain: status
-          icon: di:uptime-kuma
+        - title: Warden
+          subdomain: warden
+          icon: https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg
         - title: Dozzle
           subdomain: dozzle
           icon: di:dozzle

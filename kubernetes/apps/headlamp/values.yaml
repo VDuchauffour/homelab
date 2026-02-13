@@ -36,11 +36,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: headlamp.home.arpa
+    - host: headlamp.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           type: Prefix
   tls:
     - hosts:
-        - headlamp.home.arpa
+        - headlamp.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: headlamp-mkcert-tls

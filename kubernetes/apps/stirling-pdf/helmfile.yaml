@@ -8,6 +8,6 @@ releases:
     namespace: stirling-pdf
     createNamespace: true
     chart: stirling-pdf/stirling-pdf-chart
-    version: 2.2.0
+    version: 3.0.0
     values:
       - values.yaml

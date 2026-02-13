@@ -122,6 +122,20 @@ spec:
       share: /photos/immich
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: immich
+spec:
+  storageClassName: nfs-immich-library
+  volumeName: pv-immich-library
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pv-downloads

@@ -84,10 +84,12 @@ direnv allow
 
 | Variable | Description | Example |
 |----------|-------------|---------|
+| `HOME_DIR` | Home directory of the user on the host machine | `/home/user` |
 | `EMAIL_ADDRESS` | Your email address used for various services | `user@example.com` |
-| `DOMAIN_NAME` | Your homelab public domain name | `example.com` |
+| `PUBLIC_DOMAIN_NAME` | Your homelab public domain name | `example.com` |
+| `LOCAL_DOMAIN_NAME` | Your homelab internal domain name | `home.arpa` |
 | `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
-| `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.home.arpa` |
+| `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME` |
 | `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |
 | `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
 
@@ -95,36 +97,39 @@ Once configured, these variables will be automatically loaded whenever you enter
 
 ## Kubernetes — Applications
 
-### Deployed Apps
+### Available Apps
 
 <details>
 <summary>Apps</summary>
 
-| | App | Description |
-|:--:|-----|-------------|
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="24"> | bazarr | Subtitle management for media |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="24"> | dozzle | Real-time log viewer for containers |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="24"> | glance | Personal dashboard |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="24"> | headlamp | Kubernetes web UI |
-| <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="24"> | helm-dashboard | Helm charts management UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="24"> | jellyfin | Media server with live TV |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="24"> | jellyseerr | Media request management |
-| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="24"> | kan | Kanban board |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="24"> | lidarr | Music collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkding.png" width="24"> | linkding | Minimal bookmark manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkwarden.png" width="24"> | linkwarden | Collaborative bookmark manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="24"> | n8n | Workflow automation platform |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="24"> | pgadmin | PostgreSQL management UI |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="24"> | prowlarr | Indexer manager for arr suite |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="24"> | qbittorrent-vpn | BitTorrent client with VPN |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="24"> | radarr | Movie collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="24"> | sonarr | TV show collection manager |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/scrutiny.png" width="24"> | scrutiny | Hard drive S.M.A.R.T health monitoring |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="24"> | stirling-pdf | PDF manipulation toolkit |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="24"> | tdarr | Media transcoding optimizer |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="24"> | uptime-kuma | Uptime monitoring dashboard |
-| <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="24"> | zfdash | ZFS monitoring dashboard |
-| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="24"> | vibe-kanban | Kanban project management for vibe coding |
+| | App | Description | Deployed via |
+|:--:|-----|-------------|:------------:|
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="32"> | bazarr | Subtitle management for media | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="32"> | dozzle | Real-time log viewer for containers | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="32"> | glance | Personal dashboard | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="32"> | headlamp | Kubernetes web UI | Helmfile |
+| <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="32"> | helm-dashboard | Helm charts management UI | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png" width="32"> | immich | Self-hosted photo and video management | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png" width="32"> | jellyfin | Media server with live TV | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyseerr.png" width="32"> | jellyseerr | Media request management | Helmfile |
+| <img src="https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/web/public/favicon.ico" width="32"> | kan | Kanban board | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="32"> | lidarr | Music collection manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkding.png" width="32"> | linkding | Minimal bookmark manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkwarden.png" width="32"> | linkwarden | Collaborative bookmark manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="32"> | opencode | AI-powered coding assistant (with [openchamber](https://github.com/btriapitsyn/openchamber) as web UI) | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="32"> | prowlarr | Indexer manager for arr suite | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="32"> | qbittorrent-vpn | BitTorrent client with VPN | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="32"> | radarr | Movie collection manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="32"> | sonarr | TV show collection manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/scrutiny.png" width="32"> | scrutiny | Hard drive S.M.A.R.T health monitoring | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="32"> | stirling-pdf | PDF manipulation toolkit | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="32"> | tdarr | Media transcoding optimizer | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="32"> | uptime-kuma | Uptime monitoring dashboard | Helmfile |
+| <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
+| <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
+| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="32"> | vibe-kanban | Kanban project management for vibe coding | Helmfile |
 
 </details>
 
@@ -138,6 +143,16 @@ Generate an admin token to log in:
 kubectl create token headlamp-admin -n kube-system
 ```
 
+#### OpenCode
+
+The following host directories will be created once the Helm chart is released. PVs will look at this locations for the projects data.
+
+- `$HOME_DIR/projects` — project working directory
+- `$HOME_DIR/worktrees` — git worktrees
+
+Projects are available at `/projects` in the container. The config (`/home/opencode`) are persisted via the config PVC (mounted at `/home`) and must be configured from within the container.
+You will need to add your SSH keys (`/home/opencode/.ssh/`) for GitHub and your git config (`/home/opencode/.gitconfig`).
+
 #### Passbolt
 
 Once the chart is applied, run the following command to set up an admin user:
@@ -148,24 +163,24 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 
 ## Kubernetes — Infrastructure
 
-### Deployed Infrastructure
+### Available Infrastructure tools
 
 <details>
 <summary>Infrastructure Tools</summary>
 
-| | Tool | Description |
-|:--:|------|-------------|
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cert-manager.png" width="24"> | cert-manager | TLS certificate automation |
-| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | cloudnative-pg | PostgreSQL operator for K8s |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Intel_logo_2023.svg/1280px-Intel_logo_2023.svg.png" width="24"> | intel-device-plugins | GPU and device plugin for Intel hardware |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="24"> | kube-prometheus-stack | Monitoring and alerting stack |
-| <img src="https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true" width="24"> | minio | High-performance blob storage |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | nfs-csi-driver | NFS CSI driver for RWX volumes |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | nfs-server | In-cluster NFS server for shared media |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="24"> | node-feature-discovery | Hardware feature discovery |
-| <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="24"> | openebs | Container-native storage solution |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="24"> | passbolt | Team password manager |
-| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="24"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) |
+| | Tool | Description | Deployed via |
+|:--:|------|-------------|:------------:|
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cert-manager.png" width="32"> | cert-manager | TLS certificate automation | Helmfile |
+| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | cloudnative-pg | PostgreSQL operator for K8s | Helmfile |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Intel_logo_2023.svg/1280px-Intel_logo_2023.svg.png" width="32"> | intel-device-plugins | GPU and device plugin for Intel hardware | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | kube-prometheus-stack | Monitoring and alerting stack | Helmfile |
+| <img src="https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true" width="32"> | minio | High-performance blob storage | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-csi-driver | NFS CSI driver for RWX volumes | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server | In-cluster NFS server for shared media | Kustomize |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | node-feature-discovery | Hardware feature discovery | Helmfile |
+| <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="32"> | openebs | Container-native storage solution | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="32"> | passbolt | Team password manager | Helmfile |
+| <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) | Helmfile |
 
 </details>
 
@@ -346,6 +361,25 @@ docker compose up -d --build
 cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
+
+## Utility Scripts
+
+The `scripts/` directory contains utility scripts for managing the homelab cluster.
+
+### Warden Monitoring Tools
+
+The `warden/` package provides Kubernetes-to-Warden monitoring integration with automatic discovery, deployment verification, and cleanup capabilities.
+
+**Quick Start:**
+
+```shell
+make warden-seed          # Seed app monitors
+make warden-seed-cleanup  # Seed with cleanup
+make warden-delete        # Delete all monitors
+make warden-compare       # Compare K8s vs Warden
+```
+
+See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
 
 ## Useful Commands
 

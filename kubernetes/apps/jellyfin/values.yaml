@@ -56,11 +56,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: jellyfin.home.arpa
+    - host: jellyfin.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - jellyfin.home.arpa
+        - jellyfin.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: jellyfin-mkcert-tls

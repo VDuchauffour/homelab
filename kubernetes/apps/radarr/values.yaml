@@ -32,11 +32,11 @@ ingress:
     labels: {}
     ingressClassName: traefik
     hosts:
-      - host: radarr.home.arpa
+      - host: radarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - radarr.home.arpa
+          - radarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         secretName: radarr-mkcert-tls

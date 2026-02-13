@@ -6,3 +6,11 @@ releases:
     chart: ./charts/vibe-kanban
     values:
       - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/pv.yaml | kubectl apply -f -

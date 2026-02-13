@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opencode.fullname" . }}
+  labels:
+    {{- include "opencode.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "opencode.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "opencode.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: install-packages
+          image: "{{ .Values.openchamber.initImage.repository }}:{{ .Values.openchamber.initImage.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.initImage.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update && apt-get install -y --no-install-recommends python3 make g++ nodejs npm
+              npm install -g node-gyp --cache /tmp/.npm
+              rm -rf /var/lib/apt/lists/*
+              mkdir -p /home/opencode/.config/opencode /home/opencode/.local/share/opencode/bin /home/opencode/.ssh
+              chmod 700 /home/opencode/.ssh
+              {{- $configJson := index .Values "config-json" }}
+              {{- if $configJson }}
+              {{- $configJsonB64 := $configJson | b64enc }}
+              echo "{{ $configJsonB64 }}" | base64 -d > /home/opencode/.config/opencode/opencode.json
+              {{- end }}
+              bun add --trust -g {{ .Values.openchamber.package }} opencode-ai@latest
+              chown -R 1000:1000 /home/opencode
+          env:
+            - name: HOME
+              value: /home/opencode
+            - name: BUN_INSTALL_BIN
+              value: /home/opencode/bin
+            - name: BUN_TMPDIR
+              value: /tmp
+          volumeMounts:
+            - name: config
+              mountPath: /home
+      containers:
+        - name: openchamber
+          image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
+              export PATH="/home/opencode/bin:$PATH"
+              eval "$(ssh-agent -s)"
+              for key in /home/opencode/.ssh/*; do
+                [ -f "$key" ] && head -1 "$key" | grep -q "PRIVATE KEY" && ssh-add "$key" 2>/dev/null
+              done
+              exec setpriv --reuid=1000 --regid=1000 --init-groups -- sh -c 'exec openchamber --port {{ .Values.openchamber.port }}'
+          env:
+            - name: HOME
+              value: /home/opencode
+            - name: SHELL
+              value: /bin/bash
+            - name: GIT_CONFIG_COUNT
+              value: "1"
+            - name: GIT_CONFIG_KEY_0
+              value: safe.directory
+            - name: GIT_CONFIG_VALUE_0
+              value: "*"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          workingDir: /projects
+          ports:
+            - name: http
+              containerPort: {{ .Values.openchamber.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: config
+              mountPath: /home
+            - name: workdir
+              mountPath: /projects
+            - name: worktree
+              mountPath: /home/opencode/.local/share/opencode/worktree
+          {{- with .Values.resources.openchamber }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-config
+        - name: workdir
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-workdir
+        - name: worktree
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-worktree
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
