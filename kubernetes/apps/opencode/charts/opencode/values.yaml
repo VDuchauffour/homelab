@@ -29,6 +29,7 @@ persistence:
     accessMode: ReadWriteOnce
     size: 10Gi
 
+
 service:
   type: ClusterIP
   port: 3000

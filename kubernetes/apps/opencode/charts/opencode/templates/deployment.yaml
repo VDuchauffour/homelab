@@ -35,6 +35,7 @@ spec:
               {{ . }}
               {{- end }}
               mkdir -p /bun-home/.local/share/opencode/bin
+              mkdir -p /bun-home/.ssh && chmod 700 /bun-home/.ssh
           env:
             - name: HOME
               value: /bun-home
@@ -49,6 +50,12 @@ spec:
             - name: config
               mountPath: /bun-home/.config/openchamber
               subPath: openchamber
+            - name: config
+              mountPath: /bun-home/.local/share/opencode
+              subPath: data
+            - name: config
+              mountPath: /bun-home/.ssh
+              subPath: ssh
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -105,6 +112,12 @@ spec:
               subPath: openchamber
             - name: workdir
               mountPath: /projects
+            - name: config
+              mountPath: /bun-home/.local/share/opencode
+              subPath: data
+            - name: config
+              mountPath: /bun-home/.ssh
+              subPath: ssh
             - name: worktree
               mountPath: /bun-home/.local/share/opencode/worktree
             {{- if .Values.gitConfig.hostPath }}

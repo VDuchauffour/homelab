@@ -140,6 +140,16 @@ Generate an admin token to log in:
 kubectl create token headlamp-admin -n kube-system
 ```
 
+#### OpenCode
+
+Requires the following host directories:
+
+- `$HOME_DIR/projects` — project working directory
+- `$HOME_DIR/worktrees` — git worktrees
+- `$HOME_DIR/.config/git/config` — git configuration (mounted read-only)
+
+Projects are available at `/projects` in the container. SSH keys (`/bun-home/.ssh/`) are persisted via the config PVC.
+
 #### Passbolt
 
 Once the chart is applied, run the following command to set up an admin user:
