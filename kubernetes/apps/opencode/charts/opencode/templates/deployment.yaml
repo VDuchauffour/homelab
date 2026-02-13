@@ -14,6 +14,10 @@ spec:
       labels:
         {{- include "opencode.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       initContainers:
         - name: install-packages
           image: "{{ .Values.openchamber.initImage.repository }}:{{ .Values.openchamber.initImage.tag }}"
@@ -23,13 +27,14 @@ spec:
             - |
               set -e
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends python3 make g++ git nodejs npm
+              apt-get update && apt-get install -y --no-install-recommends python3 make g++ nodejs npm
               npm install -g node-gyp
               bun add -g {{ .Values.openchamber.package }} opencode-ai@latest
               rm -rf /var/lib/apt/lists/*
               {{- range .Values.postInstall }}
               {{ . }}
               {{- end }}
+              mkdir -p /bun-home/.local/share/opencode/bin
           env:
             - name: HOME
               value: /bun-home
@@ -40,6 +45,10 @@ spec:
               mountPath: /bun-home
             - name: config
               mountPath: /bun-home/.config/opencode
+              subPath: opencode
+            - name: config
+              mountPath: /bun-home/.config/openchamber
+              subPath: openchamber
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -48,8 +57,7 @@ spec:
           args:
             - |
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
-              git config --file /bun-home/.gitconfig --add safe.directory '*'
+              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client && rm -rf /var/lib/apt/lists/*
               export PATH="/bun-home/bin:$PATH"
               exec openchamber --port {{ .Values.openchamber.port }}
           env:
@@ -57,6 +65,12 @@ spec:
               value: /bun-home
             - name: SHELL
               value: /bin/bash
+            - name: GIT_CONFIG_COUNT
+              value: "1"
+            - name: GIT_CONFIG_KEY_0
+              value: safe.directory
+            - name: GIT_CONFIG_VALUE_0
+              value: "*"
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
@@ -85,11 +99,17 @@ spec:
               mountPath: /bun-home
             - name: config
               mountPath: /bun-home/.config/opencode
+              subPath: opencode
+            - name: config
+              mountPath: /bun-home/.config/openchamber
+              subPath: openchamber
             - name: workdir
               mountPath: /projects
+            - name: worktree
+              mountPath: /bun-home/.local/share/opencode/worktree
             {{- if .Values.gitConfig.hostPath }}
             - name: gitconfig
-              mountPath: /bun-home/.config/git
+              mountPath: /bun-home/.gitconfig
               readOnly: true
             {{- end }}
           {{- with .Values.resources.openchamber }}
@@ -105,11 +125,14 @@ spec:
         - name: workdir
           persistentVolumeClaim:
             claimName: {{ include "opencode.fullname" . }}-workdir
+        - name: worktree
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-worktree
         {{- if .Values.gitConfig.hostPath }}
         - name: gitconfig
           hostPath:
             path: {{ .Values.gitConfig.hostPath }}
-            type: Directory
+            type: ""
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

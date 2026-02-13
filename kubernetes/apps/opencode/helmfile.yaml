@@ -13,6 +13,13 @@ releases:
         command: /bin/sh
         args:
           - -c
+          - mkdir -p /home/k/projects /home/k/worktrees
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
           - vals eval -f manifests/pv.yaml | kubectl apply -f -
       - events:
           - postuninstall

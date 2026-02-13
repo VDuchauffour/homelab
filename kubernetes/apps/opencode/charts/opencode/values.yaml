@@ -24,6 +24,10 @@ persistence:
     storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
     size: 1Gi
+  worktree:
+    storageClass: sc-opencode-worktree
+    accessMode: ReadWriteOnce
+    size: 10Gi
 
 service:
   type: ClusterIP
@@ -38,6 +42,8 @@ ingress:
 
 resources:
   openchamber: {}
+
+podSecurityContext: {}
 
 nodeSelector: {}
 

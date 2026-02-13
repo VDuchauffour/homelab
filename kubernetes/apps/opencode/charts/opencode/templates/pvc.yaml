@@ -25,3 +25,17 @@ spec:
   resources:
     requests:
       storage: {{ .Values.persistence.config.size | quote }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "opencode.fullname" . }}-worktree
+  labels:
+    {{- include "opencode.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.worktree.accessMode | quote }}
+  storageClassName: {{ .Values.persistence.worktree.storageClass | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.worktree.size | quote }}
