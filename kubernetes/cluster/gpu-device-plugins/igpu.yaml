@@ -1,0 +1,15 @@
+---
+apiVersion: deviceplugin.intel.com/v1
+kind: GpuDevicePlugin
+metadata:
+  name: gpudeviceplugin-sample
+  namespace: intel-device-plugins
+spec:
+  # Shared device mode - allows multiple pods to share the same GPU
+  sharedDevNum: 10
+
+  # Balanced allocation distributes GPU load evenly across containers
+  preferredAllocationPolicy: balanced
+
+  # Enable monitoring resource for GPU metrics (optional)
+  enableMonitoring: true
