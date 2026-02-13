@@ -28,7 +28,7 @@ jobs:
           version: v3.14.0
 
       - name: Setup Helmfile
-        uses: helmfile/helmfile-action@v2.1.0
+        uses: helmfile/helmfile-action@v2.1.1
 
       - name: Lint apps
         run: |
