@@ -84,6 +84,7 @@ direnv allow
 
 | Variable | Description | Example |
 |----------|-------------|---------|
+| `HOME_DIR` | Home directory of the user on the host machine | `/home/user` |
 | `EMAIL_ADDRESS` | Your email address used for various services | `user@example.com` |
 | `DOMAIN_NAME` | Your homelab public domain name | `example.com` |
 | `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
@@ -114,6 +115,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkding.png" width="24"> | linkding | Minimal bookmark manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkwarden.png" width="24"> | linkwarden | Collaborative bookmark manager |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="24"> | n8n | Workflow automation platform |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="24"> | opencode | AI-powered coding assistant |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="24"> | pgadmin | PostgreSQL management UI |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="24"> | prowlarr | Indexer manager for arr suite |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="24"> | qbittorrent-vpn | BitTorrent client with VPN |

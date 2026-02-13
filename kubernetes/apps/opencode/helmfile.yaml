@@ -1,0 +1,23 @@
+---
+releases:
+  - name: opencode
+    namespace: opencode
+    createNamespace: true
+    chart: ./charts/opencode
+    values:
+      - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/pv.yaml | kubectl apply -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/pv.yaml | kubectl delete -f -

@@ -1,3 +1,5 @@
+export HOME_DIR=
+
 export EMAIL_ADDRESS=
 export DOMAIN_NAME=
 export SINGLE_NODE_NAME=

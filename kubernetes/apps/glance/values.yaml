@@ -113,6 +113,9 @@ glance:
         - title: n8n
           subdomain: n8n
           icon: di:n8n
+        - title: OpenCode
+          subdomain: opencode
+          icon: di:opencode-light
         - title: Vibe-kanban
           subdomain: vibe-kanban
           icon: https://raw.githubusercontent.com/VDuchauffour/homelab/refs/heads/main/kubernetes/apps/glance/assets/favicons/vibe-kanban.png
