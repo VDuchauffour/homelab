@@ -333,72 +333,75 @@ data:
                     </div>
                     {{`{{ end }}`}}
 
-                  {{`{{ else }}`}}
+                   {{`{{ else }}`}}
                     <div class="color-negative text-center">
                       <p>Error fetching qBittorrent data.</p>
                       <p class="size-sm">Check URL and authentication bypass settings.</p>
                     </div>
                   {{`{{ end }}`}}
+          {{- else if eq .name "Status" }}
+          - size: full
+            widgets:
               - type: custom-api
-                title: Uptime Kuma
-                title-url: {{ $.Values.uptimeKumaUrl }}
-                url: {{ $.Values.uptimeKumaUrl }}/api/status-page/{{ $.Values.uptimeKumaStatusSlug }}
-                subrequests:
-                  heartbeats:
-                    url: {{ $.Values.uptimeKumaUrl }}/api/status-page/heartbeat/{{ $.Values.uptimeKumaStatusSlug }}
-                cache: 10m
+                hide-header: true
+                url: http://{{ $.Values.wardenUrl }}/api/uptime
+                headers:
+                  Authorization: Bearer {{ $.Values.wardenApiKey }}
+                cache: 30s
                 template: |
-                  {{`{{ $hb := .Subrequest "heartbeats" }}`}}
-
-                  {{`{{ if not (.JSON.Exists "publicGroupList") }}`}}
-                  <p class="color-negative">Error reading response</p>
-                  {{`{{ else if eq (len (.JSON.Array "publicGroupList")) 0 }}`}}
-                  <p>No monitors found</p>
-                  {{`{{ else }}`}}
-
-                  <ul class="dynamic-columns list-gap-8">
-                    {{`{{ range .JSON.Array "publicGroupList" }}`}}
-                    {{`{{ range .Array "monitorList" }}`}}
-                    {{`{{ $id := .String "id" }}`}}
-                    {{`{{ $hbArray := $hb.JSON.Array (print "heartbeatList." $id) }}`}}
-                    <div class="flex items-center gap-12">
-                      <a class="size-title-dynamic color-highlight text-truncate block grow" href="{{ $.Values.uptimeKumaUrl }}/dashboard/{{`{{ $id }}`}}"
-                        target="_blank" rel="noreferrer">
-                        {{`{{ .String "name" }}`}} </a>
-
-                      {{`{{ if gt (len $hbArray) 0 }}`}}
-                        {{`{{ $latest := index $hbArray (sub (len $hbArray) 1) }}`}}
-                        {{`{{ if eq ($latest.Int "status") 1 }}`}}
-                        <div>{{`{{ $latest.Int "ping" }}`}}ms</div>
-                        <div class="monitor-site-status-icon-compact" title="OK">
-                          <svg fill="var(--color-positive)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                              d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                              clip-rule="evenodd"></path>
-                          </svg>
-                        </div>
-                        {{`{{ else }}`}}
-                        <div><span class="color-negative">DOWN</span></div>
-                        <div class="monitor-site-status-icon-compact" title="{{`{{ if $latest.Exists "msg" }}{{ $latest.String "msg" }}{{ else }}`}}Error{{`{{ end }}`}}">
-                          <svg fill="var(--color-negative)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                              clip-rule="evenodd"></path>
-                          </svg>
-                        </div>
+                  {{`{{ if eq .Response.StatusCode 200 }}`}}
+                    {{`{{ $groups := .JSON.Array "groups" }}`}}
+                    {{`{{ if gt (len $groups) 0 }}`}}
+                      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+                        {{`{{ range $groups }}`}}
+                          {{`{{ $monitors := .Array "monitors" }}`}}
+                          {{`{{ if gt (len $monitors) 0 }}`}}
+                            {{`{{ range $monitors }}`}}
+                              {{`{{ $status := .String "status" }}`}}
+                              {{`{{ $latency := .Int "latency" }}`}}
+                              {{`{{ $name := .String "name" }}`}}
+                              <div style="padding: 24px; background: rgba(128, 128, 128, 0.05); border-radius: 12px; text-align: center; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+                                  {{`{{ if eq $status "up" }}`}}
+                                    <svg style="width: 48px; height: 48px;" fill="var(--color-positive)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
+                                    </svg>
+                                  {{`{{ else if eq $status "degraded" }}`}}
+                                    <svg style="width: 48px; height: 48px;" fill="var(--color-warning)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+                                    </svg>
+                                  {{`{{ else if eq $status "paused" }}`}}
+                                    <svg style="width: 48px; height: 48px;" fill="var(--color-subdue)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                      <path d="M5.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75A.75.75 0 0 0 7.25 3h-1.5ZM12.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75a.75.75 0 0 0-.75-.75h-1.5Z"></path>
+                                    </svg>
+                                  {{`{{ else }}`}}
+                                    <svg style="width: 48px; height: 48px;" fill="var(--color-negative)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
+                                    </svg>
+                                  {{`{{ end }}`}}
+                                </div>
+                                <div class="size-h3 color-highlight" style="word-break: break-word; margin-bottom: 8px;">{{`{{ $name }}`}}</div>
+                                {{`{{ if and (ne $status "paused") (gt $latency 0) }}`}}
+                                  <div class="size-h4 color-subdue">{{`{{ $latency }}`}}ms</div>
+                                {{`{{ else if eq $status "paused" }}`}}
+                                  <div class="size-h4 color-subdue">Paused</div>
+                                {{`{{ else }}`}}
+                                  <div class="size-h4 color-subdue">-</div>
+                                {{`{{ end }}`}}
+                              </div>
+                            {{`{{ end }}`}}
+                          {{`{{ end }}`}}
                         {{`{{ end }}`}}
-                      {{`{{ else }}`}}
-                        <div><span class="color-negative">No data</span></div>
-                        <div class="monitor-site-status-icon-compact" title="No data available">
-                          <svg fill="var(--color-negative)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path d="M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm0-2a6 6 0 1 0 0-12 6 6 0 0 0 0 12zm-.75-8a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-1.5 0V8zm.75 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                          </svg>
-                        </div>
-                      {{`{{ end }}`}}
+                      </div>
+                    {{`{{ else }}`}}
+                      <div class="text-center" style="padding: 40px;">
+                        <p class="size-h5 color-subdue">No monitors</p>
+                      </div>
+                    {{`{{ end }}`}}
+                  {{`{{ else }}`}}
+                    <div class="color-negative text-center" style="padding: 20px;">
+                      <p class="size-h6">Failed to fetch data</p>
                     </div>
-                    {{`{{ end }}`}}
-                    {{`{{ end }}`}}
-                  </ul>
                   {{`{{ end }}`}}
           {{- end }}
     {{- end }}
