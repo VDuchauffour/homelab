@@ -127,6 +127,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="32"> | stirling-pdf | PDF manipulation toolkit | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="32"> | tdarr | Media transcoding optimizer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="32"> | uptime-kuma | Uptime monitoring dashboard | Helmfile |
+| <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
 | <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
 | <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="32"> | vibe-kanban | Kanban project management for vibe coding | Helmfile |
 
@@ -360,6 +361,49 @@ docker compose up -d --build
 cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
+
+## Utility Scripts
+
+The `scripts/` directory contains utility scripts for managing the homelab cluster.
+
+### Warden Monitoring Tools
+
+The `warden/` package provides Kubernetes-to-Warden monitoring integration with three main tools:
+
+**Features:**
+
+- ✅ **Auto-discovery** - Finds deployments with HTTP liveness probes
+- ✅ **Upsert logic** - Creates or updates monitors (idempotent)
+- ✅ **Type safety** - Pydantic models with validation
+- ✅ **Structured logging** - JSON-ready logs with structlog
+- ✅ **Dry-run mode** - Preview changes before applying
+
+**Installation:**
+
+```shell
+cd scripts
+uv sync
+```
+
+**Usage:**
+
+```shell
+# Set your Warden API key
+export WARDEN_API_KEY="your-api-key"
+
+# Seed monitors (discover and register in Warden)
+uv run warden-seed --host http://warden.home.arpa
+uv run warden-seed --namespace media-center --interval 60 --dry-run
+
+# Delete all monitors
+uv run warden-delete --host http://warden.home.arpa --dry-run
+uv run warden-delete --force  # Skip confirmations
+
+# Compare Kubernetes vs Warden
+uv run warden-compare
+```
+
+See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
 
 ## Useful Commands
 

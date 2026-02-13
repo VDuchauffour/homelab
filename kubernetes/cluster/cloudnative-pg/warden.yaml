@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: warden-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: warden
+  password: ref+envsubst://$CLOUDNATIVE_PG_WARDEN_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: warden
+  namespace: cnpg-clusters
+spec:
+  name: warden
+  owner: warden
+  cluster:
+    name: cnpg-cluster0

@@ -141,9 +141,9 @@ glance:
 
     - title: Monitoring
       links:
-        - title: Uptime Kuma
-          subdomain: status
-          icon: di:uptime-kuma
+        - title: Warden
+          subdomain: warden
+          icon: https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg
         - title: Dozzle
           subdomain: dozzle
           icon: di:dozzle
