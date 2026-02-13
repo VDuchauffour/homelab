@@ -57,6 +57,10 @@ spec:
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
               export PATH="/home/opencode/bin:$PATH"
+              eval "$(ssh-agent -s)"
+              for key in /home/opencode/.ssh/*; do
+                [ -f "$key" ] && head -1 "$key" | grep -q "PRIVATE KEY" && ssh-add "$key" 2>/dev/null
+              done
               exec setpriv --reuid=1000 --regid=1000 --init-groups -- sh -c 'exec openchamber --port {{ .Values.openchamber.port }}'
           env:
             - name: HOME
