@@ -24,7 +24,7 @@ data:
     pages:
     {{- range .Values.glance.pages }}
     {{- $pageDomain := .domain }}
-    {{- if eq $pageDomain "DOMAIN_NAME" }}
+    {{- if eq $pageDomain "PUBLIC_DOMAIN_NAME" }}
     {{- $pageDomain = $.Values.domainName }}
     {{- else if eq $pageDomain "LOCAL_DOMAIN" }}
     {{- $pageDomain = $.Values.localDomain }}

@@ -6,4 +6,4 @@ releases:
     chart: ./charts/kan
     values:
       - values.yaml
-      - domainName: ref+envsubst://$DOMAIN_NAME
+      - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME

@@ -50,7 +50,7 @@ env:
 glance:
   pages:
     - name: Public
-      domain: DOMAIN_NAME
+      domain: PUBLIC_DOMAIN_NAME
     - name: Local
       domain: LOCAL_DOMAIN
     - name: Stats

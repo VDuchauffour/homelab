@@ -1,7 +1,7 @@
 export HOME_DIR=
 
 export EMAIL_ADDRESS=
-export DOMAIN_NAME=
+export PUBLIC_DOMAIN_NAME=
 export SINGLE_NODE_NAME=
 
 export PASSBOLT_BASE_URL=http://passbolt.home.arpa

@@ -86,7 +86,7 @@ direnv allow
 |----------|-------------|---------|
 | `HOME_DIR` | Home directory of the user on the host machine | `/home/user` |
 | `EMAIL_ADDRESS` | Your email address used for various services | `user@example.com` |
-| `DOMAIN_NAME` | Your homelab public domain name | `example.com` |
+| `PUBLIC_DOMAIN_NAME` | Your homelab public domain name | `example.com` |
 | `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
 | `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.home.arpa` |
 | `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |

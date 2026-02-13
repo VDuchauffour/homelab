@@ -39,7 +39,7 @@ qbittorrent:
     - name: TZ
       value: Europe/Paris
     - name: WEBUI_HOST_HEADER_VALIDATION_DOMAINS
-      value: qbittorrent.home.arpa,qbittorrent.ref+envsubst://$DOMAIN_NAME
+      value: qbittorrent.home.arpa,qbittorrent.ref+envsubst://$PUBLIC_DOMAIN_NAME
 ingress:
   enabled: true
   className: traefik
