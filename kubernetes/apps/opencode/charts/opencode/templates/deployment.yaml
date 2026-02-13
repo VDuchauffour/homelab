@@ -34,17 +34,17 @@ spec:
               {{- range .Values.postInstall }}
               {{ . }}
               {{- end }}
-              mkdir -p /opencode/.local/share/opencode/bin
-              mkdir -p /opencode/.ssh && chmod 700 /opencode/.ssh
-              chown -R 1000:1000 /opencode
+              mkdir -p /home/opencode/.local/share/opencode/bin
+              mkdir -p /home/opencode/.ssh && chmod 700 /home/opencode/.ssh
+              chown -R 1000:1000 /home/opencode
           env:
             - name: HOME
-              value: /opencode
+              value: /home/opencode
             - name: BUN_INSTALL_BIN
-              value: /opencode/bin
+              value: /home/opencode/bin
           volumeMounts:
             - name: config
-              mountPath: /opencode
+              mountPath: /home
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -54,11 +54,11 @@ spec:
             - |
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
-              export PATH="/opencode/bin:$PATH"
+              export PATH="/home/opencode/bin:$PATH"
               exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
           env:
             - name: HOME
-              value: /opencode
+              value: /home/opencode
             - name: SHELL
               value: /bin/bash
             - name: GIT_CONFIG_COUNT
@@ -92,11 +92,11 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - name: config
-              mountPath: /opencode
+              mountPath: /home
             - name: workdir
               mountPath: /projects
             - name: worktree
-              mountPath: /opencode/.local/share/opencode/worktree
+              mountPath: /home/opencode/.local/share/opencode/worktree
           {{- with .Values.resources.openchamber }}
           resources:
             {{- toYaml . | nindent 12 }}
