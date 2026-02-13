@@ -8,7 +8,7 @@ image:
 domainName: '{{ .Values.domainName }}'
 
 kan:
-  baseUrl: https://kan.home.arpa
+  baseUrl: https://kan.ref+envsubst://$LOCAL_DOMAIN_NAME
   authSecret: ref+envsubst://$KAN_AUTHSECRET
   allowCredentials: true
 
@@ -26,11 +26,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: kan.home.arpa
+    - host: kan.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - kan.home.arpa
+        - kan.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: kan-mkcert-tls

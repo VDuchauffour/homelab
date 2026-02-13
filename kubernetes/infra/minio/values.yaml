@@ -26,11 +26,11 @@ consoleIngress:
   annotations:
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - minio-console.home.arpa
+    - minio-console.ref+envsubst://$LOCAL_DOMAIN_NAME
   tls:
     - secretName: minio-console-tls
       hosts:
-        - minio-console.home.arpa
+        - minio-console.ref+envsubst://$LOCAL_DOMAIN_NAME
 
 ingress:
   enabled: false

@@ -32,11 +32,11 @@ ingress:
     labels: {}
     ingressClassName: traefik
     hosts:
-      - host: sonarr.home.arpa
+      - host: sonarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - sonarr.home.arpa
+          - sonarr.ref+envsubst://$LOCAL_DOMAIN_NAME
         secretName: sonarr-mkcert-tls

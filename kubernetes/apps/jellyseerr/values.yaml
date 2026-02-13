@@ -15,11 +15,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: jellyseerr.home.arpa
+    - host: jellyseerr.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - host:
-        - jellyseerr.home.arpa
+        - jellyseerr.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: jellyseerr-mkcert-tls

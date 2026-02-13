@@ -10,7 +10,7 @@ Set up Traefik ingress with TLS certificates.
 
 ## Local Network (mkcert CA)
 
-For internal `.home.arpa` domains using the local CA:
+For internal `.<local-domain-name>` domains using the local CA:
 
 ```yaml
 ingress:
@@ -20,13 +20,13 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: <app-name>.home.arpa
+    - host: <app-name>.<local-domain-name>
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - <app-name>.home.arpa
+        - <app-name>.<local-domain-name>
       secretName: <app-name>-mkcert-tls
 ```
 

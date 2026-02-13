@@ -7,7 +7,7 @@ qbittorrentUrl: ''
 uptimeKumaUrl: ''
 uptimeKumaStatusSlug: ''
 domainName: '{{ .Values.domainName }}'
-localDomain: home.arpa
+localDomain: ref+envsubst://$LOCAL_DOMAIN_NAME
 
 image:
   repository: glanceapp/glance
@@ -25,13 +25,13 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: dashboard.home.arpa
+    - host: dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - dashboard.home.arpa
+        - dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: glance-mkcert-tls
 
 persistence:
@@ -50,7 +50,7 @@ env:
 glance:
   pages:
     - name: Public
-      domain: DOMAIN_NAME
+      domain: PUBLIC_DOMAIN_NAME
     - name: Local
       domain: LOCAL_DOMAIN
     - name: Stats

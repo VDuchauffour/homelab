@@ -22,11 +22,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: vibe-kanban.home.arpa
+    - host: vibe-kanban.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - vibe-kanban.home.arpa
+        - vibe-kanban.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: vibe-kanban-mkcert-tls

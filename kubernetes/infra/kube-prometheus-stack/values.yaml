@@ -23,7 +23,7 @@ grafana:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - grafana.home.arpa
+      - grafana.ref+envsubst://$LOCAL_DOMAIN_NAME
 alertmanager:
   alertmanagerSpec:
     storage:
