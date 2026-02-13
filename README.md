@@ -147,8 +147,8 @@ The following host directories will be created once the Helm chart is released. 
 - `$HOME_DIR/projects` — project working directory
 - `$HOME_DIR/worktrees` — git worktrees
 
-Projects are available at `/projects` in the container. The config (`/config`) are persisted via the config PVC and must be configured from within the container.
-You will need to add your SSH keys (`/config/.ssh/`) for GitHub and the git config (`/config/.gitconfig`).
+Projects are available at `/projects` in the container. The config (`/opencode`) are persisted via the config PVC and must be configured from within the container.
+You will need to add your SSH keys (`/opencode/.ssh/`) for GitHub and the git config (`/opencode/.gitconfig`).
 
 #### Passbolt
 

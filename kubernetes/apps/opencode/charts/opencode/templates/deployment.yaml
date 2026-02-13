@@ -34,17 +34,17 @@ spec:
               {{- range .Values.postInstall }}
               {{ . }}
               {{- end }}
-              mkdir -p /config/.local/share/opencode/bin
-              mkdir -p /config/.ssh && chmod 700 /config/.ssh
-              chown -R 1000:1000 /config
+              mkdir -p /opencode/.local/share/opencode/bin
+              mkdir -p /opencode/.ssh && chmod 700 /opencode/.ssh
+              chown -R 1000:1000 /opencode
           env:
             - name: HOME
-              value: /config
+              value: /opencode
             - name: BUN_INSTALL_BIN
-              value: /config/bin
+              value: /opencode/bin
           volumeMounts:
             - name: config
-              mountPath: /config
+              mountPath: /opencode
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -54,11 +54,11 @@ spec:
             - |
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client gh git-delta && rm -rf /var/lib/apt/lists/*
-              export PATH="/config/bin:$PATH"
+              export PATH="/opencode/bin:$PATH"
               exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
           env:
             - name: HOME
-              value: /config
+              value: /opencode
             - name: SHELL
               value: /bin/bash
             - name: GIT_CONFIG_COUNT
@@ -92,11 +92,11 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - name: config
-              mountPath: /config
+              mountPath: /opencode
             - name: workdir
               mountPath: /projects
             - name: worktree
-              mountPath: /config/.local/share/opencode/worktree
+              mountPath: /opencode/.local/share/opencode/worktree
           {{- with .Values.resources.openchamber }}
           resources:
             {{- toYaml . | nindent 12 }}
