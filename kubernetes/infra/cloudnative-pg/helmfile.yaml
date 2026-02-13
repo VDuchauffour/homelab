@@ -8,3 +8,18 @@ releases:
     chart: cnpg/cloudnative-pg
     version: 0.26.1
     createNamespace: true
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl delete -f -

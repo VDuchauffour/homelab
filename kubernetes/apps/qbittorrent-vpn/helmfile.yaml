@@ -11,3 +11,32 @@ releases:
     version: 0.0.2
     values:
       - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/gluetun-api-svc.yaml | kubectl apply -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl delete -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/gluetun-api-svc.yaml | kubectl delete -f -
