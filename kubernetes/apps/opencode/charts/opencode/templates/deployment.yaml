@@ -57,7 +57,7 @@ spec:
           args:
             - |
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client && rm -rf /var/lib/apt/lists/*
+              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client gh git-delta && rm -rf /var/lib/apt/lists/*
               export PATH="/bun-home/bin:$PATH"
               exec openchamber --port {{ .Values.openchamber.port }}
           env:
