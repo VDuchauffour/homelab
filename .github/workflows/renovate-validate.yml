@@ -23,3 +23,4 @@ jobs:
         with:
           json_schema: schemas/schema.json
           ajv_strict_mode: false
+          files: .github/renovate.json
