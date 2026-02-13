@@ -8,6 +8,6 @@ releases:
     namespace: media-center
     createNamespace: true
     chart: jellyfin/jellyfin
-    version: 2.5.0
+    version: 2.7.0
     values:
       - values.yaml
