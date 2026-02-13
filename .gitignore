@@ -1,3 +1,4 @@
+OPENCODE_CONFIG_CONTENT
 **/*.sisyphus
 **/_secret.yaml
 **/*.pem
