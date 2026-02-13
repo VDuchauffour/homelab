@@ -28,8 +28,8 @@ spec:
               set -e
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends python3 make g++ nodejs npm
-              npm install -g node-gyp
-              bun add -g {{ .Values.openchamber.package }} opencode-ai@latest
+              npm install -g node-gyp --cache /tmp/.npm
+              bun add --trust -g {{ .Values.openchamber.package }} opencode-ai@latest
               rm -rf /var/lib/apt/lists/*
               {{- range .Values.postInstall }}
               {{ . }}
@@ -42,6 +42,8 @@ spec:
               value: /home/opencode
             - name: BUN_INSTALL_BIN
               value: /home/opencode/bin
+            - name: BUN_TMPDIR
+              value: /tmp
           volumeMounts:
             - name: config
               mountPath: /home
@@ -55,7 +57,7 @@ spec:
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
               export PATH="/home/opencode/bin:$PATH"
-              exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
+              exec setpriv --reuid=1000 --regid=1000 --init-groups -- sh -c 'exec openchamber --port {{ .Values.openchamber.port }}'
           env:
             - name: HOME
               value: /home/opencode

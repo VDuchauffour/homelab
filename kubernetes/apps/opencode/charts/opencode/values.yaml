@@ -25,7 +25,7 @@ persistence:
   config:
     storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
-    size: 1Gi
+    size: 5Gi
   worktree:
     storageClass: sc-opencode-worktree
     accessMode: ReadWriteOnce
