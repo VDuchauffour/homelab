@@ -84,6 +84,7 @@ direnv allow
 
 | Variable | Description | Example |
 |----------|-------------|---------|
+| `HOME_DIR` | Home directory of the user on the host machine | `/home/user` |
 | `EMAIL_ADDRESS` | Your email address used for various services | `user@example.com` |
 | `DOMAIN_NAME` | Your homelab public domain name | `example.com` |
 | `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
