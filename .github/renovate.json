@@ -4,8 +4,8 @@
   "enabled": true,
   "dependencyDashboard": true,
   "timezone": "Europe/Paris",
-  "separateMinorPatch": true,
   "prCreation": "immediate",
+  "separateMinorPatch": true,
   "labels": ["dependencies"],
   "packageRules": [
     {
