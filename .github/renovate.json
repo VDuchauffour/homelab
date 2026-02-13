@@ -9,6 +9,16 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
       "matchManagers": ["pre-commit"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
@@ -30,9 +40,6 @@
       "automerge": true
     }
   ],
-  "regex": {
-    "enabled": true
-  },
   "customManagers": [
     {
       "customType": "regex",
