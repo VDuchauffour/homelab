@@ -108,9 +108,8 @@ class KubernetesDiscovery:
             if namespace_list and ns not in namespace_list:
                 continue
 
-            monitor = self._process_deployment(deploy, ns, name)
-            if monitor:
-                monitors.append(monitor)
+            deployment_monitors = self._process_deployment(deploy, ns, name)
+            monitors.extend(deployment_monitors)
 
         filter_desc = namespace_filter or (
             f"{len(namespace_list)} namespaces" if namespace_list else "all"
@@ -122,14 +121,31 @@ class KubernetesDiscovery:
         )
         return monitors
 
-    def _process_deployment(self, deploy, ns: str, name: str) -> Optional[Monitor]:
+    def _process_deployment(self, deploy, ns: str, name: str) -> list[Monitor]:
+        monitors = []
+        containers_with_probes = []
+
         for container in deploy.spec.template.spec.containers:
             probe = container.liveness_probe
-            if not probe or not probe.http_get:
+            if not probe:
                 continue
 
-            path = probe.http_get.path or "/"
-            port = probe.http_get.port
+            if probe.http_get or probe.tcp_socket:
+                containers_with_probes.append(container)
+
+        include_container_name = len(containers_with_probes) > 1
+
+        for container in containers_with_probes:
+            probe = container.liveness_probe
+
+            if probe.http_get:
+                path = probe.http_get.path or "/"
+                port = probe.http_get.port
+            elif probe.tcp_socket:
+                path = "/"
+                port = probe.tcp_socket.port
+            else:
+                continue
 
             if isinstance(port, str):
                 container_port = self._resolve_port(container, port)
@@ -138,6 +154,7 @@ class KubernetesDiscovery:
                         "skipping_named_port",
                         namespace=ns,
                         deployment=name,
+                        container=container.name,
                         port_name=port,
                     )
                     continue
@@ -148,16 +165,24 @@ class KubernetesDiscovery:
             svc_name = svc_name or name
             final_port = service_port if service_port else container_port
 
-            url = f"http://{svc_name}.{ns}.svc.cluster.local:{final_port}{path}"
-
-            return Monitor(
-                deployment=name,
-                namespace=ns,
-                url=url,
-                interval=probe.period_seconds or 30,
+            url = HttpUrl(
+                f"http://{svc_name}.{ns}.svc.cluster.local:{final_port}{path}"
             )
 
-        return None
+            monitor_name = (
+                f"{name}-{container.name}" if include_container_name else name
+            )
+
+            monitors.append(
+                Monitor(
+                    deployment=monitor_name,
+                    namespace=ns,
+                    url=url,
+                    interval=probe.period_seconds or 30,
+                )
+            )
+
+        return monitors
 
     def _resolve_port(self, container, named_port: str) -> Optional[int]:
         for p in container.ports or []:
