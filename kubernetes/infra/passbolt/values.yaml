@@ -17,7 +17,7 @@ jwtCreateKeysForced: true
 
 passboltEnv:
   plain:
-    APP_FULL_BASE_URL: https://passbolt.home.arpa
+    APP_FULL_BASE_URL: https://passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME
     PASSBOLT_SSL_FORCE: 'false'
     PASSBOLT_REGISTRATION_PUBLIC: 'true'
     PASSBOLT_PLUGINS_JWT_AUTHENTICATION_ENABLED: 'true'
@@ -53,7 +53,7 @@ livenessProbe:
     path: /healthcheck/status.json
     httpHeaders:
       - name: Host
-        value: passbolt.home.arpa
+        value: passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME
   initialDelaySeconds: 20
   periodSeconds: 10
 
@@ -64,7 +64,7 @@ readinessProbe:
     path: /healthcheck/status.json
     httpHeaders:
       - name: Host
-        value: passbolt.home.arpa
+        value: passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME
   initialDelaySeconds: 5
   periodSeconds: 10
 
@@ -75,7 +75,7 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: passbolt.home.arpa
+    - host: passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -83,4 +83,4 @@ ingress:
   tls:
     - existingSecret: passbolt-mkcert-tls
       hosts:
-        - passbolt.home.arpa
+        - passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME

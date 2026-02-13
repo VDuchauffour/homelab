@@ -27,11 +27,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: status.home.arpa
+    - host: status.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - status.home.arpa
+        - status.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: uptime-kuma-mkcert-tls

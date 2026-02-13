@@ -35,11 +35,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: n8n.home.arpa
+    - host: n8n.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - n8n.home.arpa
+        - n8n.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: n8n-mkcert-tls

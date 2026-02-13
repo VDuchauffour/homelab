@@ -23,11 +23,11 @@ ingress:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: mkcert-ca
   hosts:
-    - host: zfdash.home.arpa
+    - host: zfdash.ref+envsubst://$LOCAL_DOMAIN_NAME
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - zfdash.home.arpa
+        - zfdash.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: zfdash-mkcert-tls
