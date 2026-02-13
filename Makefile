@@ -1,6 +1,17 @@
-.PHONY: check-readme fix-readme
+.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare
 
-# Check that every app and infra directory is listed in the README tables
+warden-seed:
+	@cd scripts && uv run warden-seed --apps-only --host http://warden.home.arpa
+
+warden-seed-cleanup:
+	@cd scripts && uv run warden-seed --apps-only --cleanup --host http://warden.home.arpa
+
+warden-delete:
+	@cd scripts && uv run warden-delete --force --host http://warden.home.arpa
+
+warden-compare:
+	@cd scripts && uv run warden-compare
+
 check-readme:
 	@echo "Checking README.md tables against kubernetes/ directories..."
 	@exit_code=0; \
@@ -26,7 +37,6 @@ check-readme:
 	fi; \
 	exit $$exit_code
 
-# Use opencode to add missing apps/infra entries to the README tables
 fix-readme:
 	@missing_apps=""; \
 	missing_infra=""; \

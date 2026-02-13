@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Delete all monitors and groups from Warden.
-"""
 
 import os
 
@@ -20,15 +17,18 @@ def main(
     dry_run: bool = typer.Option(
         False, "--dry-run", help="Show what would be deleted without actually deleting"
     ),
-    force: bool = typer.Option(False, "--force", "-f", help="Skip confirmation prompts"),
+    force: bool = typer.Option(
+        False, "--force", "-f", help="Skip confirmation prompts"
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable debug logging"),
 ):
-    """Delete all monitors and groups from Warden."""
     configure_log_level(verbose)
 
     api_key = os.environ.get("WARDEN_API_KEY")
     if not api_key:
-        log.error("missing_api_key", message="WARDEN_API_KEY environment variable is required")
+        log.error(
+            "missing_api_key", message="WARDEN_API_KEY environment variable is required"
+        )
         raise typer.Exit(code=1)
 
     client = httpx.Client(
@@ -69,9 +69,15 @@ def main(
     )
 
     if dry_run:
-        log.info("dry_run_would_delete", monitors=len(monitors_to_delete), groups=len(groups_to_delete))
+        log.info(
+            "dry_run_would_delete",
+            monitors=len(monitors_to_delete),
+            groups=len(groups_to_delete),
+        )
         for m in monitors_to_delete:
-            log.info("would_delete_monitor", group=m["group"], name=m["name"], id=m["id"])
+            log.info(
+                "would_delete_monitor", group=m["group"], name=m["name"], id=m["id"]
+            )
         for g in groups_to_delete:
             log.info("would_delete_group", name=g["name"], id=g["id"])
         raise typer.Exit(code=0)

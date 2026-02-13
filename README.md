@@ -97,7 +97,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 
 ## Kubernetes — Applications
 
-### Deployed Apps
+### Available Apps
 
 <details>
 <summary>Apps</summary>
@@ -163,7 +163,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 
 ## Kubernetes — Infrastructure
 
-### Deployed Infrastructure
+### Available Infrastructure tools
 
 <details>
 <summary>Infrastructure Tools</summary>
@@ -368,39 +368,15 @@ The `scripts/` directory contains utility scripts for managing the homelab clust
 
 ### Warden Monitoring Tools
 
-The `warden/` package provides Kubernetes-to-Warden monitoring integration with three main tools:
+The `warden/` package provides Kubernetes-to-Warden monitoring integration with automatic discovery, deployment verification, and cleanup capabilities.
 
-**Features:**
-
-- ✅ **Auto-discovery** - Finds deployments with HTTP liveness probes
-- ✅ **Upsert logic** - Creates or updates monitors (idempotent)
-- ✅ **Type safety** - Pydantic models with validation
-- ✅ **Structured logging** - JSON-ready logs with structlog
-- ✅ **Dry-run mode** - Preview changes before applying
-
-**Installation:**
+**Quick Start:**
 
 ```shell
-cd scripts
-uv sync
-```
-
-**Usage:**
-
-```shell
-# Set your Warden API key
-export WARDEN_API_KEY="your-api-key"
-
-# Seed monitors (discover and register in Warden)
-uv run warden-seed --host http://warden.home.arpa
-uv run warden-seed --namespace media-center --interval 60 --dry-run
-
-# Delete all monitors
-uv run warden-delete --host http://warden.home.arpa --dry-run
-uv run warden-delete --force  # Skip confirmations
-
-# Compare Kubernetes vs Warden
-uv run warden-compare
+make warden-seed          # Seed app monitors
+make warden-seed-cleanup  # Seed with cleanup
+make warden-delete        # Delete all monitors
+make warden-compare       # Compare K8s vs Warden
 ```
 
 See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
