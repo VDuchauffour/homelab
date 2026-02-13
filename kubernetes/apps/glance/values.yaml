@@ -4,8 +4,8 @@ replicaCount: 1
 gluetunUrl: ''
 gluetunApiKey: ''
 qbittorrentUrl: ''
-uptimeKumaUrl: ''
-uptimeKumaStatusSlug: ''
+wardenUrl: warden.warden.svc.cluster.local:9090
+wardenApiKey: ref+envsubst://$WARDEN_API_KEY
 domainName: '{{ .Values.domainName }}'
 localDomain: ref+envsubst://$LOCAL_DOMAIN_NAME
 
@@ -54,6 +54,8 @@ glance:
     - name: Local
       domain: LOCAL_DOMAIN
     - name: Stats
+      domain: LOCAL_DOMAIN
+    - name: Status
       domain: LOCAL_DOMAIN
 
   commonBookmarkGroups:
