@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/analogj/scrutiny
   pullPolicy: IfNotPresent
-  tag: v0.8.1-omnibus
+  tag: v0.8.6-omnibus
 
 service:
   type: ClusterIP
