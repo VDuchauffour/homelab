@@ -15,7 +15,11 @@ openchamber:
 
 extraPackages: []
 
-postInstall: []
+config-json: |
+  {
+    "$schema": "https://opencode.ai/config.json",
+    "plugin": []
+  }
 
 persistence:
   workdir:
