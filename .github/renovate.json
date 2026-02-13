@@ -9,6 +9,10 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
+      "matchDepNames": ["python"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["bun"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
