@@ -6,6 +6,8 @@ metadata:
     {{- include "opencode.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "opencode.selectorLabels" . | nindent 6 }}
@@ -29,13 +31,15 @@ spec:
               export DEBIAN_FRONTEND=noninteractive
               apt-get update && apt-get install -y --no-install-recommends python3 make g++ nodejs npm
               npm install -g node-gyp --cache /tmp/.npm
-              bun add --trust -g {{ .Values.openchamber.package }} opencode-ai@latest
               rm -rf /var/lib/apt/lists/*
-              {{- range .Values.postInstall }}
-              {{ . }}
+              mkdir -p /home/opencode/.config/opencode /home/opencode/.local/share/opencode/bin /home/opencode/.ssh
+              chmod 700 /home/opencode/.ssh
+              {{- $configJson := index .Values "config-json" }}
+              {{- if $configJson }}
+              {{- $configJsonB64 := $configJson | b64enc }}
+              echo "{{ $configJsonB64 }}" | base64 -d > /home/opencode/.config/opencode/opencode.json
               {{- end }}
-              mkdir -p /home/opencode/.local/share/opencode/bin
-              mkdir -p /home/opencode/.ssh && chmod 700 /home/opencode/.ssh
+              bun add --trust -g {{ .Values.openchamber.package }} opencode-ai@latest
               chown -R 1000:1000 /home/opencode
           env:
             - name: HOME
