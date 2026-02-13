@@ -140,6 +140,16 @@ Generate an admin token to log in:
 kubectl create token headlamp-admin -n kube-system
 ```
 
+#### OpenCode
+
+The following host directories will be created once the Helm chart is released. PVs will look at this locations for the projects data.
+
+- `$HOME_DIR/projects` — project working directory
+- `$HOME_DIR/worktrees` — git worktrees
+
+Projects are available at `/projects` in the container. The config (`/opencode`) are persisted via the config PVC and must be configured from within the container.
+You will need to add your SSH keys (`/opencode/.ssh/`) for GitHub and the git config (`/opencode/.gitconfig`).
+
 #### Passbolt
 
 Once the chart is applied, run the following command to set up an admin user:

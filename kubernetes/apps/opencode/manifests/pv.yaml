@@ -21,3 +21,26 @@ spec:
               operator: In
               values:
                 - ref+envsubst://$SINGLE_NODE_NAME
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-opencode-worktree
+spec:
+  storageClassName: sc-opencode-worktree
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  local:
+    path: ref+envsubst://$HOME_DIR/worktrees
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - ref+envsubst://$SINGLE_NODE_NAME

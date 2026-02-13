@@ -14,6 +14,10 @@ spec:
       labels:
         {{- include "opencode.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       initContainers:
         - name: install-packages
           image: "{{ .Values.openchamber.initImage.repository }}:{{ .Values.openchamber.initImage.tag }}"
@@ -23,23 +27,24 @@ spec:
             - |
               set -e
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends python3 make g++ git nodejs npm
+              apt-get update && apt-get install -y --no-install-recommends python3 make g++ nodejs npm
               npm install -g node-gyp
               bun add -g {{ .Values.openchamber.package }} opencode-ai@latest
               rm -rf /var/lib/apt/lists/*
               {{- range .Values.postInstall }}
               {{ . }}
               {{- end }}
+              mkdir -p /opencode/.local/share/opencode/bin
+              mkdir -p /opencode/.ssh && chmod 700 /opencode/.ssh
+              chown -R 1000:1000 /opencode
           env:
             - name: HOME
-              value: /bun-home
+              value: /opencode
             - name: BUN_INSTALL_BIN
-              value: /bun-home/bin
+              value: /opencode/bin
           volumeMounts:
-            - name: bun-global
-              mountPath: /bun-home
             - name: config
-              mountPath: /bun-home/.config/opencode
+              mountPath: /opencode
       containers:
         - name: openchamber
           image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
@@ -48,15 +53,20 @@ spec:
           args:
             - |
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
-              git config --file /bun-home/.gitconfig --add safe.directory '*'
-              export PATH="/bun-home/bin:$PATH"
-              exec openchamber --port {{ .Values.openchamber.port }}
+              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
+              export PATH="/opencode/bin:$PATH"
+              exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
           env:
             - name: HOME
-              value: /bun-home
+              value: /opencode
             - name: SHELL
               value: /bin/bash
+            - name: GIT_CONFIG_COUNT
+              value: "1"
+            - name: GIT_CONFIG_KEY_0
+              value: safe.directory
+            - name: GIT_CONFIG_VALUE_0
+              value: "*"
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
@@ -81,36 +91,26 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           volumeMounts:
-            - name: bun-global
-              mountPath: /bun-home
             - name: config
-              mountPath: /bun-home/.config/opencode
+              mountPath: /opencode
             - name: workdir
               mountPath: /projects
-            {{- if .Values.gitConfig.hostPath }}
-            - name: gitconfig
-              mountPath: /bun-home/.config/git
-              readOnly: true
-            {{- end }}
+            - name: worktree
+              mountPath: /opencode/.local/share/opencode/worktree
           {{- with .Values.resources.openchamber }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        - name: bun-global
-          emptyDir: {}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "opencode.fullname" . }}-config
         - name: workdir
           persistentVolumeClaim:
             claimName: {{ include "opencode.fullname" . }}-workdir
-        {{- if .Values.gitConfig.hostPath }}
-        - name: gitconfig
-          hostPath:
-            path: {{ .Values.gitConfig.hostPath }}
-            type: Directory
-        {{- end }}
+        - name: worktree
+          persistentVolumeClaim:
+            claimName: {{ include "opencode.fullname" . }}-worktree
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

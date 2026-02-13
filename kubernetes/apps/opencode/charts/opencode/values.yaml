@@ -13,6 +13,8 @@ openchamber:
   package: "@openchamber/web"
   port: 3000
 
+extraPackages: []
+
 postInstall: []
 
 persistence:
@@ -24,6 +26,11 @@ persistence:
     storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
     size: 1Gi
+  worktree:
+    storageClass: sc-opencode-worktree
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
 
 service:
   type: ClusterIP
@@ -39,6 +46,8 @@ ingress:
 resources:
   openchamber: {}
 
+podSecurityContext: {}
+
 nodeSelector: {}
 
 tolerations: []
@@ -46,6 +55,3 @@ tolerations: []
 affinity: {}
 
 env: {}
-
-gitConfig:
-  hostPath: ""
