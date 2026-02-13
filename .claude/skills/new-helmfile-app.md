@@ -73,13 +73,13 @@ kubernetes/apps/<app-name>/
        kubernetes.io/ingress.class: traefik
        cert-manager.io/cluster-issuer: mkcert-ca
      hosts:
-       - host: <app-name>.ref+envsubst://$LOCAL_DOMAIN_NAME
+       - host: <app-name>.<local-domain-name>
          paths:
            - path: /
              pathType: Prefix
      tls:
        - hosts:
-           - <app-name>.ref+envsubst://$LOCAL_DOMAIN_NAME
+           - <app-name>.<local-domain-name>
          secretName: <app-name>-mkcert-tls
    ```
 
@@ -182,6 +182,6 @@ For icons, prefer in order:
 ## Conventions
 
 - Namespace: Use `<app-name>` or group namespaces like `arr`, `media-center`
-- Domain: `<app-name>.ref+envsubst://$LOCAL_DOMAIN_NAME` for local access
+- Domain: `<app-name>.<local-domain-name>` for local access
 - TLS: Use `mkcert-ca` cluster issuer
 - Storage: Use `zfs-vm-pool-dynamic` for configs, `media-library` PVC for shared media
