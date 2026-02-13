@@ -53,7 +53,7 @@ spec:
           args:
             - |
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client gh git-delta && rm -rf /var/lib/apt/lists/*
+              apt-get update && apt-get install -y --no-install-recommends git neovim openssh-client {{ join " " .Values.extraPackages }} && rm -rf /var/lib/apt/lists/*
               export PATH="/opencode/bin:$PATH"
               exec setpriv --reuid=1000 --regid=1000 --init-groups -- openchamber --port {{ .Values.openchamber.port }}
           env:

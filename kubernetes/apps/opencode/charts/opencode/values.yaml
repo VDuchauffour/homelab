@@ -13,6 +13,8 @@ openchamber:
   package: "@openchamber/web"
   port: 3000
 
+extraPackages: []
+
 postInstall: []
 
 persistence:
