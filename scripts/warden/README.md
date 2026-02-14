@@ -11,16 +11,16 @@ uv sync
 
 ## Features
 
-✅ **Auto-discovery from Apps Directory** - Dynamically discovers namespaces from `kubernetes/apps/` helmfiles
-✅ **Deployment Verification** - Only monitors namespaces that actually exist in the cluster
-✅ **Cleanup Mode** - Removes monitors/groups not in the target scope with `--cleanup`
-✅ **Upsert Logic** - Creates or updates monitors (idempotent)
-✅ **Type Safety** - Pydantic models with validation
-✅ **Structured Logging** - JSON-ready logs with structlog
-✅ **Dry-Run Mode** - Preview changes before applying
-✅ **Namespace Filtering** - Target specific namespaces
-✅ **Error Handling** - Graceful failure with detailed errors
-✅ **CLI Scripts** - Installed as `warden-*` commands
+- **Auto-discovery from Apps Directory** - Dynamically discovers namespaces from `kubernetes/apps/` helmfiles
+- **Deployment Verification** - Only monitors namespaces that actually exist in the cluster
+- **Cleanup Mode** - Removes monitors/groups not in the target scope with `--cleanup`
+- **Upsert Logic** - Creates or updates monitors (idempotent)
+- **Type Safety** - Pydantic models with validation
+- **Structured Logging** - JSON-ready logs with structlog
+- **Dry-Run Mode** - Preview changes before applying
+- **Namespace Filtering** - Target specific namespaces
+- **Error Handling** - Graceful failure with detailed errors
+- **CLI Scripts** - Installed as `warden-*` commands
 
 ## Usage
 
