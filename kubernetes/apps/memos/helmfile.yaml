@@ -1,0 +1,16 @@
+---
+releases:
+  - name: memos
+    namespace: memos
+    createNamespace: true
+    chart: ./charts/memos
+    values:
+      - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl apply -f -
