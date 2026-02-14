@@ -1,9 +1,9 @@
 ---
 releases:
-  - name: opencode
-    namespace: opencode
+  - name: openchamber
+    namespace: openchamber
     createNamespace: true
-    chart: ./charts/opencode
+    chart: ./charts/openchamber
     values:
       - values.yaml
     hooks:
@@ -13,8 +13,8 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - docker build -t homelab/opencode:latest . && docker save homelab/opencode:latest | sudo ctr
-            -n k8s.io images import -
+          - docker build -t homelab/openchamber:latest . && docker save homelab/openchamber:latest | sudo
+            ctr -n k8s.io images import -
       - events:
           - presync
         showlogs: true

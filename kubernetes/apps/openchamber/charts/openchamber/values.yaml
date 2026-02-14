@@ -1,12 +1,12 @@
 ---
 replicaCount: 1
 
-image:
-  repository: homelab/opencode
-  pullPolicy: Never
-  tag: latest
-
-port: 4096
+openchamber:
+  image:
+    repository: homelab/openchamber
+    pullPolicy: Never
+    tag: latest
+  port: 3000
 
 config-json: |
   {
@@ -16,17 +16,21 @@ config-json: |
 
 persistence:
   workdir:
-    storageClass: sc-opencode-workdir
+    storageClass: sc-openchamber-workdir
     accessMode: ReadWriteOnce
     size: 100Gi
   worktree:
-    storageClass: sc-opencode-worktree
+    storageClass: sc-openchamber-worktree
     accessMode: ReadWriteOnce
     size: 10Gi
+  config:
+    storageClass: zfs-vm-pool-dynamic
+    accessMode: ReadWriteOnce
+    size: 1Gi
 
 service:
   type: ClusterIP
-  port: 4096
+  port: 3000
 
 ingress:
   enabled: false
@@ -36,7 +40,7 @@ ingress:
   tls: []
 
 resources:
-  opencode: {}
+  openchamber: {}
 
 podSecurityContext: {}
 

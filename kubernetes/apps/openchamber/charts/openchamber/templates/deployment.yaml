@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openchamber.fullname" . }}
+  labels:
+    {{- include "openchamber.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "openchamber.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "openchamber.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        fsGroup: 1000
+        {{- with .Values.podSecurityContext }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      initContainers:
+        - name: seed-config
+          image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.image.pullPolicy }}
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /home/openchamber/.config/opencode /home/openchamber/.config/openchamber
+              if [ ! -f /home/openchamber/.config/opencode/opencode.json ]; then
+                cp /tmp/configmap/opencode.json /home/openchamber/.config/opencode/opencode.json
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /home/openchamber/.config
+            - name: openchamber-configmap
+              mountPath: /tmp/configmap
+      containers:
+        - name: openchamber
+          image: "{{ .Values.openchamber.image.repository }}:{{ .Values.openchamber.image.tag }}"
+          imagePullPolicy: {{ .Values.openchamber.image.pullPolicy }}
+          command: ["openchamber", "--port", "{{ .Values.openchamber.port }}"]
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          env:
+            - name: HOME
+              value: /home/openchamber
+            - name: OPENCODE_CONFIG
+              value: /home/openchamber/.config/opencode/opencode.json
+            - name: SHELL
+              value: /bin/bash
+            - name: GIT_CONFIG_COUNT
+              value: "1"
+            - name: GIT_CONFIG_KEY_0
+              value: safe.directory
+            - name: GIT_CONFIG_VALUE_0
+              value: "*"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          workingDir: /projects
+          ports:
+            - name: http
+              containerPort: {{ .Values.openchamber.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: config
+              mountPath: /home/openchamber/.config
+            - name: workdir
+              mountPath: /projects
+            - name: worktree
+              mountPath: /home/openchamber/.local/share/opencode/worktree
+          {{- with .Values.resources.openchamber }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: openchamber-configmap
+          configMap:
+            name: {{ include "openchamber.fullname" . }}-config
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "openchamber.fullname" . }}-config
+        - name: workdir
+          persistentVolumeClaim:
+            claimName: {{ include "openchamber.fullname" . }}-workdir
+        - name: worktree
+          persistentVolumeClaim:
+            claimName: {{ include "openchamber.fullname" . }}-worktree
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

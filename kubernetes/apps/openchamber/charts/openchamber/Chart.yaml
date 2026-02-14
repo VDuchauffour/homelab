@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: openchamber
+description: OpenChamber web UI for OpenCode AI coding agent
+type: application
+version: 0.1.0
+appVersion: latest
