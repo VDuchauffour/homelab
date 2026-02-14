@@ -116,6 +116,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png" width="32"> | lidarr | Music collection manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkding.png" width="32"> | linkding | Minimal bookmark manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/linkwarden.png" width="32"> | linkwarden | Collaborative bookmark manager | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/memos.png" width="32"> | memos | Lightweight self-hosted memo hub | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="32"> | opencode | AI-powered coding assistant (with [openchamber](https://github.com/btriapitsyn/openchamber) as web UI) | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |

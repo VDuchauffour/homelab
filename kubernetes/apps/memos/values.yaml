@@ -1,0 +1,33 @@
+---
+image:
+  tag: 0.25.2
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  accessMode: ReadWriteOnce
+  size: 5Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: memos.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - memos.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: memos-mkcert-tls
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

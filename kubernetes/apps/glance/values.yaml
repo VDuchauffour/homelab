@@ -73,6 +73,9 @@ glance:
         - title: Linkding
           subdomain: linkding
           icon: sh:linkding
+        - title: Memos
+          subdomain: memos
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
 
     - title: Media
       links:
