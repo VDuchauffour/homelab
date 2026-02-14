@@ -15,20 +15,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "opencode.fullname" . }}-config
-  labels:
-    {{- include "opencode.labels" . | nindent 4 }}
-spec:
-  accessModes:
-    - {{ .Values.persistence.config.accessMode | quote }}
-  storageClassName: {{ .Values.persistence.config.storageClass | quote }}
-  resources:
-    requests:
-      storage: {{ .Values.persistence.config.size | quote }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: {{ include "opencode.fullname" . }}-worktree
   labels:
     {{- include "opencode.labels" . | nindent 4 }}

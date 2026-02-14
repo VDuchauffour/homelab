@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: opencode
-description: OpenCode AI coding agent with OpenChamber web UI
+description: OpenCode AI coding agent with built-in web UI
 type: application
 version: 0.1.0
 appVersion: latest
