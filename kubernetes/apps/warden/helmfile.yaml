@@ -8,7 +8,7 @@ releases:
     namespace: warden
     createNamespace: true
     chart: projecthelena/warden
-    version: 0.1.0
+    version: 0.2.1
     values:
       - values.yaml
     hooks:
