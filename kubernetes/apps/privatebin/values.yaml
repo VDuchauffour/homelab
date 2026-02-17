@@ -1,0 +1,30 @@
+---
+controller:
+  kind: StatefulSet
+  pvc:
+    accessModes: ReadWriteOnce
+    requests: 1Gi
+    storageClass: zfs-vm-pool-dynamic
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: privatebin.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - privatebin.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: privatebin-mkcert-tls
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
