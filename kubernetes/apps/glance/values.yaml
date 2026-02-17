@@ -59,7 +59,7 @@ glance:
       domain: LOCAL_DOMAIN
 
   commonBookmarkGroups:
-    - title: Tools
+    - title: Productivity
       links:
         - title: Kan.sh
           subdomain: kan
@@ -76,6 +76,12 @@ glance:
         - title: Memos
           subdomain: memos
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
+
+    - title: Sharing
+      links:
+        - title: Privatebin
+          subdomain: privatebin
+          icon: di:privatebin
 
     - title: Media
       links:

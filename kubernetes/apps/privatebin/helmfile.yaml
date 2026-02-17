@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: privatebin
+    url: https://privatebin.github.io/helm-chart
+
+releases:
+  - name: privatebin
+    namespace: privatebin
+    createNamespace: true
+    chart: privatebin/privatebin
+    version: 0.23.3
+    values:
+      - values.yaml
