@@ -44,6 +44,7 @@ data:
                       - title: {{ .title }}
                         url: https://{{ .subdomain }}.{{ $pageDomain }}
                         icon: {{ .icon }}
+                        hide-arrow: true
                     {{- end }}
                 {{- end }}
           - size: full
@@ -58,6 +59,7 @@ data:
                       - title: {{ .title }}
                         url: https://{{ .subdomain }}.{{ $pageDomain }}
                         icon: {{ .icon }}
+                        hide-arrow: true
                     {{- end }}
                 {{- end }}
           {{- else if eq .name "Local" }}
@@ -73,6 +75,7 @@ data:
                       - title: {{ .title }}
                         url: https://{{ .subdomain }}.{{ $pageDomain }}
                         icon: {{ .icon }}
+                        hide-arrow: true
                     {{- end }}
                 {{- end }}
           - size: full
@@ -87,6 +90,7 @@ data:
                       - title: {{ .title }}
                         url: https://{{ .subdomain }}.{{ $pageDomain }}
                         icon: {{ .icon }}
+                        hide-arrow: true
                     {{- end }}
                 {{- end }}
           {{- else if eq .name "Stats" }}
