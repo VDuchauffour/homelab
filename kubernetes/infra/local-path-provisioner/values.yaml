@@ -1,0 +1,11 @@
+---
+storageClass:
+  create: true
+  name: local-path
+  reclaimPolicy: Retain
+  volumeBindingMode: WaitForFirstConsumer
+
+nodePathMap:
+  - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+    paths:
+      - /opt/local-path-provisioner
