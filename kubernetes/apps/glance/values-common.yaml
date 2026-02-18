@@ -75,6 +75,9 @@ glance:
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
     - title: Sharing
       links:
+        - title: Filebrowser
+          subdomain: filebrowser
+          icon: di:filebrowser
         - title: Privatebin
           subdomain: privatebin
           icon: di:privatebin
