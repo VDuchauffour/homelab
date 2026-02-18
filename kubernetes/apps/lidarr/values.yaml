@@ -1,4 +1,7 @@
 ---
+global:
+  labels: {}
+
 env:
   TZ: Europe/Paris
 
@@ -26,6 +29,12 @@ podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    interval: 3m
+    scrapeTimeout: 1m
 
 ingress:
   main:
