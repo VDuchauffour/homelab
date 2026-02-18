@@ -183,6 +183,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server | In-cluster NFS server for shared media | Kustomize |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | node-feature-discovery | Hardware feature discovery | Helmfile |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="32"> | openebs | Container-native storage solution | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pangolin.png" width="32"> | pangolin-newt | Newt tunnel client for external access via Pangolin | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="32"> | passbolt | Team password manager | Helmfile |
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) | Helmfile |
 

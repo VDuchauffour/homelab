@@ -1,0 +1,28 @@
+---
+repositories:
+  - name: fossorial
+    url: https://charts.fossorial.io
+
+releases:
+  - name: fossorial
+    namespace: fossorial
+    createNamespace: true
+    chart: fossorial/newt
+    version: 1.1.0
+    values:
+      - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - vals eval -f manifests/secret.yaml | kubectl delete -f -
