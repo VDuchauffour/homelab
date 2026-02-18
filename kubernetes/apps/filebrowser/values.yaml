@@ -1,0 +1,42 @@
+---
+controllers:
+  main:
+    containers:
+      main:
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    className: traefik
+    hosts:
+      - host: filebrowser.ref+envsubst://$LOCAL_DOMAIN_NAME
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+    tls:
+      - hosts:
+          - filebrowser.ref+envsubst://$LOCAL_DOMAIN_NAME
+        secretName: filebrowser-mkcert-tls
+
+persistence:
+  database:
+    storageClass: zfs-vm-pool-dynamic
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-library
+    globalMounts:
+      - path: /srv
+        readOnly: false

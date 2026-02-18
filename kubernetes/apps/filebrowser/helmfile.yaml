@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: brandan-schmitz
+    url: https://brandan-schmitz.github.io/helm-charts
+
+releases:
+  - name: filebrowser
+    namespace: filebrowser
+    createNamespace: true
+    chart: brandan-schmitz/Filebrowser
+    version: 1.2.0
+    values:
+      - values.yaml
