@@ -35,7 +35,6 @@ packages:
   - sudo
   - zsh
   - apt-utils
-  - ufw
 
 write_files:
   - path: /home/${username}/init.sh
@@ -43,53 +42,84 @@ write_files:
     owner: root:root
     content: |
       ${indent(6, init_script)}
-  - path: /home/${username}/proxy/Caddyfile
-    permissions: "0644"
-    owner: root:root
-    content: |
-      ${indent(6, caddyfile)}
-  - path: /home/${username}/proxy/frps.toml
-    permissions: "0644"
-    owner: root:root
-    content: |
-      bindPort = 7000
-      vhostHTTPPort = 8080
-
-      enablePrometheus = true
-
-      [webServer]
-      addr = "0.0.0.0"
-      port = 7500
-      user = "admin"
-      password = "${frp_dashboard_password}"
-
-      [auth]
-      method = "token"
-      token = "${auth_token}"
-  - path: /home/${username}/proxy/compose.yaml
+  - path: /home/${username}/pangolin/compose.yaml
     permissions: "0644"
     owner: root:root
     content: |
       ${indent(6, compose_file)}
-  - path: /home/${username}/proxy/Dockerfile.caddy
+  - path: /home/${username}/pangolin/config/config.yml
     permissions: "0644"
     owner: root:root
     content: |
-      ${indent(6, dockerfile_caddy)}
-  - path: /home/${username}/proxy/crowdsec/acquis.yaml
+      ${indent(6, pangolin_config)}
+  - path: /home/${username}/pangolin/config/traefik/traefik_config.yml
     permissions: "0644"
     owner: root:root
     content: |
-      ${indent(6, acquis_yaml)}
+      ${indent(6, traefik_static_config)}
+  - path: /home/${username}/pangolin/config/traefik/dynamic_config.yml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, traefik_dynamic_config)}
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/traefik.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      poll_without_inotify: false
+      filenames:
+        - /var/log/traefik/*.log
+      labels:
+        type: traefik
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/syslog.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      filenames:
+        - /var/log/auth.log
+        - /var/log/syslog
+      labels:
+        type: syslog
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/appsec.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      listen_addr: 0.0.0.0:7422
+      appsec_config: crowdsecurity/appsec-default
+      name: myAppSecComponent
+      source: appsec
+      labels:
+        type: appsec
+  - path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    permissions: "0600"
+    owner: root:root
+    content: |
+      mode: iptables
+      update_frequency: 10s
+      daemonize: false
+      log_mode: stdout
+      log_level: info
+      api_url: http://127.0.0.1:8080/
+      api_key: ${crowdsec_firewall_bouncer_key}
+      disable_ipv6: false
+      deny_action: DROP
+      deny_log: false
+      supported_decisions_types:
+        - ban
+        - captcha
+      iptables_chains:
+        - INPUT
+        - FORWARD
+        - DOCKER-USER
 
 runcmd:
   - chsh -s /bin/zsh ${username}
   - mkdir -p /home/${username}/.ssh
   - cp /root/.ssh/authorized_keys /home/${username}/.ssh/authorized_keys
   - chown -R ${username}:${username} /home/${username}/.ssh
-  - chown -R ${username}:${username} /home/${username}/proxy
+  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db
+  - curl -sLo /home/${username}/pangolin/config/traefik/ban.html https://raw.githubusercontent.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/main/ban.html
+  - chown -R ${username}:${username} /home/${username}/pangolin
   - /home/${username}/init.sh ${username}
-
-power_state:
-  mode: reboot
-  message: Restarting after VM configuration
+  - systemctl enable --now docker
+  - docker compose -f /home/${username}/pangolin/compose.yaml up -d

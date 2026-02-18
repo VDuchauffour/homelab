@@ -5,10 +5,10 @@ A Kubernetes-based homelab with cloud infrastructure for secure external access.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Caddy + CrowdSec + FRP) → Homelab K8s Cluster
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik + CrowdSec) → Homelab K8s Cluster
 ```
 
-- **External Access**: Scaleway-hosted reverse proxy with FRP tunneling
+- **External Access**: Scaleway-hosted reverse proxy with Pangolin (WireGuard tunneling via Gerbil)
 - **Internal**: Kubernetes cluster with Traefik ingress and cert-manager
 
 ## Project Structure
@@ -18,11 +18,14 @@ homelab/
 ├── kubernetes/
 │   ├── apps/                    # User applications
 │   ├── infra/                   # Infrastructure services
+│   │   └── pangolin-newt/       # Newt tunnel client + blueprint for external access
 │   └── cluster/                 # Cluster-wide definitions
+│       ├── coredns/             # CoreDNS custom config (split-horizon DNS)
+│       └── cloudnative-pg/      # CNPG cluster, databases, backups
 │
 ├── infra/
 │   └── modules/
-│       └── scaleway-proxy/      # Terraform for reverse proxy (Caddy, FRP, CrowdSec)
+│       └── scaleway-proxy/      # Terraform for reverse proxy (Pangolin, Gerbil, Traefik)
 │
 └── README.md                    # Main documentation
 ```
@@ -58,7 +61,8 @@ app-name/
 | GPU | Intel Device Plugins (iGPU/QSV) |
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
-| External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
+| External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
+| Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | IaC | Terraform |
 
 ## Deployment Patterns
@@ -80,7 +84,7 @@ terraform apply -var-file=terraform.tfvars
 ## TLS Configuration
 
 - **Local network**: mkcert CA via cert-manager ClusterIssuer
-- **Public access**: Let's Encrypt via Caddy (on Scaleway proxy)
+- **Public access**: Let's Encrypt via Traefik (on Scaleway proxy, managed by Pangolin)
 
 Add to ingress for local TLS:
 
@@ -218,3 +222,89 @@ To check/fix reclaim policy:
 kubectl get pv -o custom-columns='NAME:.metadata.name,RECLAIM:.spec.persistentVolumeReclaimPolicy'
 kubectl patch pv <pv-name> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 ```
+
+## External Access (Pangolin Blueprints)
+
+Services are exposed to the Internet through Pangolin on a Scaleway instance. The Newt tunnel client runs in-cluster and uses a **blueprint** to declaratively configure all exposed resources (domains, auth, healthchecks).
+
+### Architecture
+
+```
+Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard) → Newt (in-cluster) → K8s services
+```
+
+### Blueprint System
+
+The blueprint (`kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`) is a ConfigMap containing a `blueprint.yaml` key that Newt reads on startup. It declaratively defines:
+
+- **Public resources** (no auth): jellyfin, jellyseerr, immich
+- **Admin-only resources** (SSO whitelist): all other apps and infra tools
+
+Each resource specifies: domain, target hostname/port, auth settings, and healthcheck configuration.
+
+**Key constraints:**
+
+- `sso-roles` cannot include "Admin" (reserved by Pangolin) — use `whitelist-users` with email addresses instead
+- The blueprint YAML lives inside a ConfigMap literal block (`|`) — indentation errors are silently ignored by Pangolin, always validate with `vals eval`
+- Healthcheck blocks must be nested under each target, not at the resource level
+
+### Deployment
+
+```shell
+cd kubernetes/infra/pangolin-newt
+helmfile apply
+```
+
+The helmfile presync hook applies the blueprint ConfigMap before the Newt deployment. To update the blueprint only:
+
+```shell
+vals eval -f manifests/blueprint.yaml | kubectl apply -f -
+kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
+```
+
+### Adding a New Externally-Accessible Service
+
+1. Add a new resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`
+2. Set `full-domain`, target `hostname`/`port`, auth settings, and healthcheck
+3. Apply with `vals eval -f manifests/blueprint.yaml | kubectl apply -f -`
+4. Restart Newt: `kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial`
+
+## CoreDNS (Split-Horizon DNS)
+
+Custom CoreDNS configuration (`kubernetes/cluster/coredns/coredns-custom.yaml`) implements split-horizon DNS so that in-cluster traffic to `*.<public-domain>` resolves to the internal Traefik ClusterIP instead of going out to the Internet and back.
+
+**Exception:** `pangolin.<public-domain>` resolves to the Scaleway proxy IP so the Newt tunnel client can reach it directly.
+
+### Environment Variables
+
+- `PANGOLIN_PROXY_IP` — Scaleway instance public IP (for CoreDNS pangolin override)
+- `TRAEFIK_CLUSTER_IP` — Traefik service ClusterIP (for CoreDNS wildcard override)
+
+### Deployment
+
+```shell
+vals eval -f kubernetes/cluster/coredns/coredns-custom.yaml | kubectl apply -f -
+kubectl rollout restart deployment coredns -n kube-system
+```
+
+### Why This Exists
+
+Without the CoreDNS override, the Newt client resolves `pangolin.<domain>` to the internal Traefik IP (due to the wildcard override), causing TLS handshake failures because Traefik doesn't serve Pangolin's certificate. The separate server block for `pangolin.<domain>` ensures Newt connects to the actual Scaleway proxy.
+
+## Security (CrowdSec)
+
+The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer security. Configuration is managed via Terraform (`infra/modules/scaleway-proxy/`).
+
+### Layers
+
+- **Traefik bouncer plugin** (`crowdsec-bouncer-traefik-plugin v1.4.4`) — WAF + AppSec on all HTTPS traffic
+- **Syslog monitoring** — Detects SSH brute-force via `/var/log/auth.log` and `/var/log/syslog`
+- **Host firewall bouncer** (`crowdsec-firewall-bouncer-iptables`) — Drops banned IPs at the iptables level
+
+### Key Details
+
+- Bouncer API keys are pre-registered via `BOUNCER_KEY_*` env vars in the CrowdSec container (Terraform variables: `crowdsec_bouncer_key`, `crowdsec_firewall_bouncer_key`)
+- CrowdSec port 8080 is exposed only on localhost (`127.0.0.1:8080`) for the host firewall bouncer
+- Collections: `crowdsecurity/traefik`, `crowdsecurity/appsec-virtual-patching`, `crowdsecurity/appsec-generic-rules`, `crowdsecurity/linux`
+- Acquis configs: `config/crowdsec/acquis.d/{traefik,syslog,appsec}.yaml`
+- Ban page: `config/traefik/ban.html` (default from crowdsec-bouncer-traefik-plugin)

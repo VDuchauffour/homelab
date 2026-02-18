@@ -51,18 +51,18 @@ resource "scaleway_instance_security_group" "proxy" {
     protocol = "UDP"
   }
 
-  # FRP tunnel
+  # WireGuard (Gerbil tunnel)
   inbound_rule {
     action   = "accept"
-    port     = 7000
-    protocol = "TCP"
+    port     = 51820
+    protocol = "UDP"
   }
 
-  # FRP SSH proxy
+  # WireGuard (Gerbil client relay)
   inbound_rule {
     action   = "accept"
-    port     = 6000
-    protocol = "TCP"
+    port     = 21820
+    protocol = "UDP"
   }
 }
 
@@ -78,26 +78,32 @@ resource "scaleway_instance_server" "dev" {
   cloud_init = templatefile("cloud-init.yaml.tftpl", {
     init_script = file("init.sh")
     compose_file = templatefile("compose.yaml.tftpl", {
-      crowdsec_api_key = var.crowdsec_api_key
+      scaleway_access_key           = var.scaleway_access_key
+      scaleway_secret_key           = var.scaleway_secret_key
+      pangolin_pg_user              = var.pangolin_pg_user
+      pangolin_pg_password          = var.pangolin_pg_password
+      crowdsec_bouncer_key          = var.crowdsec_bouncer_key
+      crowdsec_firewall_bouncer_key = var.crowdsec_firewall_bouncer_key
     })
-    dockerfile_caddy = file("Dockerfile.caddy")
-    acquis_yaml      = file("crowdsec/acquis.yaml")
-    caddyfile = templatefile("Caddyfile.tftpl", {
-      domain_name                   = var.domain_name
-      crowdsec_api_key              = var.crowdsec_api_key
-      acme_email                    = var.acme_email
-      basic_auth_user               = var.basic_auth_user
-      basic_auth_hash               = var.basic_auth_hash
-      subdomains_with_basic_auth    = var.subdomains_with_basic_auth
-      subdomains_without_basic_auth = var.subdomains_without_basic_auth
+    pangolin_config = templatefile("config.yml.tftpl", {
+      domain_name          = var.domain_name
+      acme_email           = var.acme_email
+      pangolin_secret      = var.pangolin_secret
+      pangolin_pg_user     = var.pangolin_pg_user
+      pangolin_pg_password = var.pangolin_pg_password
     })
-    domain_name            = var.domain_name
-    username               = var.username
-    password_hash          = var.password_hash
-    auth_token             = var.auth_token
-    frp_dashboard_password = var.frp_dashboard_password
-    crowdsec_api_key       = var.crowdsec_api_key
-    ssh_public_keys        = var.ssh_public_keys
+    traefik_static_config = templatefile("traefik_config.yml.tftpl", {
+      acme_email = var.acme_email
+    })
+    traefik_dynamic_config = templatefile("dynamic_config.yml.tftpl", {
+      domain_name          = var.domain_name
+      crowdsec_bouncer_key = var.crowdsec_bouncer_key
+    })
+    domain_name                   = var.domain_name
+    username                      = var.username
+    password_hash                 = var.password_hash
+    ssh_public_keys               = var.ssh_public_keys
+    crowdsec_firewall_bouncer_key = var.crowdsec_firewall_bouncer_key
   })
 
   tags = var.tags

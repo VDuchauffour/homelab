@@ -62,49 +62,49 @@ variable "ssh_public_keys" {
   type        = list(string)
 }
 
-variable "auth_token" {
-  description = "FRP authentication token"
-  type        = string
-  sensitive   = true
-}
-
-variable "frp_dashboard_password" {
-  description = "FRP dashboard password"
-  type        = string
-  sensitive   = true
-}
-
-variable "crowdsec_api_key" {
-  description = "CrowdSec bouncer API key"
-  type        = string
-  sensitive   = true
-}
-
 variable "acme_email" {
   description = "Email for ACME certificate registration"
   type        = string
 }
 
-variable "basic_auth_hash" {
-  description = "Bcrypt hash for basic auth (generate with: caddy hash-password)"
+variable "pangolin_secret" {
+  description = "Secret key for Pangolin server encryption (min 32 chars, generate with: openssl rand -base64 48)"
   type        = string
   sensitive   = true
 }
 
-variable "basic_auth_user" {
-  description = "Username for basic auth"
+variable "pangolin_pg_user" {
+  description = "PostgreSQL username for Pangolin"
   type        = string
-  default     = "admin"
+  default     = "pangolin"
 }
 
-variable "subdomains_with_basic_auth" {
-  description = "List of subdomains that require basic auth"
-  type        = list(string)
-  default     = []
+variable "pangolin_pg_password" {
+  description = "PostgreSQL password for Pangolin (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
 }
 
-variable "subdomains_without_basic_auth" {
-  description = "List of subdomains that do NOT require basic auth (have their own auth)"
-  type        = list(string)
-  default     = []
+variable "scaleway_access_key" {
+  description = "Scaleway API access key for DNS challenge (from ~/.config/scw/config.yaml)"
+  type        = string
+  sensitive   = true
+}
+
+variable "scaleway_secret_key" {
+  description = "Scaleway API secret key for DNS challenge (from ~/.config/scw/config.yaml)"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_bouncer_key" {
+  description = "API key for the CrowdSec Traefik bouncer plugin (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_firewall_bouncer_key" {
+  description = "API key for the CrowdSec host firewall bouncer (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
 }

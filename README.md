@@ -5,10 +5,10 @@ All the configuration and manifests for running my homelab on Kubernetes.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Caddy + CrowdSec + FRP) → Homelab K8s Cluster (Traefik Ingress)
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik + CrowdSec) → Homelab K8s Cluster (Traefik Ingress)
 ```
 
-Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using FRP. Everything else stays on the local network, secured with mkcert-issued TLS certificates.
+Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using [Pangolin](https://pangolin.net/) with WireGuard (Gerbil). Everything else stays on the local network, secured with mkcert-issued TLS certificates.
 
 ## Key Technologies
 
@@ -23,7 +23,8 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | GPU | Intel Device Plugins (iGPU/QSV) |
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
-| External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
+| External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
+| Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -92,6 +93,8 @@ direnv allow
 | `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME` |
 | `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |
 | `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
+| `PANGOLIN_PROXY_IP` | Public IP of the Scaleway proxy instance (for CoreDNS split-horizon) | `163.172.x.x` |
+| `TRAEFIK_CLUSTER_IP` | ClusterIP of the Traefik service (for CoreDNS split-horizon) | `10.43.x.x` |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
@@ -183,6 +186,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server | In-cluster NFS server for shared media | Kustomize |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | node-feature-discovery | Hardware feature discovery | Helmfile |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="32"> | openebs | Container-native storage solution | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pangolin.png" width="32"> | pangolin-newt | Newt tunnel client for external access via Pangolin | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="32"> | passbolt | Team password manager | Helmfile |
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to MinIO) | Helmfile |
 
@@ -287,7 +291,7 @@ ingress:
     cert-manager.io/cluster-issuer: mkcert-ca
 ```
 
-Public-facing services get their TLS from Caddy (Let's Encrypt) on the Scaleway proxy — see [External Access](#external-access).
+Public-facing services get their TLS from Traefik (Let's Encrypt) on the Scaleway proxy via Pangolin — see [External Access](#external-access).
 
 ### GPU
 
@@ -311,41 +315,66 @@ The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community
 
 ## External Access
 
-The homelab is exposed to the Internet through a reverse proxy hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance.
+The homelab is exposed to the Internet through [Pangolin](https://pangolin.net/) hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance. Exposed resources are managed declaratively via a [Pangolin blueprint](https://docs.pangolin.net/manage/blueprints).
 
 ### Architecture
 
 ```
-Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
-                                 ↑
-                            frps:7000 ← homelab frpc clients
+Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard) → Newt (in-cluster) → K8s services
 ```
 
 ### Components
 
-- **Caddy** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination for all public-facing services.
-- **CrowdSec** — Collaborative security with IP reputation and behavior analysis.
-- **FRP server** (frps) — Receives tunneled connections from homelab services. The FRP dashboard is accessible at `https://frp.<domain>`.
+- **Pangolin** — Tunnel management platform with a web dashboard for configuring exposed services.
+- **Gerbil** — WireGuard-based tunnel controller. Manages encrypted tunnels between the proxy and homelab.
+- **Traefik** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination and routing.
+- **CrowdSec** — Collaborative behavior detection engine with WAF (AppSec), Traefik bouncer plugin, and host firewall bouncer for SSH protection.
+- **Newt** — Tunnel client running in-cluster (`kubernetes/infra/pangolin-newt/`). Connects to Gerbil and routes traffic to K8s services.
 
-You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
+### Blueprint (Declarative Resource Config)
 
-Generate the Caddy basic auth password hash with:
+All externally-accessible services are defined in a blueprint file (`kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`). The blueprint is a ConfigMap that Newt reads on startup, declaratively configuring domains, auth settings, and healthchecks.
+
+- **Public (no auth)**: jellyfin, jellyseerr, immich
+- **Admin-only (SSO whitelist)**: all other apps and infra tools
+
+To add a new externally-accessible service, add a resource block to the blueprint and redeploy:
 
 ```shell
-docker run --rm caddy:2-alpine caddy hash-password --plaintext 'your-password'
+# Deploy blueprint + Newt together
+cd kubernetes/infra/pangolin-newt
+helmfile apply
+
+# Or update the blueprint only
+vals eval -f manifests/blueprint.yaml | kubectl apply -f -
+kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 ```
 
-Then set `basic_auth_user`, `basic_auth_hash`, `subdomains_with_basic_auth` and `subdomains_without_basic_auth` in your `terraform.tfvars`.
+> **Note:** `sso-roles` cannot include "Admin" (reserved by Pangolin). Use `whitelist-users` with email addresses instead. The blueprint YAML lives inside a ConfigMap literal block — indentation errors are silently ignored, so always validate rendered output with `vals eval`.
 
-To use docker without `sudo` run login as user and run `newgrp docker`.
+### CoreDNS (Split-Horizon DNS)
 
-### Deployment
+Custom CoreDNS configuration (`kubernetes/cluster/coredns/coredns-custom.yaml`) implements split-horizon DNS so that in-cluster traffic to `*.<public-domain>` resolves to the internal Traefik ClusterIP instead of hairpinning through the Internet.
+
+**Exception:** `pangolin.<public-domain>` resolves to the Scaleway proxy IP so the Newt tunnel client can reach Pangolin directly (otherwise it would get Traefik's IP via the wildcard rule and fail TLS handshake).
+
+```shell
+vals eval -f kubernetes/cluster/coredns/coredns-custom.yaml | kubectl apply -f -
+kubectl rollout restart deployment coredns -n kube-system
+```
+
+Requires environment variables: `PANGOLIN_PROXY_IP` and `TRAEFIK_CLUSTER_IP` (see [Environment Variables](#environment-variables)).
+
+### Scaleway Proxy (Terraform)
+
+You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
 
 ```shell
 cd ./infra/modules/scaleway-proxy
 
 cp ./terraform.tfvars.example ./terraform.tfvars
 # edit the file with the relevant values
+# generate pangolin_secret with: openssl rand -base64 48
 
 terraform init
 terraform plan
@@ -355,8 +384,31 @@ terraform apply
 Once the instance is ready, run:
 
 ```shell
-cd "$HOME_DIR/proxy"
-docker compose up -d --build
+cd "$HOME_DIR/pangolin"
+docker compose up -d
+```
+
+Then navigate to `https://pangolin.<domain>/auth/initial-setup` to complete the initial setup. The setup token is printed in the Pangolin container logs (`docker compose logs pangolin`).
+
+After Terraform apply, also deploy the CoreDNS config (see above) and the Newt blueprint to complete the external access setup.
+
+### CrowdSec (WAF + Host Protection)
+
+The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer security, deployed automatically via Terraform/cloud-init:
+
+- **Traefik bouncer plugin** — Inspects all incoming HTTP/HTTPS requests via the `crowdsec-bouncer-traefik-plugin`. Banned IPs get a ban page. AppSec (virtual patching) is enabled for WAF-level protection.
+- **Syslog monitoring** — CrowdSec reads `/var/log/auth.log` and `/var/log/syslog` to detect SSH brute-force and other host-level attacks.
+- **Host firewall bouncer** — `crowdsec-firewall-bouncer-iptables` runs on the host and adds iptables rules to DROP banned IPs at the network level (covers SSH and any non-HTTP traffic).
+
+Bouncer API keys are pre-registered via `BOUNCER_KEY_*` environment variables in the CrowdSec container, so no manual key generation is needed after deploy.
+
+Useful commands (SSH into the proxy):
+
+```shell
+docker exec crowdsec cscli metrics                              # View bouncer stats
+docker exec crowdsec cscli decisions list                       # List active bans
+docker exec crowdsec cscli decisions add --ip <IP> -d 1m --type ban  # Manually ban an IP (1 min)
+systemctl status crowdsec-firewall-bouncer                      # Host bouncer status
 ```
 
 ### Destroy
@@ -365,6 +417,8 @@ docker compose up -d --build
 cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
+
+> **Note:** Scaleway allows duplicate DNS records. After `terraform destroy` and a fresh `terraform apply`, check for stale A records (apex `@` and wildcard `*`) pointing to the old instance IP. Duplicates will cause ACME certificate issuance to fail intermittently. Remove them manually from the Scaleway console.
 
 ## Utility Scripts
 
@@ -398,4 +452,3 @@ openssl rand -base64 32
 ## Acknowledgments
 
 - Some charts are inspired by [rtomik's helm-charts repository](https://github.com/rtomik/helm-charts)
-- The FRP server setup is inspired by [jpfranca-br's repository](https://github.com/jpfranca-br/frps-setup)

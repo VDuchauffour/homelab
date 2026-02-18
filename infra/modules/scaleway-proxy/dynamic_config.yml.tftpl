@@ -1,0 +1,98 @@
+http:
+  middlewares:
+    badger:
+      plugin:
+        badger:
+          disableForwardAuth: true
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+    crowdsec:
+      plugin:
+        crowdsec:
+          enabled: true
+          logLevel: INFO
+          updateIntervalSeconds: 15
+          updateMaxFailure: 0
+          defaultDecisionSeconds: 15
+          httpTimeoutSeconds: 10
+          crowdsecMode: live
+          crowdsecAppsecEnabled: true
+          crowdsecAppsecHost: crowdsec:7422
+          crowdsecAppsecFailureBlock: true
+          crowdsecAppsecUnreachableBlock: true
+          crowdsecAppsecBodyLimit: 10485760
+          crowdsecLapiKey: "${crowdsec_bouncer_key}"
+          crowdsecLapiHost: crowdsec:8080
+          crowdsecLapiScheme: http
+          banHTMLFilePath: /etc/traefik/ban.html
+          forwardedHeadersTrustedIPs:
+            - "0.0.0.0/0"
+          clientTrustedIPs:
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+            - "192.168.0.0/16"
+
+  routers:
+    main-app-router-redirect:
+      rule: "Host(`pangolin.${domain_name}`)"
+      service: next-service
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+        - badger
+
+    next-router:
+      rule: "Host(`pangolin.${domain_name}`) && !PathPrefix(`/api/v1`)"
+      service: next-service
+      entryPoints:
+        - websecure
+      middlewares:
+        - badger
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "${domain_name}"
+            sans:
+              - "*.${domain_name}"
+
+    api-router:
+      rule: "Host(`pangolin.${domain_name}`) && PathPrefix(`/api/v1`)"
+      service: api-service
+      entryPoints:
+        - websecure
+      middlewares:
+        - badger
+      tls:
+        certResolver: letsencrypt
+
+    ws-router:
+      rule: "Host(`pangolin.${domain_name}`)"
+      service: api-service
+      entryPoints:
+        - websecure
+      middlewares:
+        - badger
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    next-service:
+      loadBalancer:
+        servers:
+          - url: "http://pangolin:3002"
+
+    api-service:
+      loadBalancer:
+        servers:
+          - url: "http://pangolin:3000"
+
+tcp:
+  serversTransports:
+    pp-transport-v1:
+      proxyProtocol:
+        version: 1
+    pp-transport-v2:
+      proxyProtocol:
+        version: 2

@@ -1,64 +1,106 @@
 ---
+name: pangolin
+
 services:
+  pangolin:
+    image: docker.io/fosrl/pangolin:postgresql-1.15.4
+    container_name: pangolin
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./config:/app/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
+      interval: "10s"
+      timeout: "10s"
+      retries: 15
+
+  postgres:
+    image: docker.io/postgres:17
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${pangolin_pg_user}
+      - POSTGRES_PASSWORD=${pangolin_pg_password}
+      - POSTGRES_DB=pangolin
+    volumes:
+      - ./config/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${pangolin_pg_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gerbil:
+    image: docker.io/fosrl/gerbil:latest
+    container_name: gerbil
+    restart: unless-stopped
+    depends_on:
+      pangolin:
+        condition: service_healthy
+    command:
+      - --reachableAt=http://gerbil:3004
+      - --generateAndSaveKeyTo=/var/config/key
+      - --remoteConfig=http://pangolin:3001/api/v1/
+    volumes:
+      - ./config/:/var/config
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    ports:
+      - 51820:51820/udp
+      - 21820:21820/udp
+      - 443:443
+      - 80:80
+
   crowdsec:
     image: docker.io/crowdsecurity/crowdsec:latest
+    container_name: crowdsec
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
     environment:
-      - GID=1000
-      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
-      - BOUNCER_KEY_CADDY=${crowdsec_api_key}
+      GID: "1000"
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/linux"
+      PARSERS: "crowdsecurity/whitelists"
+      BOUNCER_KEY_traefik: "${crowdsec_bouncer_key}"
+      BOUNCER_KEY_firewall: "${crowdsec_firewall_bouncer_key}"
+    healthcheck:
+      test: ["CMD", "cscli", "lapi", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     volumes:
-      - crowdsec-db:/var/lib/crowdsec/data/
-      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-      - caddy-logs:/var/log/caddy:ro
-    networks:
-      - crowdsec
-
-  frps:
-    image: snowdreamtech/frps:0.61
-    restart: unless-stopped
+      - ./config/crowdsec:/etc/crowdsec
+      - ./config/crowdsec/db:/var/lib/crowdsec/data
+      - ./config/traefik/logs:/var/log/traefik:ro
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
     ports:
-      - 6000:6000
-      - 7000:7000
-    volumes:
-      - ./frps.toml:/etc/frp/frps.toml:ro
-    command:
-      - -c
-      - /etc/frp/frps.toml
-    networks:
-      - crowdsec
+      - "127.0.0.1:8080:8080"
 
-  caddy:
-    build:
-      context: .
-      dockerfile: Dockerfile.caddy
-      target: caddy
+  traefik:
+    image: docker.io/traefik:v3.6
+    container_name: traefik
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-logs:/var/log/caddy
-      - caddy-data:/data
-      - caddy-config:/config
-    networks:
-      - crowdsec
+    network_mode: service:gerbil
     depends_on:
-      - frps
-      - crowdsec
-
-volumes:
-  caddy-data:
-  caddy-config:
-  caddy-logs:
-  crowdsec-db:
+      pangolin:
+        condition: service_healthy
+      crowdsec:
+        condition: service_healthy
+    command:
+      - --configFile=/etc/traefik/traefik_config.yml
+    environment:
+      - SCW_ACCESS_KEY=${scaleway_access_key}
+      - SCW_SECRET_KEY=${scaleway_secret_key}
+    volumes:
+      - ./config/traefik:/etc/traefik:ro
+      - ./config/letsencrypt:/letsencrypt
+      - ./config/traefik/logs:/var/log/traefik
 
 networks:
-  crowdsec:
+  default:
     driver: bridge
+    name: pangolin

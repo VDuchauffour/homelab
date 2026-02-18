@@ -1,0 +1,87 @@
+---
+newtInstances:
+  - name: main-tunnel
+    enabled: true
+    auth:
+      existingSecretName: newt-credentials
+    extraEnv:
+      BLUEPRINT_FILE: /etc/newt/blueprint.yaml
+    extraVolumes:
+      - name: blueprint
+        configMap:
+          name: newt-blueprint
+    extraVolumeMounts:
+      - name: blueprint
+        mountPath: /etc/newt/blueprint.yaml
+        subPath: blueprint.yaml
+        readOnly: true
+
+global:
+  image:
+    registry: docker.io
+    repository: fosrl/newt
+    tag: 1.9.0
+    imagePullPolicy: IfNotPresent
+
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 256Mi
+
+  tests:
+    enabled: false
+    image:
+      repository: bitnami/kubectl
+      tag: 1.28.15
+      pullPolicy: IfNotPresent
+
+  metrics:
+    enabled: false
+    port: 9090
+    path: /metrics
+    annotations: {}
+    portName: metrics
+    targetPortName: ''
+    service:
+      enabled: false
+      type: ClusterIP
+      port: 9090
+      portName: metrics
+      annotations: {}
+    podMonitor:
+      enabled: false
+      apiVersion: monitoring.coreos.com/v1
+      namespace: ''
+      portName: metrics
+      scheme: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      honorLabels: true
+      labels: {}
+      annotations: {}
+      relabelings: []
+      metricRelabelings: []
+    serviceMonitor:
+      enabled: false
+      apiVersion: monitoring.coreos.com/v1
+      namespace: ''
+      labels: {}
+      interval: 30s
+      scrapeTimeout: 10s
+      jobLabel: ''
+      scheme: http
+      relabelings: []
+      metricRelabelings: []
+      targetLabels: []
+      sampleLimit: 0
+    prometheusRule:
+      enabled: false
+      apiVersion: monitoring.coreos.com/v1
+      namespace: ''
+      labels: {}
+      rules: []
