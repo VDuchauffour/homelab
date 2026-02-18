@@ -461,6 +461,33 @@ def test_resolve_port_no_ports(discovery):
     assert result is None
 
 
+def test_discover_monitors_skips_hardcoded_deployments(discovery):
+    probe = create_mock_probe(
+        http_get=create_mock_http_get("/", 8080), period_seconds=30
+    )
+    normal = create_mock_deployment(
+        name="immich-server",
+        namespace="immich",
+        containers=[create_mock_container("c", probe)],
+    )
+    skipped = create_mock_deployment(
+        name="immich-valkey",
+        namespace="immich",
+        containers=[create_mock_container("c", probe)],
+    )
+
+    discovery.apps_v1.list_deployment_for_all_namespaces.return_value.items = [
+        normal,
+        skipped,
+    ]
+    discovery.core_v1.list_namespaced_service.return_value.items = []
+
+    monitors = discovery.discover_monitors()
+
+    assert len(monitors) == 1
+    assert monitors[0].deployment == "immich-server"
+
+
 def test_discover_monitors_returns_all_without_filter(discovery):
     probe = create_mock_probe(
         http_get=create_mock_http_get("/", 8080), period_seconds=30
