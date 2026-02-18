@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "qbittorrent-exporter.fullname" . }}
+  labels:
+    {{- include "qbittorrent-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "qbittorrent-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "qbittorrent-exporter.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: QBITTORRENT_HOST
+              value: {{ .Values.qbittorrent.host | quote }}
+            - name: QBITTORRENT_PORT
+              value: {{ .Values.qbittorrent.port | quote }}
+            {{- if .Values.qbittorrent.username }}
+            - name: QBITTORRENT_USER
+              value: {{ .Values.qbittorrent.username | quote }}
+            {{- end }}
+            {{- if .Values.qbittorrent.password }}
+            - name: QBITTORRENT_PASS
+              value: {{ .Values.qbittorrent.password | quote }}
+            {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

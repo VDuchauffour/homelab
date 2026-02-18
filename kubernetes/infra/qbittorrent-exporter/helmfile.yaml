@@ -1,0 +1,8 @@
+---
+releases:
+  - name: qbittorrent-exporter
+    namespace: monitoring
+    createNamespace: false
+    chart: ./charts/qbittorrent-exporter
+    values:
+      - values.yaml

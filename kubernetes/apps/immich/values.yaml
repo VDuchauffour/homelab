@@ -16,7 +16,7 @@ controllers:
 
 immich:
   metrics:
-    enabled: false
+    enabled: true
   persistence:
     library:
       existingClaim: media-library

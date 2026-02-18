@@ -1,6 +1,8 @@
 ---
 mode: standalone
 
+deploymentUpdate:
+  type: Recreate
 existingSecret: minio-credentials
 
 persistence:
@@ -31,6 +33,10 @@ consoleIngress:
     - secretName: minio-console-tls
       hosts:
         - minio-console.ref+envsubst://$LOCAL_DOMAIN_NAME
+
+metrics:
+  serviceMonitor:
+    enabled: true
 
 ingress:
   enabled: false

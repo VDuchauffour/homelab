@@ -88,12 +88,20 @@ spec:
         superuser: false
         passwordSecret:
           name: memos-cnpg-credentials
+      - name: grafana
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: grafana-cnpg-credentials
   postgresql:
     shared_preload_libraries:
       - vchord.so
     parameters:
       shared_buffers: 256MB
       max_connections: '100'
+  monitoring:
+    enablePodMonitor: true
   resources:
     requests:
       memory: 512Mi

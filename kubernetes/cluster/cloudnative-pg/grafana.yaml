@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: grafana
+  password: ref+envsubst://$CLOUDNATIVE_PG_GRAFANA_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: grafana
+  namespace: cnpg-clusters
+spec:
+  name: grafana
+  owner: grafana
+  cluster:
+    name: cnpg-cluster0

@@ -426,6 +426,25 @@ data:
               path: /
               interval: 30
               timeout: 5
+      grafana:
+        name: Grafana
+        protocol: http
+        full-domain: grafana.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: monitoring-grafana.monitoring.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: monitoring-grafana.monitoring.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /api/health
+              interval: 30
+              timeout: 5
       # --- Admin-only infra ---
       passbolt:
         name: Passbolt
