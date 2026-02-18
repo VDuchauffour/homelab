@@ -92,6 +92,8 @@ direnv allow
 | `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME` |
 | `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |
 | `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
+| `PANGOLIN_PROXY_IP` | Public IP of the Scaleway proxy instance (for CoreDNS split-horizon) | `163.172.x.x` |
+| `TRAEFIK_CLUSTER_IP` | ClusterIP of the Traefik service (for CoreDNS split-horizon) | `10.43.x.x` |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
@@ -312,14 +314,12 @@ The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community
 
 ## External Access
 
-The homelab is exposed to the Internet through [Pangolin](https://pangolin.net/) hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance.
+The homelab is exposed to the Internet through [Pangolin](https://pangolin.net/) hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance. Exposed resources are managed declaratively via a [Pangolin blueprint](https://docs.pangolin.net/manage/blueprints).
 
 ### Architecture
 
 ```
-Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard)
-                                              ↑
-                                         Newt clients ← homelab services
+Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard) → Newt (in-cluster) → K8s services
 ```
 
 ### Components
@@ -327,10 +327,45 @@ Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard)
 - **Pangolin** — Tunnel management platform with a web dashboard for configuring exposed services.
 - **Gerbil** — WireGuard-based tunnel controller. Manages encrypted tunnels between the proxy and homelab.
 - **Traefik** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination and routing.
+- **Newt** — Tunnel client running in-cluster (`kubernetes/infra/pangolin-newt/`). Connects to Gerbil and routes traffic to K8s services.
+
+### Blueprint (Declarative Resource Config)
+
+All externally-accessible services are defined in a blueprint file (`kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`). The blueprint is a ConfigMap that Newt reads on startup, declaratively configuring domains, auth settings, and healthchecks.
+
+- **Public (no auth)**: jellyfin, jellyseerr, immich
+- **Admin-only (SSO whitelist)**: all other apps and infra tools
+
+To add a new externally-accessible service, add a resource block to the blueprint and redeploy:
+
+```shell
+# Deploy blueprint + Newt together
+cd kubernetes/infra/pangolin-newt
+helmfile apply
+
+# Or update the blueprint only
+vals eval -f manifests/blueprint.yaml | kubectl apply -f -
+kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
+```
+
+> **Note:** `sso-roles` cannot include "Admin" (reserved by Pangolin). Use `whitelist-users` with email addresses instead. The blueprint YAML lives inside a ConfigMap literal block — indentation errors are silently ignored, so always validate rendered output with `vals eval`.
+
+### CoreDNS (Split-Horizon DNS)
+
+Custom CoreDNS configuration (`kubernetes/cluster/coredns/coredns-custom.yaml`) implements split-horizon DNS so that in-cluster traffic to `*.<public-domain>` resolves to the internal Traefik ClusterIP instead of hairpinning through the Internet.
+
+**Exception:** `pangolin.<public-domain>` resolves to the Scaleway proxy IP so the Newt tunnel client can reach Pangolin directly (otherwise it would get Traefik's IP via the wildcard rule and fail TLS handshake).
+
+```shell
+vals eval -f kubernetes/cluster/coredns/coredns-custom.yaml | kubectl apply -f -
+kubectl rollout restart deployment coredns -n kube-system
+```
+
+Requires environment variables: `PANGOLIN_PROXY_IP` and `TRAEFIK_CLUSTER_IP` (see [Environment Variables](#environment-variables)).
+
+### Scaleway Proxy (Terraform)
 
 You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
-
-### Deployment
 
 ```shell
 cd ./infra/modules/scaleway-proxy
@@ -352,6 +387,8 @@ docker compose up -d
 ```
 
 Then navigate to `https://pangolin.<domain>/auth/initial-setup` to complete the initial setup. The setup token is printed in the Pangolin container logs (`docker compose logs pangolin`).
+
+After Terraform apply, also deploy the CoreDNS config (see above) and the Newt blueprint to complete the external access setup.
 
 ### Destroy
 

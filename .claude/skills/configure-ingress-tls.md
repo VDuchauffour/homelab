@@ -30,13 +30,16 @@ ingress:
       secretName: <app-name>-mkcert-tls
 ```
 
-## Public Access (Let's Encrypt via FRP)
+## Public Access (via Pangolin Blueprint)
 
 For publicly accessible apps through the Scaleway proxy:
 
-1. App uses regular ingress (no TLS annotation needed - Caddy handles it)
-2. Configure FRP client in homelab to tunnel the service
-3. Add route in Scaleway proxy's Caddyfile
+1. App uses regular ingress with local TLS (same as above)
+2. Add a resource block to the Pangolin blueprint: `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`
+3. Set `full-domain`, target `hostname`/`port`, auth settings (`sso-enabled`, `whitelist-users`), and healthcheck
+4. Deploy: `vals eval -f manifests/blueprint.yaml | kubectl apply -f - && kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial`
+
+**Note:** TLS for public access is handled by Traefik (Let's Encrypt) on the Scaleway proxy — no cert-manager annotation needed for the public domain. The Newt tunnel forwards traffic to the K8s service ClusterIP directly.
 
 ## Recreate Local CA
 

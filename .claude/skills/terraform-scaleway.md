@@ -67,6 +67,14 @@ docker compose up -d
 
 Then complete the initial setup at `https://pangolin.<domain>/auth/initial-setup`.
 
+After the proxy is running, update the CoreDNS split-horizon config in the K8s cluster so in-cluster traffic resolves correctly:
+
+1. Set `PANGOLIN_PROXY_IP` in `.envrc` to the new instance IP (from `terraform output`)
+2. Set `TRAEFIK_CLUSTER_IP` to the Traefik service ClusterIP (`kubectl get svc traefik -n kube-system -o jsonpath='{.spec.clusterIP}'`)
+3. Apply CoreDNS config: `vals eval -f kubernetes/cluster/coredns/coredns-custom.yaml | kubectl apply -f -`
+4. Restart CoreDNS: `kubectl rollout restart deployment coredns -n kube-system`
+5. Deploy Newt + blueprint: `cd kubernetes/infra/pangolin-newt && helmfile apply`
+
 ### Destroy
 
 ```shell
