@@ -1,14 +1,44 @@
 ---
 releases:
-  - name: glance
+  - name: glance-public
     namespace: glance
     createNamespace: true
     chart: ./charts/glance
     values:
-      - values.yaml
-      - gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
-      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
-      - qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
-      - uptimeKumaUrl: http://uptime-kuma.monitoring.svc.cluster.local
-      - uptimeKumaStatusSlug: homelab
+      - values-common.yaml
+      - values-public.yaml
       - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME
+      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
+      - wardenApiKey: ref+envsubst://$WARDEN_API_KEY
+      - glance:
+          auth:
+            secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
+            users:
+              admin:
+                password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD
+
+  - name: glance-local
+    namespace: glance
+    chart: ./charts/glance
+    values:
+      - values-common.yaml
+      - values-local.yaml
+      - domainName: ref+envsubst://$LOCAL_DOMAIN_NAME
+      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
+      - wardenApiKey: ref+envsubst://$WARDEN_API_KEY
+      - glance:
+          auth:
+            secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
+            users:
+              admin:
+                password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD
+      - ingress:
+          hosts:
+            - host: dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
+              secretName: glance-local-mkcert-tls

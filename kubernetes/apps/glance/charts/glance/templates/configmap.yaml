@@ -22,31 +22,29 @@ data:
           password: {{ .Values.glance.auth.users.admin.password }}
 
     pages:
-    {{- range .Values.glance.pages }}
-    {{- $pageDomain := .domain }}
-    {{- if eq $pageDomain "PUBLIC_DOMAIN_NAME" }}
-    {{- $pageDomain = $.Values.domainName }}
-    {{- else if eq $pageDomain "LOCAL_DOMAIN" }}
-    {{- $pageDomain = $.Values.localDomain }}
-    {{- end }}
-      - name: {{ .name }}
+      - name: Home
         columns:
-          {{- if eq .name "Public" }}
+          {{- if .Values.glance.instanceBookmarkGroups }}
           - size: small
             widgets:
               - type: bookmarks
                 hide-header: true
                 groups:
-                {{- range $.Values.glance.publicOnlyBookmarkGroups }}
+                {{- range $.Values.glance.instanceBookmarkGroups }}
                   - title: {{ .title }}
                     links:
                     {{- range .links }}
                       - title: {{ .title }}
-                        url: https://{{ .subdomain }}.{{ $pageDomain }}
+                        {{- if .url }}
+                        url: {{ .url }}
+                        {{- else }}
+                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}
+                        {{- end }}
                         icon: {{ .icon }}
                         hide-arrow: true
                     {{- end }}
                 {{- end }}
+          {{- end }}
           - size: full
             widgets:
               - type: bookmarks
@@ -57,43 +55,18 @@ data:
                     links:
                     {{- range .links }}
                       - title: {{ .title }}
-                        url: https://{{ .subdomain }}.{{ $pageDomain }}
+                        {{- if .url }}
+                        url: {{ .url }}
+                        {{- else }}
+                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}
+                        {{- end }}
                         icon: {{ .icon }}
                         hide-arrow: true
                     {{- end }}
                 {{- end }}
-          {{- else if eq .name "Local" }}
-          - size: small
-            widgets:
-              - type: bookmarks
-                hide-header: true
-                groups:
-                {{- range $.Values.glance.localOnlyBookmarkGroups }}
-                  - title: {{ .title }}
-                    links:
-                    {{- range .links }}
-                      - title: {{ .title }}
-                        url: https://{{ .subdomain }}.{{ $pageDomain }}
-                        icon: {{ .icon }}
-                        hide-arrow: true
-                    {{- end }}
-                {{- end }}
-          - size: full
-            widgets:
-              - type: bookmarks
-                hide-header: true
-                groups:
-                {{- range $.Values.glance.commonBookmarkGroups }}
-                  - title: {{ .title }}
-                    links:
-                    {{- range .links }}
-                      - title: {{ .title }}
-                        url: https://{{ .subdomain }}.{{ $pageDomain }}
-                        icon: {{ .icon }}
-                        hide-arrow: true
-                    {{- end }}
-                {{- end }}
-          {{- else if eq .name "Stats" }}
+
+      - name: Stats
+        columns:
           - size: small
             widgets:
               - type: calendar
@@ -343,7 +316,9 @@ data:
                       <p class="size-sm">Check URL and authentication bypass settings.</p>
                     </div>
                   {{`{{ end }}`}}
-          {{- else if eq .name "Status" }}
+
+      - name: Status
+        columns:
           - size: full
             widgets:
               - type: custom-api
@@ -407,5 +382,3 @@ data:
                       <p class="size-h6">Failed to fetch data</p>
                     </div>
                   {{`{{ end }}`}}
-          {{- end }}
-    {{- end }}

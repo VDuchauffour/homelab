@@ -6,6 +6,13 @@ image:
   pullPolicy: IfNotPresent
   tag: latest
 
+domainName: ''
+gluetunUrl: ''
+gluetunApiKey: ''
+qbittorrentUrl: ''
+wardenUrl: ''
+wardenApiKey: ''
+
 service:
   type: ClusterIP
   port: 8080
@@ -32,3 +39,12 @@ affinity: {}
 
 env:
   TZ: Europe/Paris
+
+glance:
+  auth:
+    secretKey: ''
+    users:
+      admin:
+        password: ''
+  commonBookmarkGroups: []
+  instanceBookmarkGroups: []
