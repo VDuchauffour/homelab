@@ -61,9 +61,6 @@ glance:
         - title: Kan.sh
           subdomain: kan
           icon: https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/docs/favicon.png
-        - title: Stirling PDF
-          subdomain: stirling-pdf
-          icon: sh:stirling-pdf
         - title: Linkwarden
           subdomain: linkwarden
           icon: sh:linkwarden
@@ -73,6 +70,14 @@ glance:
         - title: Memos
           subdomain: memos
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
+    - title: Tools
+      links:
+        - title: BentoPDF
+          subdomain: bentopdf
+          icon: sh:bentopdf
+        - title: Stirling PDF
+          subdomain: stirling-pdf
+          icon: sh:stirling-pdf
     - title: Sharing
       links:
         - title: Filebrowser
