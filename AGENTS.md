@@ -228,6 +228,53 @@ kubectl get pv -o custom-columns='NAME:.metadata.name,RECLAIM:.spec.persistentVo
 kubectl patch pv <pv-name> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 ```
 
+## Dashboard (Glance)
+
+The homelab uses [Glance](https://github.com/glanceapp/glance) as a personal dashboard. It runs as **two instances** (public + local) from a single helmfile in `kubernetes/apps/glance/`.
+
+### Architecture
+
+- **glance-public**: Exposed via Pangolin (public domain), no local ingress
+- **glance-local**: Local network only, ingress with mkcert TLS on `dashboard.<local-domain>`
+- Both share `values-common.yaml` for bookmark groups, widgets, and API integrations
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `helmfile.yaml` | Two releases (glance-public, glance-local) with vals secrets |
+| `values-common.yaml` | Shared bookmarks, widgets (weather, calendar, qBittorrent, Warden) |
+| `values-local.yaml` | Local ingress config (mkcert TLS) |
+| `values-public.yaml` | Public instance config (ingress disabled — exposed via Pangolin) |
+| `charts/glance/` | Custom Helm chart (configmap template generates `glance.yml`) |
+
+### Bookmark Structure
+
+Bookmarks in `values-common.yaml` are organized into groups:
+
+- **`instanceBookmarkGroups`**: Instance-specific links (Proxy, Cluster, Monitoring) — shown in the left sidebar
+- **`commonBookmarkGroups`**: Shared app links (Productivity, Tools, Sharing, Media, Arr, AI) — shown in the main area
+
+Each link uses either `url` (full URL) or `subdomain` (auto-expanded to `https://<subdomain>.<domainName>`).
+
+### Adding a New App to the Dashboard
+
+1. Add a bookmark entry to the appropriate group in `kubernetes/apps/glance/values-common.yaml`:
+
+   ```yaml
+   - title: MyApp
+     subdomain: myapp
+     icon: di:myapp  # or sh:myapp, or a raw URL
+   ```
+
+2. Redeploy: `cd kubernetes/apps/glance && helmfile apply`
+
+### Icon Conventions
+
+- `di:<name>` — [Dashboard Icons](https://github.com/walkxcode/dashboard-icons) (preferred)
+- `sh:<name>` — [Selfh.st Icons](https://selfh.st/icons/)
+- Raw URL — GitHub raw links for icons not in the above sets
+
 ## External Access (Pangolin Blueprints)
 
 Services are exposed to the Internet through Pangolin on a Scaleway instance. The Newt tunnel client runs in-cluster and uses a **blueprint** to declaratively configure all exposed resources (domains, auth, healthchecks).
@@ -273,6 +320,15 @@ kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 2. Set `full-domain`, target `hostname`/`port`, auth settings, and healthcheck
 3. Apply with `vals eval -f manifests/blueprint.yaml | kubectl apply -f -`
 4. Restart Newt: `kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial`
+5. Add a bookmark to the Glance dashboard (see [Adding a New App to the Dashboard](#adding-a-new-app-to-the-dashboard))
+
+## Post-Deployment Checklist (New App or Infra Tool)
+
+After deploying a new app or infra tool, complete these additional steps:
+
+1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`cd kubernetes/apps/glance && helmfile apply`)
+2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
+3. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
 
 ## CoreDNS (Split-Horizon DNS)
 

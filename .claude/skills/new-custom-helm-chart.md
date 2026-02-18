@@ -96,6 +96,74 @@ kubernetes/apps/<app-name>/
          - values.yaml
    ```
 
+## Post-Deployment Checklist
+
+After deploying the new app, complete ALL of the following steps:
+
+### 1. Update Glance Dashboard
+
+Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group:
+
+- **`instanceBookmarkGroups`**: Infrastructure/cluster tools (Proxy, Cluster, Monitoring groups)
+- **`commonBookmarkGroups`**: User-facing apps (Productivity, Tools, Sharing, Media, Arr, AI groups)
+
+```yaml
+- title: MyApp
+  subdomain: myapp
+  icon: di:myapp  # or sh:myapp, or a raw URL
+```
+
+Icon conventions:
+
+- `di:<name>` — [Dashboard Icons](https://github.com/walkxcode/dashboard-icons) (preferred)
+- `sh:<name>` — [Selfh.st Icons](https://selfh.st/icons/)
+- Raw URL — GitHub raw links for icons not in the above sets
+
+Redeploy Glance:
+
+```shell
+cd kubernetes/apps/glance && helmfile apply
+```
+
+### 2. Update Pangolin Blueprint (if externally accessible)
+
+Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`:
+
+```yaml
+myapp:
+  name: MyApp
+  protocol: http
+  full-domain: myapp.ref+envsubst://$PUBLIC_DOMAIN_NAME
+  auth:
+    sso-enabled: true
+    whitelist-users:
+      - ref+envsubst://$EMAIL_ADDRESS
+  targets:
+    - hostname: myapp.myapp.svc.cluster.local
+      method: http
+      port: 8080
+      healthcheck:
+        hostname: myapp.myapp.svc.cluster.local
+        port: 8080
+        enabled: true
+        path: /
+        interval: 30
+        timeout: 5
+```
+
+For public apps (no auth), omit the `auth` block.
+
+Apply and restart Newt:
+
+```shell
+vals eval -f kubernetes/infra/pangolin-newt/manifests/blueprint.yaml | kubectl apply -f -
+kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
+```
+
+### 3. Update README
+
+Update `README.md` to include the app in the deployed components tables. Run `make check-readme` to verify.
+
 ## Reference
 
 See `kubernetes/apps/glance/` for a complete custom chart example.
