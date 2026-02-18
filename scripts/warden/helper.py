@@ -5,6 +5,14 @@ import structlog
 from kubernetes import client, config
 from pydantic import BaseModel, Field, HttpUrl
 
+# Deployments to skip during discovery (namespace, deployment name).
+# Use this for services that don't speak HTTP and cause false positive
+# alerts when health-checked (e.g. Valkey/Redis receiving HTTP probes).
+SKIPPED_DEPLOYMENTS: set[tuple[str, str]] = {
+    ("immich", "immich-valkey"),
+    ("monitoring", "monitoring-kube-prometheus-operator"),
+}
+
 structlog.configure(
     processors=[
         structlog.contextvars.merge_contextvars,
@@ -107,6 +115,9 @@ class KubernetesDiscovery:
             if namespace_filter and ns != namespace_filter:
                 continue
             if namespace_list and ns not in namespace_list:
+                continue
+            if (ns, name) in SKIPPED_DEPLOYMENTS:
+                self.log.debug("skipping_deployment", namespace=ns, deployment=name)
                 continue
 
             deployment_monitors = self._process_deployment(
