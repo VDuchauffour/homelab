@@ -11,16 +11,16 @@ Manage the Scaleway reverse proxy infrastructure.
 ## Architecture
 
 ```
-Internet -> Caddy (80/443) -> frps:8080 -> homelab services
-                                  ^
-                             frps:7000 <- homelab frpc clients
+Internet -> Traefik (80/443) -> Pangolin -> Gerbil (WireGuard)
+                                                ^
+                                           Newt clients <- homelab services
 ```
 
 Components:
 
-- **Caddy**: TLS termination, reverse proxy (auto HTTPS via Let's Encrypt)
-- **CrowdSec**: Collaborative security with IP reputation
-- **FRP Server (frps)**: Receives tunneled connections from homelab
+- **Pangolin**: Tunnel management platform with web dashboard
+- **Gerbil**: WireGuard-based tunnel controller
+- **Traefik**: Reverse proxy with automatic HTTPS via Let's Encrypt
 
 ## Steps
 
@@ -33,20 +33,16 @@ INSTANCE_NAME="proxy"
 DOMAIN_NAME="example.com"
 USERNAME="admin"
 PASSWORD_HASH=$(mkpasswd -m sha-512 'your-password')
-AUTH_TOKEN="your-frp-auth-token"
-FRP_DASHBOARD_PASSWORD="dashboard-password"
-CROWDSEC_API_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
 ACME_EMAIL="admin@example.com"
+PANGOLIN_SECRET=$(openssl rand -base64 48)
 
 terraform plan \
   -var "instance_name=$INSTANCE_NAME" \
   -var "domain_name=$DOMAIN_NAME" \
   -var "username=$USERNAME" \
   -var "password_hash=$PASSWORD_HASH" \
-  -var "auth_token=$AUTH_TOKEN" \
-  -var "frp_dashboard_password=$FRP_DASHBOARD_PASSWORD" \
-  -var "crowdsec_api_key=$CROWDSEC_API_KEY" \
-  -var "acme_email=$ACME_EMAIL"
+  -var "acme_email=$ACME_EMAIL" \
+  -var "pangolin_secret=$PANGOLIN_SECRET"
 ```
 
 ### Apply
@@ -61,13 +57,15 @@ terraform apply -auto-approve \
 
 ### Post-Apply
 
-SSH into the instance and start the proxy stack:
+SSH into the instance and start Pangolin:
 
 ```shell
 ssh <username>@<instance-ip>
-cd "$HOME_DIR/proxy"
-docker compose up -d --build
+cd "$HOME_DIR/pangolin"
+docker compose up -d
 ```
+
+Then complete the initial setup at `https://pangolin.<domain>/auth/initial-setup`.
 
 ### Destroy
 
@@ -83,5 +81,7 @@ terraform destroy -auto-approve \
 - `variables.tf`: Input variables
 - `outputs.tf`: Instance IP output
 - `cloud-init.yaml.tftpl`: Cloud-init configuration
-- `compose.yaml.tftpl`: Docker Compose for Caddy, CrowdSec, FRP
-- `Caddyfile.tftpl`: Caddy reverse proxy configuration
+- `compose.yaml.tftpl`: Docker Compose for Pangolin, Gerbil, Traefik
+- `config.yml.tftpl`: Pangolin configuration
+- `traefik_config.yml.tftpl`: Traefik static configuration
+- `dynamic_config.yml.tftpl`: Traefik dynamic configuration

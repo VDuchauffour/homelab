@@ -5,10 +5,10 @@ A Kubernetes-based homelab with cloud infrastructure for secure external access.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Caddy + CrowdSec + FRP) → Homelab K8s Cluster
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik) → Homelab K8s Cluster
 ```
 
-- **External Access**: Scaleway-hosted reverse proxy with FRP tunneling
+- **External Access**: Scaleway-hosted reverse proxy with Pangolin (WireGuard tunneling via Gerbil)
 - **Internal**: Kubernetes cluster with Traefik ingress and cert-manager
 
 ## Project Structure
@@ -22,7 +22,7 @@ homelab/
 │
 ├── infra/
 │   └── modules/
-│       └── scaleway-proxy/      # Terraform for reverse proxy (Caddy, FRP, CrowdSec)
+│       └── scaleway-proxy/      # Terraform for reverse proxy (Pangolin, Gerbil, Traefik)
 │
 └── README.md                    # Main documentation
 ```
@@ -58,7 +58,7 @@ app-name/
 | GPU | Intel Device Plugins (iGPU/QSV) |
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
-| External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
+| External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | IaC | Terraform |
 
 ## Deployment Patterns
@@ -80,7 +80,7 @@ terraform apply -var-file=terraform.tfvars
 ## TLS Configuration
 
 - **Local network**: mkcert CA via cert-manager ClusterIssuer
-- **Public access**: Let's Encrypt via Caddy (on Scaleway proxy)
+- **Public access**: Let's Encrypt via Traefik (on Scaleway proxy, managed by Pangolin)
 
 Add to ingress for local TLS:
 

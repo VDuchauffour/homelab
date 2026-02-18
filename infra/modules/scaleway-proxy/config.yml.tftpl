@@ -1,0 +1,32 @@
+gerbil:
+  start_port: 51820
+  base_endpoint: "pangolin.${domain_name}"
+
+app:
+  dashboard_url: "https://pangolin.${domain_name}"
+  log_level: "info"
+  telemetry:
+    anonymous_usage: false
+
+domains:
+  domain1:
+    base_domain: "${domain_name}"
+    cert_resolver: "letsencrypt"
+    prefer_wildcard_cert: true
+
+server:
+  secret: "${pangolin_secret}"
+  cors:
+    origins: ["https://pangolin.${domain_name}"]
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    allowed_headers: ["X-CSRF-Token", "Content-Type"]
+    credentials: false
+
+postgres:
+  connection_string: "postgresql://${pangolin_pg_user}:${pangolin_pg_password}@postgres:5432/pangolin"
+
+flags:
+  require_email_verification: false
+  disable_signup_without_invite: true
+  disable_user_create_org: false
+  allow_raw_resources: true

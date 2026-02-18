@@ -5,10 +5,10 @@ All the configuration and manifests for running my homelab on Kubernetes.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Caddy + CrowdSec + FRP) → Homelab K8s Cluster (Traefik Ingress)
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik) → Homelab K8s Cluster (Traefik Ingress)
 ```
 
-Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using FRP. Everything else stays on the local network, secured with mkcert-issued TLS certificates.
+Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using [Pangolin](https://pangolin.net/) with WireGuard (Gerbil). Everything else stays on the local network, secured with mkcert-issued TLS certificates.
 
 ## Key Technologies
 
@@ -23,7 +23,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | GPU | Intel Device Plugins (iGPU/QSV) |
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
-| External Proxy | Caddy + FRP + CrowdSec (Scaleway) |
+| External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -287,7 +287,7 @@ ingress:
     cert-manager.io/cluster-issuer: mkcert-ca
 ```
 
-Public-facing services get their TLS from Caddy (Let's Encrypt) on the Scaleway proxy — see [External Access](#external-access).
+Public-facing services get their TLS from Traefik (Let's Encrypt) on the Scaleway proxy via Pangolin — see [External Access](#external-access).
 
 ### GPU
 
@@ -311,33 +311,23 @@ The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community
 
 ## External Access
 
-The homelab is exposed to the Internet through a reverse proxy hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance.
+The homelab is exposed to the Internet through [Pangolin](https://pangolin.net/) hosted on a Scaleway instance. The infrastructure is provisioned with Terraform (`infra/modules/scaleway-proxy/`) and the services run in Docker on the instance.
 
 ### Architecture
 
 ```
-Internet → Caddy (80/443) → frps:8080 (services) or frps:7500 (dashboard)
-                                 ↑
-                            frps:7000 ← homelab frpc clients
+Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard)
+                                              ↑
+                                         Newt clients ← homelab services
 ```
 
 ### Components
 
-- **Caddy** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination for all public-facing services.
-- **CrowdSec** — Collaborative security with IP reputation and behavior analysis.
-- **FRP server** (frps) — Receives tunneled connections from homelab services. The FRP dashboard is accessible at `https://frp.<domain>`.
+- **Pangolin** — Tunnel management platform with a web dashboard for configuring exposed services.
+- **Gerbil** — WireGuard-based tunnel controller. Manages encrypted tunnels between the proxy and homelab.
+- **Traefik** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination and routing.
 
 You'll need a [Scaleway config file](https://cli.scaleway.com/config/).
-
-Generate the Caddy basic auth password hash with:
-
-```shell
-docker run --rm caddy:2-alpine caddy hash-password --plaintext 'your-password'
-```
-
-Then set `basic_auth_user`, `basic_auth_hash`, `subdomains_with_basic_auth` and `subdomains_without_basic_auth` in your `terraform.tfvars`.
-
-To use docker without `sudo` run login as user and run `newgrp docker`.
 
 ### Deployment
 
@@ -346,6 +336,7 @@ cd ./infra/modules/scaleway-proxy
 
 cp ./terraform.tfvars.example ./terraform.tfvars
 # edit the file with the relevant values
+# generate pangolin_secret with: openssl rand -base64 48
 
 terraform init
 terraform plan
@@ -355,9 +346,11 @@ terraform apply
 Once the instance is ready, run:
 
 ```shell
-cd "$HOME_DIR/proxy"
-docker compose up -d --build
+cd "$HOME_DIR/pangolin"
+docker compose up -d
 ```
+
+Then navigate to `https://pangolin.<domain>/auth/initial-setup` to complete the initial setup. The setup token is printed in the Pangolin container logs (`docker compose logs pangolin`).
 
 ### Destroy
 
@@ -365,6 +358,8 @@ docker compose up -d --build
 cd ./infra/modules/scaleway-proxy
 terraform destroy
 ```
+
+> **Note:** Scaleway allows duplicate DNS records. After `terraform destroy` and a fresh `terraform apply`, check for stale A records (apex `@` and wildcard `*`) pointing to the old instance IP. Duplicates will cause ACME certificate issuance to fail intermittently. Remove them manually from the Scaleway console.
 
 ## Utility Scripts
 
@@ -398,4 +393,3 @@ openssl rand -base64 32
 ## Acknowledgments
 
 - Some charts are inspired by [rtomik's helm-charts repository](https://github.com/rtomik/helm-charts)
-- The FRP server setup is inspired by [jpfranca-br's repository](https://github.com/jpfranca-br/frps-setup)
