@@ -51,13 +51,6 @@ resource "scaleway_instance_security_group" "proxy" {
     protocol = "UDP"
   }
 
-  # SSH tunnel (Pangolin TCP resource → homelab)
-  inbound_rule {
-    action   = "accept"
-    port     = 2222
-    protocol = "TCP"
-  }
-
   # WireGuard (Gerbil tunnel)
   inbound_rule {
     action   = "accept"

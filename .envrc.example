@@ -5,7 +5,6 @@ export PUBLIC_DOMAIN_NAME=
 export LOCAL_DOMAIN_NAME=home.arpa
 export TRAEFIK_CLUSTER_IP=
 export SINGLE_NODE_NAME=
-export SINGLE_NODE_IP=
 
 export PASSBOLT_BASE_URL=http://passbolt.home.arpa
 export PASSBOLT_GPG_KEY_FILE=
