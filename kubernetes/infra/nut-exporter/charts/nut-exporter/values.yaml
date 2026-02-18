@@ -1,0 +1,21 @@
+image:
+  repository: ghcr.io/druggeri/nut_exporter
+  tag: "3.2.3"
+  pullPolicy: IfNotPresent
+
+nut:
+  server: ""
+  port: 3493
+  username: ""
+  password: ""
+  varsEnable: ""
+
+service:
+  port: 9199
+
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
+
+resources: {}

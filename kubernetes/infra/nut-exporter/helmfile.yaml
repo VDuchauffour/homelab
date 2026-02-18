@@ -1,0 +1,8 @@
+---
+releases:
+  - name: nut-exporter
+    namespace: monitoring
+    createNamespace: false
+    chart: ./charts/nut-exporter
+    values:
+      - values.yaml
