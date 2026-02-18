@@ -53,6 +53,44 @@ data:
               path: /ping
               interval: 30
               timeout: 5
+      filebrowser:
+        name: FileBrowser
+        protocol: http
+        full-domain: filebrowser.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: filebrowser.filebrowser.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: filebrowser.filebrowser.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      privatebin:
+        name: PrivateBin
+        protocol: http
+        full-domain: privatebin.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: privatebin.privatebin.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: privatebin.privatebin.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       # --- Admin-only apps ---
       bazarr:
         name: Bazarr
@@ -320,23 +358,23 @@ data:
               path: /login
               interval: 30
               timeout: 5
-      privatebin:
-        name: PrivateBin
+      bentopdf:
+        name: BentoPDF
         protocol: http
-        full-domain: privatebin.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        full-domain: bentopdf.ref+envsubst://$PUBLIC_DOMAIN_NAME
         auth:
           sso-enabled: true
           whitelist-users:
             - ref+envsubst://$EMAIL_ADDRESS
         targets:
-          - hostname: privatebin.privatebin.svc.cluster.local
+          - hostname: bentopdf.bentopdf.svc.cluster.local
             method: http
-            port: 80
+            port: 8080
             healthcheck:
-              hostname: privatebin.privatebin.svc.cluster.local
-              port: 80
+              hostname: bentopdf.bentopdf.svc.cluster.local
+              port: 8080
               enabled: true
-              path: /
+              path: /healthz
               interval: 30
               timeout: 5
       stirling-pdf:
