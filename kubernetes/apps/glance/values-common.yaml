@@ -54,36 +54,6 @@ glance:
         collapseAfter: 10
 
   commonBookmarkGroups:
-    - title: Productivity
-      links:
-        - title: Kan.sh
-          subdomain: kan
-          icon: https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/docs/favicon.png
-        - title: Linkwarden
-          subdomain: linkwarden
-          icon: sh:linkwarden
-        - title: Linkding
-          subdomain: linkding
-          icon: sh:linkding
-        - title: Memos
-          subdomain: memos
-          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
-    - title: Tools
-      links:
-        - title: BentoPDF
-          subdomain: bentopdf
-          icon: sh:bentopdf
-        - title: Stirling PDF
-          subdomain: stirling-pdf
-          icon: sh:stirling-pdf
-    - title: Sharing
-      links:
-        - title: Filebrowser
-          subdomain: filebrowser
-          icon: di:filebrowser
-        - title: Privatebin
-          subdomain: privatebin
-          icon: di:privatebin
     - title: Media
       links:
         - title: Jellyfin
@@ -118,6 +88,36 @@ glance:
         - title: Tdarr
           subdomain: tdarr
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tdarr.png
+    - title: Productivity
+      links:
+        - title: Kan.sh
+          subdomain: kan
+          icon: https://raw.githubusercontent.com/kanbn/kan/refs/heads/main/apps/docs/favicon.png
+        - title: Linkwarden
+          subdomain: linkwarden
+          icon: sh:linkwarden
+        - title: Linkding
+          subdomain: linkding
+          icon: sh:linkding
+        - title: Memos
+          subdomain: memos
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
+    - title: Tools
+      links:
+        - title: BentoPDF
+          subdomain: bentopdf
+          icon: sh:bentopdf
+        - title: Stirling PDF
+          subdomain: stirling-pdf
+          icon: sh:stirling-pdf
+    - title: Sharing
+      links:
+        - title: Filebrowser
+          subdomain: filebrowser
+          icon: di:filebrowser
+        - title: Privatebin
+          subdomain: privatebin
+          icon: di:privatebin
     - title: AI
       links:
         - title: n8n
