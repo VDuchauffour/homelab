@@ -27,6 +27,11 @@ homelab/
 │   └── modules/
 │       └── scaleway-proxy/      # Terraform for reverse proxy (Pangolin, Gerbil, Traefik)
 │
+├── scripts/                     # Python utility scripts (uv, Python 3.12+)
+│   ├── pyproject.toml           # Shared project config, dependencies, CLI entry points
+│   ├── warden/                  # Kubernetes-to-Warden monitoring integration
+│   └── passbolt/                # Passbolt secret management (custom fields)
+│
 └── README.md                    # Main documentation
 ```
 
@@ -308,3 +313,47 @@ The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer se
 - Collections: `crowdsecurity/traefik`, `crowdsecurity/appsec-virtual-patching`, `crowdsecurity/appsec-generic-rules`, `crowdsecurity/linux`
 - Acquis configs: `config/crowdsec/acquis.d/{traefik,syslog,appsec}.yaml`
 - Ban page: `config/traefik/ban.html` (default from crowdsec-bouncer-traefik-plugin)
+
+## Utility Scripts (`scripts/`)
+
+Python utility scripts managed with **uv** (Python 3.12+). All packages live under `scripts/` with a shared `pyproject.toml`.
+
+### Packages
+
+- `warden/` — Kubernetes-to-Warden monitoring integration (discover, seed, compare, delete monitors)
+- `passbolt/` — Passbolt secret management (add custom fields to new or existing secrets via GPG-authenticated API)
+
+### Script Conventions
+
+New scripts **must** follow the established patterns:
+
+| Concern | Convention |
+|---------|-----------|
+| CLI | Typer (`typer.Typer()` + `@app.command()`) |
+| Models | Pydantic v2 (`BaseModel`, `Field`, frozen config) |
+| HTTP | httpx (sync `Client` or async `AsyncClient`) |
+| Logging | structlog (same `configure()` block as `warden/helper.py`) |
+| Testing | pytest + `unittest.mock` (MagicMock, patch) |
+| Config | Environment variables via `os.environ`, loaded in a `load_config_from_env()` function |
+
+### Package Structure
+
+```
+scripts/<package-name>/
+├── __init__.py          # Package metadata (__version__)
+├── helper.py            # Shared models, API clients, logging setup
+├── <command>.py          # CLI entry point (Typer app)
+└── tests/
+    ├── __init__.py
+    └── test_<module>.py
+```
+
+### Adding a New Script Package
+
+1. Create the package directory under `scripts/`
+2. Add CLI entry point to `pyproject.toml` under `[project.scripts]`
+3. Add the package to `[tool.hatch.build.targets.wheel].packages`
+4. Add test path to `[tool.pytest.ini_options].testpaths`
+5. Add to `[tool.coverage.run]` source and omit lists
+6. Add any new dependencies to `[project].dependencies`
+7. Run `uv sync` to install

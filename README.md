@@ -439,6 +439,16 @@ make warden-compare       # Compare K8s vs Warden
 
 See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
 
+### Passbolt Custom Field Tool
+
+The `passbolt/` package adds custom key-value fields to new or existing Passbolt secrets via the GPG-authenticated API. Requires `PASSBOLT_BASE_URL`, `PASSBOLT_GPG_KEY_FILE`, `PASSBOLT_GPG_PASSPHRASE`.
+
+```shell
+cd scripts
+uv run passbolt-add-field --name "MyApp" --password "s3cret" --field-name "api_key" --field-value "tok-123"
+uv run passbolt-add-field --resource-name "MyApp" --field-name "env" --field-value "production"
+```
+
 ## Useful Commands
 
 Generate a strong password:
