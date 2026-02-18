@@ -1,0 +1,36 @@
+---
+# Custom CoreDNS configuration for K3s.
+# Files are imported via the coredns-custom configmap:
+#   *.override  → imported into the main .:53 server block
+#   *.server    → imported as separate server blocks
+#
+# All *.<public-domain> subdomains resolve to the internal Traefik
+# service IP so that in-cluster traffic stays local.
+# pangolin.<public-domain> is the exception — it must resolve to the
+# Scaleway proxy so the Newt tunnel client can reach it.
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  pangolin.server: |
+    pangolin.ref+envsubst://$PUBLIC_DOMAIN_NAME:53 {
+      errors
+      cache 30
+      template IN A pangolin.ref+envsubst://$PUBLIC_DOMAIN_NAME {
+        answer "{{ .Name }} 60 IN A ref+envsubst://$PANGOLIN_PROXY_IP"
+      }
+    }
+  public-domain.server: |-
+    ref+envsubst://$PUBLIC_DOMAIN_NAME:53 {
+      errors
+      cache 30
+      template IN A {
+        match .*\.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        answer "{{ .Name }} 60 IN A ref+envsubst://$TRAEFIK_CLUSTER_IP"
+        fallthrough
+      }
+      forward . /etc/resolv.conf
+    }
