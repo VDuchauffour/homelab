@@ -383,6 +383,34 @@ def main(
 
     KubernetesConfig.load()
 
+    if namespace or namespace_list:
+        core_v1 = client.CoreV1Api()
+        try:
+            cluster_namespaces = core_v1.list_namespace()
+            deployed = {ns.metadata.name for ns in cluster_namespaces.items}
+
+            if namespace and namespace not in deployed:
+                log.error(
+                    "namespace_not_found",
+                    namespace=namespace,
+                    available=sorted(deployed),
+                )
+                raise typer.Exit(code=1)
+
+            if namespace_list and not apps_only:
+                invalid = set(namespace_list) - deployed
+                if invalid:
+                    log.error(
+                        "namespaces_not_found",
+                        invalid=sorted(invalid),
+                        available=sorted(deployed),
+                    )
+                    raise typer.Exit(code=1)
+        except typer.Exit:
+            raise
+        except Exception as e:
+            log.warning("failed_to_validate_namespaces", error=str(e))
+
     discovery = KubernetesDiscovery()
     monitors = discovery.discover_monitors(
         namespace, namespace_list, default_interval=interval or 30

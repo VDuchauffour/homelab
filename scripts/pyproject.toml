@@ -23,3 +23,27 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["warden"]
+
+[tool.pytest.ini_options]
+testpaths = ["warden/tests"]
+
+[tool.coverage.run]
+source = ["warden"]
+omit = [
+  "warden/seed_monitors.py",
+  "warden/delete_monitors.py",
+  "warden/compare.py",
+  "warden/tests/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[dependency-groups]
+dev = [
+  "pytest>=9.0.2",
+  "pytest-asyncio>=1.3.0",
+  "pytest-cov>=7.0.0",
+  "ruff>=0.15.1",
+]
