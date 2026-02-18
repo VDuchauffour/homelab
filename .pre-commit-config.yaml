@@ -63,6 +63,17 @@ repos:
         args:
           - --args=-json
           - --args=-no-color
+  # An extremely fast Python linter, written in Rust
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.14
+    hooks:
+      # Run the linter
+      - id: ruff
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+      # Run the formatter.
+      - id: ruff-format
   # Linter for cloud-init - tftpl can't be used directly
   - repo: local
     hooks:
@@ -78,3 +89,9 @@ repos:
         language: system
         pass_filenames: false
         files: ^(kubernetes/(apps|infra)/|README\.md)
+      - id: scripts-tests
+        name: Scripts tests
+        entry: bash -c 'cd scripts && uv run pytest --cov -q'
+        language: system
+        pass_filenames: false
+        files: ^scripts/
