@@ -317,7 +317,7 @@ data:
               hostname: kan.kan.svc.cluster.local
               port: 3000
               enabled: true
-              path: /
+              path: /login
               interval: 30
               timeout: 5
       privatebin:
@@ -411,12 +411,15 @@ data:
             port: 443
             healthcheck:
               hostname: passbolt.passbolt.svc.cluster.local
-              port: 443
+              port: 80
+              scheme: http
               enabled: true
               path: /healthcheck/status.json
               interval: 30
               timeout: 5
-              scheme: https
+              headers:
+                - name: Host
+                  value: passbolt.home.arpa
       pgadmin:
         name: pgAdmin
         protocol: http
@@ -547,6 +550,6 @@ data:
               hostname: zfdash.zfdash.svc.cluster.local
               port: 5001
               enabled: true
-              path: /
+              path: /login
               interval: 30
               timeout: 5
