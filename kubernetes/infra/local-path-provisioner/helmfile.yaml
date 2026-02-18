@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: local-path-provisioner
+    url: git+https://github.com/rancher/local-path-provisioner@deploy/chart?ref=v0.0.34
+
+releases:
+  - name: local-path-provisioner
+    namespace: local-path-provisioner
+    createNamespace: true
+    chart: local-path-provisioner/local-path-provisioner
+    version: 0.0.34
+    values:
+      - values.yaml

@@ -51,7 +51,7 @@ homelab/
 ### Prerequisites
 
 - A Kubernetes cluster
-- [Helm](https://helm.sh/) + [Helmfile](https://github.com/helmfile/helmfile)
+- [Helm](https://helm.sh/) + [Helmfile](https://github.com/helmfile/helmfile) + [helm-git](https://github.com/aslafy-z/helm-git) plugin
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [direnv](https://direnv.net/)
 - [vals](https://github.com/helmfile/vals)
@@ -183,6 +183,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | cloudnative-pg | PostgreSQL operator for K8s | Helmfile |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Intel_logo_2023.svg/1280px-Intel_logo_2023.svg.png" width="32"> | intel-device-plugins | GPU and device plugin for Intel hardware | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | kube-prometheus-stack | Monitoring and alerting stack | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | local-path-provisioner | Local hostpath storage provisioner | Helmfile |
 | <img src="https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true" width="32"> | minio | High-performance blob storage | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-csi-driver | NFS CSI driver for RWX volumes | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server | In-cluster NFS server for shared media | Kustomize |
@@ -211,7 +212,7 @@ All storage uses **Retain** reclaim policy to prevent accidental data loss. You 
 
 #### Local Path
 
-Rancher Local Path utilizes the local storage in each node. Installation instructions can be found [here](https://github.com/rancher/local-path-provisioner).
+Rancher Local Path utilizes the local storage in each node.
 
 #### ZFS-LocalPV (App Configs)
 
