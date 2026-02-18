@@ -255,7 +255,9 @@ async def async_main(
     KubernetesConfig.load()
 
     discovery = KubernetesDiscovery()
-    monitors = discovery.discover_monitors(namespace, namespace_list)
+    monitors = discovery.discover_monitors(
+        namespace, namespace_list, default_interval=interval or 30
+    )
 
     if not monitors:
         filter_desc = namespace or (
@@ -382,7 +384,9 @@ def main(
     KubernetesConfig.load()
 
     discovery = KubernetesDiscovery()
-    monitors = discovery.discover_monitors(namespace, namespace_list)
+    monitors = discovery.discover_monitors(
+        namespace, namespace_list, default_interval=interval or 30
+    )
 
     if not monitors:
         filter_desc = namespace or (

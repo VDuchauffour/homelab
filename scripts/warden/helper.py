@@ -95,6 +95,7 @@ class KubernetesDiscovery:
         self,
         namespace_filter: Optional[str] = None,
         namespace_list: Optional[list[str]] = None,
+        default_interval: int = 30,
     ) -> list[Monitor]:
         deployments = self.apps_v1.list_deployment_for_all_namespaces()
         monitors = []
@@ -108,7 +109,9 @@ class KubernetesDiscovery:
             if namespace_list and ns not in namespace_list:
                 continue
 
-            deployment_monitors = self._process_deployment(deploy, ns, name)
+            deployment_monitors = self._process_deployment(
+                deploy, ns, name, default_interval
+            )
             monitors.extend(deployment_monitors)
 
         filter_desc = namespace_filter or (
@@ -121,7 +124,9 @@ class KubernetesDiscovery:
         )
         return monitors
 
-    def _process_deployment(self, deploy, ns: str, name: str) -> list[Monitor]:
+    def _process_deployment(
+        self, deploy, ns: str, name: str, default_interval: int = 30
+    ) -> list[Monitor]:
         monitors = []
         containers_with_probes = []
 
@@ -132,6 +137,12 @@ class KubernetesDiscovery:
 
             if probe.http_get or probe.tcp_socket:
                 containers_with_probes.append(container)
+
+        if not containers_with_probes:
+            fallback = self._fallback_from_service(deploy, ns, name, default_interval)
+            if fallback:
+                monitors.append(fallback)
+            return monitors
 
         include_container_name = len(containers_with_probes) > 1
 
@@ -228,6 +239,48 @@ class KubernetesDiscovery:
                 if p.name == port_name and p.container_port == container_port:
                     return True
         return False
+
+    def _fallback_from_service(
+        self, deploy, ns: str, name: str, default_interval: int = 30
+    ) -> Optional[Monitor]:
+        labels = deploy.spec.template.metadata.labels or {}
+        if not labels:
+            return None
+
+        if ns not in self._services_cache:
+            self._services_cache[ns] = self.core_v1.list_namespaced_service(ns)
+
+        services = self._services_cache[ns]
+
+        for svc in services.items or []:
+            selector = svc.spec.selector or {}
+            if not selector or not all(labels.get(k) == v for k, v in selector.items()):
+                continue
+
+            ports = svc.spec.ports or []
+            if not ports:
+                continue
+
+            svc_name = svc.metadata.name
+            port = ports[0].port
+            url = HttpUrl(f"http://{svc_name}.{ns}.svc.cluster.local:{port}/")
+
+            self.log.debug(
+                "fallback_monitor_from_service",
+                namespace=ns,
+                deployment=name,
+                service=svc_name,
+                port=port,
+            )
+
+            return Monitor(
+                deployment=name,
+                namespace=ns,
+                url=url,
+                interval=default_interval,
+            )
+
+        return None
 
 
 class WardenClient:
