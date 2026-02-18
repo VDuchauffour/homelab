@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nut-exporter.fullname" . }}
+  labels:
+    {{- include "nut-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "nut-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "nut-exporter.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --nut.server={{ .Values.nut.server }}
+            - --nut.serverport={{ .Values.nut.port }}
+            {{- if .Values.nut.username }}
+            - --nut.username={{ .Values.nut.username }}
+            {{- end }}
+            {{- if .Values.nut.password }}
+            - --nut.password={{ .Values.nut.password }}
+            {{- end }}
+            {{- if .Values.nut.varsEnable }}
+            - --nut.vars_enable={{ .Values.nut.varsEnable }}
+            {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

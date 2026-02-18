@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nut-exporter
+description: Prometheus exporter for Network UPS Tools (NUT)
+type: application
+version: 0.1.0
+appVersion: "3.2.3"
