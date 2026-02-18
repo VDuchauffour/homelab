@@ -5,6 +5,7 @@ metadata:
   name: {{ include "nut-exporter.fullname" . }}
   labels:
     {{- include "nut-exporter.labels" . | nindent 4 }}
+    release: {{ .Values.serviceMonitor.release | default .Release.Name }}
 spec:
   selector:
     matchLabels:
@@ -13,5 +14,10 @@ spec:
     - port: metrics
       interval: {{ .Values.serviceMonitor.interval }}
       scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
-      path: /metrics
+      path: /ups_metrics
+      {{- if .Values.nut.upsName }}
+      params:
+        ups:
+          - {{ .Values.nut.upsName | quote }}
+      {{- end }}
 {{- end }}

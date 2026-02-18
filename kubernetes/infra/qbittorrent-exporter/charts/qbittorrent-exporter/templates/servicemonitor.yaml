@@ -5,6 +5,7 @@ metadata:
   name: {{ include "qbittorrent-exporter.fullname" . }}
   labels:
     {{- include "qbittorrent-exporter.labels" . | nindent 4 }}
+    release: {{ .Values.serviceMonitor.release | default .Release.Name }}
 spec:
   selector:
     matchLabels:
