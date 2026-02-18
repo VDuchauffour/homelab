@@ -40,7 +40,7 @@ global:
       pullPolicy: IfNotPresent
 
   metrics:
-    enabled: false
+    enabled: true
     port: 9090
     path: /metrics
     annotations: {}
@@ -53,7 +53,7 @@ global:
       portName: metrics
       annotations: {}
     podMonitor:
-      enabled: false
+      enabled: true
       apiVersion: monitoring.coreos.com/v1
       namespace: ''
       portName: metrics

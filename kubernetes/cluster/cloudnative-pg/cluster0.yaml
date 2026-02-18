@@ -100,6 +100,8 @@ spec:
     parameters:
       shared_buffers: 256MB
       max_connections: '100'
+  monitoring:
+    enablePodMonitor: true
   resources:
     requests:
       memory: 512Mi

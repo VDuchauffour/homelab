@@ -11,4 +11,6 @@ releases:
     values:
       - installCRDs: true
         prometheus:
-          enabled: false
+          enabled: true
+          servicemonitor:
+            enabled: true
