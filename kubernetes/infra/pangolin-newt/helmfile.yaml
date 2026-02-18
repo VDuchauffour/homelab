@@ -18,7 +18,8 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - vals eval -f manifests/secret.yaml | kubectl apply -f - && vals eval -f manifests/blueprint.yaml
+          - kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f - && vals
+            eval -f manifests/secret.yaml | kubectl apply -f - && vals eval -f manifests/blueprint.yaml
             | kubectl apply -f -
       - events:
           - postuninstall
