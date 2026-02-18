@@ -123,4 +123,3 @@ runcmd:
   - /home/${username}/init.sh ${username}
   - systemctl enable --now docker
   - docker compose -f /home/${username}/pangolin/compose.yaml up -d
-  - systemctl enable --now crowdsec-firewall-bouncer
