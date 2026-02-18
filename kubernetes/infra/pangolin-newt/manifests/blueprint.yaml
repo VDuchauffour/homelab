@@ -1,0 +1,552 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: newt-blueprint
+  namespace: fossorial
+data:
+  blueprint.yaml: |-
+    public-resources:
+      # --- Public (no auth) ---
+      jellyfin:
+        name: Jellyfin
+        protocol: http
+        full-domain: jellyfin.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: jellyfin.media-center.svc.cluster.local
+            method: http
+            port: 8096
+            healthcheck:
+              hostname: jellyfin.media-center.svc.cluster.local
+              port: 8096
+              enabled: true
+              path: /health
+              interval: 30
+              timeout: 5
+      jellyseerr:
+        name: Jellyseerr
+        protocol: http
+        full-domain: jellyseerr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: jellyseerr.media-center.svc.cluster.local
+            method: http
+            port: 5055
+            healthcheck:
+              hostname: jellyseerr.media-center.svc.cluster.local
+              port: 5055
+              enabled: true
+              path: /api/v1/status
+              interval: 30
+              timeout: 5
+      immich:
+        name: Immich
+        protocol: http
+        full-domain: immich.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: immich-server.immich.svc.cluster.local
+            method: http
+            port: 2283
+            healthcheck:
+              hostname: immich-server.immich.svc.cluster.local
+              port: 2283
+              enabled: true
+              path: /ping
+              interval: 30
+              timeout: 5
+      # --- Admin-only apps ---
+      bazarr:
+        name: Bazarr
+        protocol: http
+        full-domain: bazarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: bazarr.arr.svc.cluster.local
+            method: http
+            port: 6767
+            healthcheck:
+              hostname: bazarr.arr.svc.cluster.local
+              port: 6767
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      sonarr:
+        name: Sonarr
+        protocol: http
+        full-domain: sonarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: sonarr.arr.svc.cluster.local
+            method: http
+            port: 8989
+            healthcheck:
+              hostname: sonarr.arr.svc.cluster.local
+              port: 8989
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      radarr:
+        name: Radarr
+        protocol: http
+        full-domain: radarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: radarr.arr.svc.cluster.local
+            method: http
+            port: 7878
+            healthcheck:
+              hostname: radarr.arr.svc.cluster.local
+              port: 7878
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      lidarr:
+        name: Lidarr
+        protocol: http
+        full-domain: lidarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: lidarr.arr.svc.cluster.local
+            method: http
+            port: 8686
+            healthcheck:
+              hostname: lidarr.arr.svc.cluster.local
+              port: 8686
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      prowlarr:
+        name: Prowlarr
+        protocol: http
+        full-domain: prowlarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: prowlarr.arr.svc.cluster.local
+            method: http
+            port: 9696
+            healthcheck:
+              hostname: prowlarr.arr.svc.cluster.local
+              port: 9696
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      tdarr:
+        name: Tdarr
+        protocol: http
+        full-domain: tdarr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: tdarr.arr.svc.cluster.local
+            method: http
+            port: 8265
+            healthcheck:
+              hostname: tdarr.arr.svc.cluster.local
+              port: 8265
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      qbittorrent:
+        name: qBittorrent
+        protocol: http
+        full-domain: qbittorrent.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      dashboard:
+        name: Dashboard
+        protocol: http
+        full-domain: dashboard.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: glance.glance.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: glance.glance.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      dozzle:
+        name: Dozzle
+        protocol: http
+        full-domain: dozzle.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: dozzle.dozzle.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: dozzle.dozzle.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      n8n:
+        name: n8n
+        protocol: http
+        full-domain: n8n.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: n8n.n8n.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: n8n.n8n.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /healthz
+              interval: 30
+              timeout: 5
+      memos:
+        name: Memos
+        protocol: http
+        full-domain: memos.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: memos.memos.svc.cluster.local
+            method: http
+            port: 5230
+            healthcheck:
+              hostname: memos.memos.svc.cluster.local
+              port: 5230
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      linkwarden:
+        name: Linkwarden
+        protocol: http
+        full-domain: linkwarden.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: linkwarden.linkwarden.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: linkwarden.linkwarden.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      linkding:
+        name: Linkding
+        protocol: http
+        full-domain: linkding.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: linkding.linkding.svc.cluster.local
+            method: http
+            port: 9090
+            healthcheck:
+              hostname: linkding.linkding.svc.cluster.local
+              port: 9090
+              enabled: true
+              path: /health
+              interval: 30
+              timeout: 5
+      kan:
+        name: Kan
+        protocol: http
+        full-domain: kan.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: kan.kan.svc.cluster.local
+            method: http
+            port: 3000
+            healthcheck:
+              hostname: kan.kan.svc.cluster.local
+              port: 3000
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      privatebin:
+        name: PrivateBin
+        protocol: http
+        full-domain: privatebin.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: privatebin.privatebin.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: privatebin.privatebin.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      stirling-pdf:
+        name: Stirling PDF
+        protocol: http
+        full-domain: stirling-pdf.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: stirling-pdf.stirling-pdf.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: stirling-pdf.stirling-pdf.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      opencode:
+        name: OpenCode
+        protocol: http
+        full-domain: opencode.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: opencode.opencode.svc.cluster.local
+            method: http
+            port: 4096
+            healthcheck:
+              hostname: opencode.opencode.svc.cluster.local
+              port: 4096
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      openchamber:
+        name: OpenChamber
+        protocol: http
+        full-domain: openchamber.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: openchamber.openchamber.svc.cluster.local
+            method: http
+            port: 3000
+            healthcheck:
+              hostname: openchamber.openchamber.svc.cluster.local
+              port: 3000
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      # --- Admin-only infra ---
+      passbolt:
+        name: Passbolt
+        protocol: http
+        full-domain: passbolt.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: passbolt.passbolt.svc.cluster.local
+            method: https
+            port: 443
+            healthcheck:
+              hostname: passbolt.passbolt.svc.cluster.local
+              port: 443
+              enabled: true
+              path: /healthcheck/status.json
+              interval: 30
+              timeout: 5
+              scheme: https
+      pgadmin:
+        name: pgAdmin
+        protocol: http
+        full-domain: pgadmin.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: pgadmin-pgadmin4.pgadmin.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: pgadmin-pgadmin4.pgadmin.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /misc/ping
+              interval: 30
+              timeout: 5
+      minio-console:
+        name: MinIO Console
+        protocol: http
+        full-domain: minio-console.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: minio-console.minio.svc.cluster.local
+            method: http
+            port: 9001
+            healthcheck:
+              hostname: minio-console.minio.svc.cluster.local
+              port: 9001
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      headlamp:
+        name: Headlamp
+        protocol: http
+        full-domain: headlamp.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: headlamp.kube-system.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: headlamp.kube-system.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
+      helm-dashboard:
+        name: Helm Dashboard
+        protocol: http
+        full-domain: helm-dashboard.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: helm-dashboard.kube-system.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: helm-dashboard.kube-system.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /status
+              interval: 30
+              timeout: 5
+      scrutiny:
+        name: Scrutiny
+        protocol: http
+        full-domain: scrutiny.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: scrutiny.scrutiny.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: scrutiny.scrutiny.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /api/health
+              interval: 30
+              timeout: 5
+      warden:
+        name: Warden
+        protocol: http
+        full-domain: warden.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: warden.warden.svc.cluster.local
+            method: http
+            port: 9090
+            healthcheck:
+              hostname: warden.warden.svc.cluster.local
+              port: 9090
+              enabled: true
+              path: /healthz
+              interval: 30
+              timeout: 5
+      zfdash:
+        name: ZFDash
+        protocol: http
+        full-domain: zfdash.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: zfdash.zfdash.svc.cluster.local
+            method: http
+            port: 5001
+            healthcheck:
+              hostname: zfdash.zfdash.svc.cluster.local
+              port: 5001
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5

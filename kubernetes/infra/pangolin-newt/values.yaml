@@ -4,6 +4,17 @@ newtInstances:
     enabled: true
     auth:
       existingSecretName: newt-credentials
+    extraEnv:
+      BLUEPRINT_FILE: /etc/newt/blueprint.yaml
+    extraVolumes:
+      - name: blueprint
+        configMap:
+          name: newt-blueprint
+    extraVolumeMounts:
+      - name: blueprint
+        mountPath: /etc/newt/blueprint.yaml
+        subPath: blueprint.yaml
+        readOnly: true
 
 global:
   image:

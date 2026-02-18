@@ -18,11 +18,13 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+          - vals eval -f manifests/secret.yaml | kubectl apply -f - && vals eval -f manifests/blueprint.yaml
+            | kubectl apply -f -
       - events:
           - postuninstall
         showlogs: true
         command: /bin/sh
         args:
           - -c
-          - vals eval -f manifests/secret.yaml | kubectl delete -f -
+          - vals eval -f manifests/secret.yaml | kubectl delete -f - && vals eval -f manifests/blueprint.yaml
+            | kubectl delete -f -
