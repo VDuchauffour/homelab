@@ -44,6 +44,11 @@
       "name": "storage-classes",
       "description": "Configure persistent storage for applications",
       "file": "skills/storage-classes.md"
+    },
+    {
+      "name": "new-utility-script",
+      "description": "Scaffold a new Python utility script package under scripts/ following project conventions (Typer CLI, Pydantic models, structlog, httpx, pytest with MagicMock)",
+      "file": "skills/new-utility-script.md"
     }
   ]
 }
