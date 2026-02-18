@@ -5,7 +5,7 @@ All the configuration and manifests for running my homelab on Kubernetes.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik) → Homelab K8s Cluster (Traefik Ingress)
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik + CrowdSec) → Homelab K8s Cluster (Traefik Ingress)
 ```
 
 Selected services are exposed to the Internet through a reverse proxy hosted on a Scaleway instance. Traffic is tunneled from the proxy to the cluster using [Pangolin](https://pangolin.net/) with WireGuard (Gerbil). Everything else stays on the local network, secured with mkcert-issued TLS certificates.

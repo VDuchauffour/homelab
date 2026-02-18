@@ -5,7 +5,7 @@ A Kubernetes-based homelab with cloud infrastructure for secure external access.
 ## Architecture Overview
 
 ```
-Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik) → Homelab K8s Cluster
+Internet → Scaleway Proxy (Pangolin + Gerbil + Traefik + CrowdSec) → Homelab K8s Cluster
 ```
 
 - **External Access**: Scaleway-hosted reverse proxy with Pangolin (WireGuard tunneling via Gerbil)
