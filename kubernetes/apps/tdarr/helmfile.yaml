@@ -8,6 +8,6 @@ releases:
     namespace: arr
     createNamespace: true
     chart: k8s-home-lab/tdarr
-    version: 5.0.1
+    version: 5.1.0
     values:
       - values.yaml
