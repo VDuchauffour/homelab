@@ -42,6 +42,16 @@ glance:
         - title: Scrutiny
           subdomain: scrutiny
           icon: di:scrutiny-light
+    - title: ''
+      links:
+        - title: qBittorrent
+          subdomain: grafana
+          path: /d/eKyTETFMk/qbittorrent
+          icon: di:qbittorrent
+        - title: UPS statistics
+          subdomain: grafana
+          path: /d/j4a-DMWRk/ups-statistics
+          icon: di:ups
 
   sharedWidgets:
     stats:
