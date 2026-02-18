@@ -14,3 +14,5 @@ pangolin_secret      = "foo"            # Generate with: openssl rand -base64 48
 pangolin_pg_password = "foo"            # Generate with: openssl rand -base64 32
 scaleway_access_key = "foo"            # From: ~/.config/scw/config.yaml (access_key)
 scaleway_secret_key = "foo"            # From: ~/.config/scw/config.yaml (secret_key)
+crowdsec_bouncer_key          = "foo"  # Generate with: openssl rand -base64 32
+crowdsec_firewall_bouncer_key = "foo"  # Generate with: openssl rand -base64 32

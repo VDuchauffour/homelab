@@ -62,6 +62,7 @@ app-name/
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
+| Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | IaC | Terraform |
 
 ## Deployment Patterns
@@ -289,3 +290,21 @@ kubectl rollout restart deployment coredns -n kube-system
 ### Why This Exists
 
 Without the CoreDNS override, the Newt client resolves `pangolin.<domain>` to the internal Traefik IP (due to the wildcard override), causing TLS handshake failures because Traefik doesn't serve Pangolin's certificate. The separate server block for `pangolin.<domain>` ensures Newt connects to the actual Scaleway proxy.
+
+## Security (CrowdSec)
+
+The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer security. Configuration is managed via Terraform (`infra/modules/scaleway-proxy/`).
+
+### Layers
+
+- **Traefik bouncer plugin** (`crowdsec-bouncer-traefik-plugin v1.4.4`) — WAF + AppSec on all HTTPS traffic
+- **Syslog monitoring** — Detects SSH brute-force via `/var/log/auth.log` and `/var/log/syslog`
+- **Host firewall bouncer** (`crowdsec-firewall-bouncer-iptables`) — Drops banned IPs at the iptables level
+
+### Key Details
+
+- Bouncer API keys are pre-registered via `BOUNCER_KEY_*` env vars in the CrowdSec container (Terraform variables: `crowdsec_bouncer_key`, `crowdsec_firewall_bouncer_key`)
+- CrowdSec port 8080 is exposed only on localhost (`127.0.0.1:8080`) for the host firewall bouncer
+- Collections: `crowdsecurity/traefik`, `crowdsecurity/appsec-virtual-patching`, `crowdsecurity/appsec-generic-rules`, `crowdsecurity/linux`
+- Acquis configs: `config/crowdsec/acquis.d/{traefik,syslog,appsec}.yaml`
+- Ban page: `config/traefik/ban.html` (default from crowdsec-bouncer-traefik-plugin)

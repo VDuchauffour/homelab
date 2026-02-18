@@ -62,14 +62,65 @@ write_files:
     owner: root:root
     content: |
       ${indent(6, traefik_dynamic_config)}
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/traefik.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      poll_without_inotify: false
+      filenames:
+        - /var/log/traefik/*.log
+      labels:
+        type: traefik
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/syslog.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      filenames:
+        - /var/log/auth.log
+        - /var/log/syslog
+      labels:
+        type: syslog
+  - path: /home/${username}/pangolin/config/crowdsec/acquis.d/appsec.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      listen_addr: 0.0.0.0:7422
+      appsec_config: crowdsecurity/appsec-default
+      name: myAppSecComponent
+      source: appsec
+      labels:
+        type: appsec
+  - path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+    permissions: "0600"
+    owner: root:root
+    content: |
+      mode: iptables
+      update_frequency: 10s
+      daemonize: false
+      log_mode: stdout
+      log_level: info
+      api_url: http://127.0.0.1:8080/
+      api_key: ${crowdsec_firewall_bouncer_key}
+      disable_ipv6: false
+      deny_action: DROP
+      deny_log: false
+      supported_decisions_types:
+        - ban
+        - captcha
+      iptables_chains:
+        - INPUT
+        - FORWARD
+        - DOCKER-USER
 
 runcmd:
   - chsh -s /bin/zsh ${username}
   - mkdir -p /home/${username}/.ssh
   - cp /root/.ssh/authorized_keys /home/${username}/.ssh/authorized_keys
   - chown -R ${username}:${username} /home/${username}/.ssh
-  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres
+  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db
+  - curl -sLo /home/${username}/pangolin/config/traefik/ban.html https://raw.githubusercontent.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/main/ban.html
   - chown -R ${username}:${username} /home/${username}/pangolin
   - /home/${username}/init.sh ${username}
   - systemctl enable --now docker
   - docker compose -f /home/${username}/pangolin/compose.yaml up -d
+  - systemctl enable --now crowdsec-firewall-bouncer

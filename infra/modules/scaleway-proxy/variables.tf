@@ -96,3 +96,15 @@ variable "scaleway_secret_key" {
   type        = string
   sensitive   = true
 }
+
+variable "crowdsec_bouncer_key" {
+  description = "API key for the CrowdSec Traefik bouncer plugin (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_firewall_bouncer_key" {
+  description = "API key for the CrowdSec host firewall bouncer (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
+}

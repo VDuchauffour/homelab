@@ -51,6 +51,13 @@ resource "scaleway_instance_security_group" "proxy" {
     protocol = "UDP"
   }
 
+  # SSH tunnel (Pangolin TCP resource → homelab)
+  inbound_rule {
+    action   = "accept"
+    port     = 2222
+    protocol = "TCP"
+  }
+
   # WireGuard (Gerbil tunnel)
   inbound_rule {
     action   = "accept"
@@ -78,10 +85,12 @@ resource "scaleway_instance_server" "dev" {
   cloud_init = templatefile("cloud-init.yaml.tftpl", {
     init_script = file("init.sh")
     compose_file = templatefile("compose.yaml.tftpl", {
-      scaleway_access_key  = var.scaleway_access_key
-      scaleway_secret_key  = var.scaleway_secret_key
-      pangolin_pg_user     = var.pangolin_pg_user
-      pangolin_pg_password = var.pangolin_pg_password
+      scaleway_access_key           = var.scaleway_access_key
+      scaleway_secret_key           = var.scaleway_secret_key
+      pangolin_pg_user              = var.pangolin_pg_user
+      pangolin_pg_password          = var.pangolin_pg_password
+      crowdsec_bouncer_key          = var.crowdsec_bouncer_key
+      crowdsec_firewall_bouncer_key = var.crowdsec_firewall_bouncer_key
     })
     pangolin_config = templatefile("config.yml.tftpl", {
       domain_name          = var.domain_name
@@ -94,12 +103,14 @@ resource "scaleway_instance_server" "dev" {
       acme_email = var.acme_email
     })
     traefik_dynamic_config = templatefile("dynamic_config.yml.tftpl", {
-      domain_name = var.domain_name
+      domain_name          = var.domain_name
+      crowdsec_bouncer_key = var.crowdsec_bouncer_key
     })
-    domain_name     = var.domain_name
-    username        = var.username
-    password_hash   = var.password_hash
-    ssh_public_keys = var.ssh_public_keys
+    domain_name                   = var.domain_name
+    username                      = var.username
+    password_hash                 = var.password_hash
+    ssh_public_keys               = var.ssh_public_keys
+    crowdsec_firewall_bouncer_key = var.crowdsec_firewall_bouncer_key
   })
 
   tags = var.tags

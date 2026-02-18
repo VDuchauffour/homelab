@@ -24,6 +24,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | Monitoring | kube-prometheus-stack |
 | Auth | TinyAuth |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
+| Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -327,6 +328,7 @@ Internet → Traefik (80/443) → Pangolin → Gerbil (WireGuard) → Newt (in-c
 - **Pangolin** — Tunnel management platform with a web dashboard for configuring exposed services.
 - **Gerbil** — WireGuard-based tunnel controller. Manages encrypted tunnels between the proxy and homelab.
 - **Traefik** — Reverse proxy with automatic HTTPS via Let's Encrypt. Handles TLS termination and routing.
+- **CrowdSec** — Collaborative behavior detection engine with WAF (AppSec), Traefik bouncer plugin, and host firewall bouncer for SSH protection.
 - **Newt** — Tunnel client running in-cluster (`kubernetes/infra/pangolin-newt/`). Connects to Gerbil and routes traffic to K8s services.
 
 ### Blueprint (Declarative Resource Config)
@@ -389,6 +391,25 @@ docker compose up -d
 Then navigate to `https://pangolin.<domain>/auth/initial-setup` to complete the initial setup. The setup token is printed in the Pangolin container logs (`docker compose logs pangolin`).
 
 After Terraform apply, also deploy the CoreDNS config (see above) and the Newt blueprint to complete the external access setup.
+
+### CrowdSec (WAF + Host Protection)
+
+The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer security, deployed automatically via Terraform/cloud-init:
+
+- **Traefik bouncer plugin** — Inspects all incoming HTTP/HTTPS requests via the `crowdsec-bouncer-traefik-plugin`. Banned IPs get a ban page. AppSec (virtual patching) is enabled for WAF-level protection.
+- **Syslog monitoring** — CrowdSec reads `/var/log/auth.log` and `/var/log/syslog` to detect SSH brute-force and other host-level attacks.
+- **Host firewall bouncer** — `crowdsec-firewall-bouncer-iptables` runs on the host and adds iptables rules to DROP banned IPs at the network level (covers SSH and any non-HTTP traffic).
+
+Bouncer API keys are pre-registered via `BOUNCER_KEY_*` environment variables in the CrowdSec container, so no manual key generation is needed after deploy.
+
+Useful commands (SSH into the proxy):
+
+```shell
+docker exec crowdsec cscli metrics                              # View bouncer stats
+docker exec crowdsec cscli decisions list                       # List active bans
+docker exec crowdsec cscli decisions add --ip <IP> -d 1m --type ban  # Manually ban an IP (1 min)
+systemctl status crowdsec-firewall-bouncer                      # Host bouncer status
+```
 
 ### Destroy
 
