@@ -39,7 +39,7 @@ data:
                         {{- if .url }}
                         url: {{ .url }}
                         {{- else }}
-                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}
+                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}{{ .path | default "" }}
                         {{- end }}
                         icon: {{ .icon }}
                         hide-arrow: true
@@ -59,7 +59,7 @@ data:
                         {{- if .url }}
                         url: {{ .url }}
                         {{- else }}
-                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}
+                        url: https://{{ .subdomain }}.{{ $.Values.domainName }}{{ .path | default "" }}
                         {{- end }}
                         icon: {{ .icon }}
                         hide-arrow: true
