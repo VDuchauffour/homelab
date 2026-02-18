@@ -10,8 +10,7 @@ domainName: ''
 gluetunUrl: ''
 gluetunApiKey: ''
 qbittorrentUrl: ''
-wardenUrl: ''
-wardenApiKey: ''
+
 
 service:
   type: ClusterIP

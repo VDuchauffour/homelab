@@ -1,8 +1,6 @@
 ---
 gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
 qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
-wardenUrl: warden.warden.svc.cluster.local:9090
-
 glance:
   instanceBookmarkGroups:
     - title: Proxy

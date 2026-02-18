@@ -9,7 +9,6 @@ releases:
       - values-public.yaml
       - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME
       - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
-      - wardenApiKey: ref+envsubst://$WARDEN_API_KEY
       - glance:
           auth:
             secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
@@ -25,7 +24,6 @@ releases:
       - values-local.yaml
       - domainName: ref+envsubst://$LOCAL_DOMAIN_NAME
       - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
-      - wardenApiKey: ref+envsubst://$WARDEN_API_KEY
       - glance:
           auth:
             secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
