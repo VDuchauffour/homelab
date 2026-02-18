@@ -6,6 +6,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
+          storageClassName: zfs-vm-pool-dynamic
           accessModes:
             - ReadWriteOnce
           resources:
@@ -18,17 +19,36 @@ grafana:
     passwordKey: password
   persistence:
     enabled: true
+    storageClassName: zfs-vm-pool-dynamic
     size: 10Gi
+  grafana.ini:
+    database:
+      type: postgres
+      host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local:5432
+      name: grafana
+      user: grafana
+      password: $__env{GF_DATABASE_PASSWORD}
+  envFromSecrets:
+    - name: grafana-cnpg-credentials
+      optional: false
   ingress:
     enabled: true
     ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
     hosts:
       - grafana.ref+envsubst://$LOCAL_DOMAIN_NAME
+    tls:
+      - hosts:
+          - grafana.ref+envsubst://$LOCAL_DOMAIN_NAME
+        secretName: grafana-mkcert-tls
 alertmanager:
   alertmanagerSpec:
     storage:
       volumeClaimTemplate:
         spec:
+          storageClassName: zfs-vm-pool-dynamic
           accessModes:
             - ReadWriteOnce
           resources:

@@ -27,6 +27,9 @@ glance:
           icon: di:minio
     - title: Monitoring
       links:
+        - title: Grafana
+          subdomain: grafana
+          icon: di:grafana
         - title: Warden
           subdomain: warden
           icon: https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg

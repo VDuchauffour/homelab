@@ -8,6 +8,7 @@ releases:
     createNamespace: true
     chart: prometheus-community/kube-prometheus-stack
     version: 82.1.0
+    disableValidationOnInstall: true
     values:
       - values.yaml
     hooks:
@@ -17,7 +18,8 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+          - kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f - && vals
+            eval -f manifests/secret.yaml | kubectl apply -f -
       - events:
           - postuninstall
         showlogs: true
