@@ -57,10 +57,6 @@ data:
         name: FileBrowser
         protocol: http
         full-domain: filebrowser.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
         targets:
           - hostname: filebrowser.filebrowser.svc.cluster.local
             method: http
@@ -76,10 +72,6 @@ data:
         name: PrivateBin
         protocol: http
         full-domain: privatebin.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
         targets:
           - hostname: privatebin.privatebin.svc.cluster.local
             method: http
