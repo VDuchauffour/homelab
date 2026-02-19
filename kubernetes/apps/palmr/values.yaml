@@ -1,0 +1,51 @@
+---
+image:
+  repository: kyantech/palmr
+  pullPolicy: IfNotPresent
+  tag: v3.2.0-beta
+
+config:
+  secureSite: 'true'
+
+s3:
+  enabled: true
+  endpoint: minio.minio.svc.cluster.local:9000
+  accessKey: ref+envsubst://$MINIO_ROOT_USER
+  secretKey: ref+envsubst://$MINIO_ROOT_PASSWORD
+  bucket: palmr
+  region: us-east-1
+  useSSL: 'false'
+  forcePathStyle: 'true'
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 5Gi
+
+service:
+  type: ClusterIP
+  port: 5487
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: palmr.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - palmr.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: palmr-mkcert-tls
+
+resources:
+  limits:
+    cpu: '1'
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

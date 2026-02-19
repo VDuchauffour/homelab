@@ -126,6 +126,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="32"> | opencode | AI-powered coding assistant with built-in web UI | Helmfile |
 | <img src="https://raw.githubusercontent.com/btriapitsyn/openchamber/20f158f2b71b66aef0235531b5092ba82cda720f/packages/vscode/assets/app-icon.png" width="32"> | openchamber | [OpenChamber](https://github.com/btriapitsyn/openchamber) web UI for OpenCode | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |
+| <img src="https://raw.githubusercontent.com/kyantech/Palmr/main/apps/web/public/favicon.ico" width="32"> | palmr | Open-source file-sharing platform | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/privatebin.png" width="32"> | privatebin | Encrypted pastebin for sharing secrets | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="32"> | prowlarr | Indexer manager for arr suite | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="32"> | qbittorrent-vpn | BitTorrent client with VPN | Helmfile |

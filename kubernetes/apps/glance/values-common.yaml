@@ -132,6 +132,9 @@ glance:
         - title: Filebrowser
           subdomain: filebrowser
           icon: di:filebrowser
+        - title: Palmr
+          subdomain: palmr
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/palmr.png
         - title: Privatebin
           subdomain: privatebin
           icon: di:privatebin

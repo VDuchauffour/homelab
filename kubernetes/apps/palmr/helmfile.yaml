@@ -1,0 +1,8 @@
+---
+releases:
+  - name: palmr
+    namespace: palmr
+    createNamespace: true
+    chart: ./charts/palmr
+    values:
+      - values.yaml

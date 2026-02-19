@@ -1,0 +1,45 @@
+---
+replicaCount: 1
+
+image:
+  repository: kyantech/palmr
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 5487
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 5Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  secureSite: ''
+  defaultLanguage: ''
+
+s3:
+  enabled: false
+  endpoint: ''
+  accessKey: ''
+  secretKey: ''
+  bucket: ''
+  region: ''
+  useSSL: 'false'
+  forcePathStyle: 'true'
