@@ -138,6 +138,40 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: pv-media-library-slskd
+spec:
+  storageClassName: nfs-media-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-media-library-slskd
+    volumeAttributes:
+      server: nfs-server.nfs-server.svc.cluster.local
+      share: /
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-library
+  namespace: slskd
+spec:
+  storageClassName: nfs-media-library
+  volumeName: pv-media-library-slskd
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: pv-immich-library
 spec:
   storageClassName: nfs-immich-library

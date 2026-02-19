@@ -88,6 +88,9 @@ glance:
         - title: qBittorrent
           subdomain: qbittorrent
           icon: di:qbittorrent
+        - title: slskd
+          subdomain: slskd
+          icon: di:slskd
     - title: Arr
       links:
         - title: Bazarr

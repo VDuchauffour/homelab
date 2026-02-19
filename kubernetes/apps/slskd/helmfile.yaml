@@ -1,0 +1,8 @@
+---
+releases:
+  - name: slskd
+    namespace: slskd
+    createNamespace: true
+    chart: ./charts/slskd
+    values:
+      - values.yaml

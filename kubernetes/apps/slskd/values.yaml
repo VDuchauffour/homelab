@@ -1,0 +1,58 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/slskd/slskd
+  pullPolicy: IfNotPresent
+  tag: 0.24.4
+
+service:
+  type: ClusterIP
+  port: 5030
+
+env:
+  TZ: Europe/Paris
+  SLSKD_REMOTE_CONFIGURATION: 'true'
+  SLSKD_NO_HTTPS: 'true'
+  SLSKD_SHARED_DIR: /music
+  SLSKD_DOWNLOADS_DIR: /music/downloads/slskd
+  SLSKD_SLSK_USERNAME: ref+envsubst://$SLSKD_SLSK_USERNAME
+  SLSKD_SLSK_PASSWORD: ref+envsubst://$SLSKD_SLSK_PASSWORD
+
+persistence:
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+  music:
+    enabled: true
+    existingClaim: media-library
+    mountPath: /music
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: slskd.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - slskd.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: slskd-mkcert-tls
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 128Mi
+  limits:
+    memory: 512Mi

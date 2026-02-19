@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+name: slskd
+description: A modern client-server application for the Soulseek file sharing network
+type: application
+version: 0.1.0
+appVersion: "0.24.4"
+home: https://github.com/slskd/slskd
+sources:
+  - https://github.com/slskd/slskd
+keywords:
+  - slskd
+  - soulseek
+  - music
+  - p2p
