@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wakapi-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: wakapi
+  password: ref+envsubst://$CLOUDNATIVE_PG_WAKAPI_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: wakapi
+  namespace: cnpg-clusters
+spec:
+  name: wakapi
+  owner: wakapi
+  cluster:
+    name: cnpg-cluster0

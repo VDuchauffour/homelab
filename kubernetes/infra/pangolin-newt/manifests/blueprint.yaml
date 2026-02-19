@@ -426,6 +426,25 @@ data:
               path: /health
               interval: 30
               timeout: 5
+      wakapi:
+        name: Wakapi
+        protocol: http
+        full-domain: wakapi.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: wakapi.wakapi.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: wakapi.wakapi.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /api/health
+              interval: 30
+              timeout: 5
       # --- Admin-only infra ---
       passbolt:
         name: Passbolt

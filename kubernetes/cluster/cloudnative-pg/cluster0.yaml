@@ -94,6 +94,12 @@ spec:
         superuser: false
         passwordSecret:
           name: grafana-cnpg-credentials
+      - name: wakapi
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: wakapi-cnpg-credentials
   postgresql:
     shared_preload_libraries:
       - vchord.so

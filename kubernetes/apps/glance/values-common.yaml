@@ -127,6 +127,9 @@ glance:
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
     - title: Tools
       links:
+        - title: Wakapi
+          subdomain: wakapi
+          icon: di:wakapi
         - title: BentoPDF
           subdomain: bentopdf
           icon: sh:bentopdf

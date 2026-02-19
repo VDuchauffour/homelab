@@ -1,0 +1,133 @@
+---
+image:
+  tag: 2.17.1
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: wakapi.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - wakapi.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: wakapi-mkcert-tls
+
+wakapi_config:
+  env: production
+  skip_migrations: false
+
+  server:
+    listen_ipv4: 0.0.0.0
+    listen_ipv6: ''
+    tls_cert_path: ''
+    tls_key_path: ''
+    port: 3000
+    base_path: /
+    public_url: https://wakapi.ref+envsubst://$PUBLIC_DOMAIN_NAME
+    timeout_sec: 30
+    listen_socket: ''
+    listen_socket_mode: '0666'
+
+  app:
+    aggregation_time: 0 15 2 * * *
+    inactive_days: 7
+    leaderboard_enabled: true
+    leaderboard_scope: 7_days
+    leaderboard_generation_time: 0 0 6 * * *,0 0 18 * * *
+    leaderboard_require_auth: true
+    report_time_weekly: 0 0 18 * * 5
+    data_cleanup_time: 0 0 6 * * 0
+    import_enabled: true
+    import_batch_size: 50
+    import_backoff_min: 5
+    import_max_rate: 24
+    heartbeat_max_age: 4320h
+    warm_caches: true
+    avatar_url_template: ''
+    date_format: Mon, 02 Jan 2006
+    datetime_format: Mon, 02 Jan 2006 15:04
+    support_contact: ''
+    data_retention_months: -1
+    max_inactive_months: 12
+    count_cache_ttl_min: 30
+    data_cleanup_dry_run: false
+    optimize_database_time: 0 0 8 1 * *
+
+  db:
+    host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+    port: 5432
+    user: wakapi
+    password: ref+envsubst://$CLOUDNATIVE_PG_WAKAPI_PASSWORD
+    name: wakapi
+    dialect: postgres
+    charset: utf8mb4
+    max_conn: 2
+    ssl: false
+    automigrate_fail_silently: false
+    socket: ''
+
+  security:
+    password_salt: ref+envsubst://$WAKAPI_PASSWORD_SALT
+    insecure_cookies: false
+    cookie_max_age: 172800
+    allow_signup: true
+    expose_metrics: false
+    enable_proxy: false
+    signup_captcha: false
+    invite_codes: true
+    disable_frontpage: false
+    trusted_header_auth: false
+    trusted_header_auth_key: Remote-User
+    trust_reverse_proxy_ips: ''
+    signup_max_rate: 5/1h
+    login_max_rate: 10/1m
+    password_reset_max_rate: 5/1h
+
+  mail:
+    enabled: false
+    sender: ''
+    provider: smtp
+    smtp:
+      host: ''
+      port: 465
+      username: ''
+      password: ''
+      tls: true
+      skip_verify: false
+
+  sentry:
+    dsn: ''
+    environment: ''
+    enable_tracing: false
+    sample_rate: 0.75
+    sample_rate_heartbeats: 0.1
+
+  quick_start: false
+  enable_pprof: false
+
+wakapi_secrets:
+  db:
+    password: ref+envsubst://$CLOUDNATIVE_PG_WAKAPI_PASSWORD
+  security:
+    password_salt: ref+envsubst://$WAKAPI_PASSWORD_SALT
+  mail:
+    smtp:
+      password: ''
