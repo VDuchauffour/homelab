@@ -52,6 +52,10 @@ glance:
           subdomain: grafana
           path: /d/j4a-DMWRk/ups-statistics
           icon: di:ups
+        - title: Status
+          subdomain: warden
+          path: /status/all
+          icon: https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg
 
   sharedWidgets:
     stats:
