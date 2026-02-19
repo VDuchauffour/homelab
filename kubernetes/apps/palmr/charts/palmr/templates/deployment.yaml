@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "palmr.fullname" . }}
+  labels:
+    {{- include "palmr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "palmr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "palmr.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: 0
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 5487
+              protocol: TCP
+            - name: api
+              containerPort: 3333
+              protocol: TCP
+          env:
+            - name: PALMR_UID
+              value: "1001"
+            - name: PALMR_GID
+              value: "1001"
+            {{- if .Values.s3.enabled }}
+            - name: ENABLE_S3
+              value: "true"
+            - name: S3_ENDPOINT
+              value: {{ .Values.s3.endpoint | quote }}
+            - name: S3_ACCESS_KEY
+              value: {{ .Values.s3.accessKey | quote }}
+            - name: S3_SECRET_KEY
+              value: {{ .Values.s3.secretKey | quote }}
+            - name: S3_BUCKET_NAME
+              value: {{ .Values.s3.bucket | quote }}
+            {{- if .Values.s3.region }}
+            - name: S3_REGION
+              value: {{ .Values.s3.region | quote }}
+            {{- end }}
+            - name: S3_USE_SSL
+              value: {{ .Values.s3.useSSL | quote }}
+            - name: S3_FORCE_PATH_STYLE
+              value: {{ .Values.s3.forcePathStyle | quote }}
+            {{- end }}
+            {{- if .Values.config.secureSite }}
+            - name: SECURE_SITE
+              value: {{ .Values.config.secureSite | quote }}
+            {{- end }}
+            {{- if .Values.config.defaultLanguage }}
+            - name: DEFAULT_LANGUAGE
+              value: {{ .Values.config.defaultLanguage | quote }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /app/server
+            {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "palmr.fullname" . }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

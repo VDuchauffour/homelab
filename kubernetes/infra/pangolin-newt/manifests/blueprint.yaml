@@ -68,6 +68,25 @@ data:
               path: /
               interval: 30
               timeout: 5
+      palmr:
+        name: Palmr
+        protocol: http
+        full-domain: palmr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: palmr.palmr.svc.cluster.local
+            method: http
+            port: 5487
+            healthcheck:
+              hostname: palmr.palmr.svc.cluster.local
+              port: 5487
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       privatebin:
         name: PrivateBin
         protocol: http

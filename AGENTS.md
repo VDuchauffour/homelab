@@ -324,10 +324,10 @@ kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
 ## Post-Deployment Checklist (New App or Infra Tool)
 
-After deploying a new app or infra tool, complete these additional steps:
+After deploying a new app or infra tool, **always** complete all of the following steps:
 
 1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`cd kubernetes/apps/glance && helmfile apply`)
-2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
+2. **Pangolin blueprint**: Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml` for external access (admin-only SSO by default), then apply and restart Newt. All apps are exposed externally unless explicitly stated otherwise.
 3. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
 
 ## CoreDNS (Split-Horizon DNS)

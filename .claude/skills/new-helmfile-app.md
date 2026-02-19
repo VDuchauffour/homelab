@@ -181,7 +181,9 @@ Redeploy Glance:
 cd kubernetes/apps/glance && helmfile apply
 ```
 
-### 2. Update Pangolin Blueprint (if externally accessible)
+### 2. Update Pangolin Blueprint
+
+All apps are exposed externally by default (admin-only SSO). Only skip this step if the user explicitly says the app should be local-only.
 
 Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`:
 
