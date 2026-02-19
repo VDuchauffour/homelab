@@ -19,6 +19,13 @@ postgres:
   user: kan
   password: ref+envsubst://$KAN_POSTGRESURL_PASSWORD
 
+resources:
+  requests:
+    cpu: 10m
+    memory: 288Mi
+  limits:
+    memory: 512Mi
+
 ingress:
   enabled: true
   className: traefik

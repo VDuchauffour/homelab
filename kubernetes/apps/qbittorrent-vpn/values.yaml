@@ -40,6 +40,20 @@ qbittorrent:
       value: Europe/Paris
     - name: WEBUI_HOST_HEADER_VALIDATION_DOMAINS
       value: qbittorrent.ref+envsubst://$LOCAL_DOMAIN_NAME,qbittorrent.ref+envsubst://$PUBLIC_DOMAIN_NAME
+resources:
+  gluetun:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  qbittorrent:
+    requests:
+      cpu: 50m
+      memory: 2Gi
+    limits:
+      memory: 4Gi
+
 ingress:
   enabled: true
   className: traefik

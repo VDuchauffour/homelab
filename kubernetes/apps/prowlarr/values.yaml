@@ -16,6 +16,13 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
 
+resources:
+  requests:
+    cpu: 10m
+    memory: 96Mi
+  limits:
+    memory: 256Mi
+
 ingress:
   main:
     enabled: true

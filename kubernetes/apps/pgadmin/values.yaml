@@ -23,6 +23,13 @@ serverDefinitions:
       MaintenanceDB: postgres
       SSLMode: prefer
 
+resources:
+  requests:
+    cpu: 10m
+    memory: 320Mi
+  limits:
+    memory: 640Mi
+
 persistentVolume:
   enabled: true
   storageClass: zfs-vm-pool-dynamic

@@ -28,11 +28,10 @@ ingress:
 
 resources:
   requests:
-    memory: 64Mi
-    cpu: 50m
+    cpu: 5m
+    memory: 32Mi
   limits:
-    memory: 128Mi
-    cpu: 200m
+    memory: 64Mi
 nodeSelector: {}
 
 tolerations: []

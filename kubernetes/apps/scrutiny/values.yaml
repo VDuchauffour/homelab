@@ -16,6 +16,13 @@ persistence:
     storageClass: zfs-vm-pool-dynamic
     size: 5Gi
 
+resources:
+  requests:
+    cpu: 10m
+    memory: 96Mi
+  limits:
+    memory: 256Mi
+
 env:
   COLLECTOR_CRON_SCHEDULE: 0 0 * * *
 

@@ -25,6 +25,12 @@ pluginsManager:
       maxConcurrent: 2
   baseImage: node:lts-alpine
   version: latest
+resources:
+  requests:
+    cpu: 10m
+    memory: 96Mi
+  limits:
+    memory: 192Mi
 serviceAccount:
   create: true
   annotations: {}

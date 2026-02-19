@@ -22,9 +22,8 @@ ingress:
       secretName: privatebin-mkcert-tls
 
 resources:
-  limits:
-    cpu: 500m
-    memory: 256Mi
   requests:
-    cpu: 50m
-    memory: 64Mi
+    cpu: 5m
+    memory: 80Mi
+  limits:
+    memory: 192Mi

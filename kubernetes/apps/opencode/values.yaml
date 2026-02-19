@@ -30,6 +30,14 @@ config-json: |
     ]
   }
 
+resources:
+  opencode:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
 persistence:
   workdir:
     storageClass: sc-opencode-workdir
