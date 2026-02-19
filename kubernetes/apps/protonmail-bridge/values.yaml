@@ -1,0 +1,28 @@
+---
+image:
+  repository: shenxn/protonmail-bridge
+  tag: 3.19.0-1
+
+env:
+  TZ: Europe/Paris
+
+service:
+  main:
+    ports:
+      smtp:
+        enabled: true
+        port: 25
+        protocol: TCP
+      imap:
+        enabled: true
+        port: 143
+        protocol: TCP
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    storageClass: zfs-vm-pool-dynamic
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /root
