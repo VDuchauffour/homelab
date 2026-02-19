@@ -8,9 +8,9 @@ controllers:
         resources:
           requests:
             cpu: 10m
-            memory: 512Mi
-          limits:
             memory: 1Gi
+          limits:
+            memory: 2Gi
         env:
           REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
           IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
@@ -35,7 +35,7 @@ valkey:
       cpu: 10m
       memory: 8Mi
     limits:
-      memory: 32Mi
+      memory: 64Mi
   persistence:
     data:
       enabled: true
@@ -53,9 +53,9 @@ machine-learning:
           resources:
             requests:
               cpu: 10m
-              memory: 256Mi
+              memory: 512Mi
             limits:
-              memory: 1Gi
+              memory: 2Gi
   defaultPodOptions:
     securityContext:
       runAsUser: 1000
