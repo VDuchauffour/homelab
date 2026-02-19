@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: k8s-at-home
+    url: https://k8s-at-home.com/charts/
+
+releases:
+  - name: protonmail-bridge
+    namespace: protonmail-bridge
+    createNamespace: true
+    chart: k8s-at-home/protonmail-bridge
+    version: 3.0.0
+    values:
+      - values.yaml
