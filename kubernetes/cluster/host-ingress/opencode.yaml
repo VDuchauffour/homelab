@@ -1,0 +1,46 @@
+---
+# Routes opencode.home.arpa to the host-installed OpenCode web UI (port 14097)
+apiVersion: v1
+kind: Service
+metadata:
+  name: opencode-host
+spec:
+  ports:
+    - port: 14097
+      targetPort: 14097
+      protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: opencode-host
+subsets:
+  - addresses:
+      - ip: ref+envsubst://$SINGLE_NODE_IP
+    ports:
+      - port: 14097
+        protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opencode
+  annotations:
+    cert-manager.io/cluster-issuer: mkcert-ca
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - opencode.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: opencode-mkcert-tls
+  rules:
+    - host: opencode.ref+envsubst://$LOCAL_DOMAIN_NAME
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: opencode-host
+                port:
+                  number: 14097
