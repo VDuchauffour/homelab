@@ -8,6 +8,6 @@ releases:
     namespace: protonmail-bridge
     createNamespace: true
     chart: k8s-at-home/protonmail-bridge
-    version: 3.0.0
+    version: 3.0.1
     values:
       - values.yaml
