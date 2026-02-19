@@ -13,6 +13,12 @@ configuration:
     authURL: http://localhost:3000/api/v1/auth
     authSecret: ref+envsubst://$LINKWARDEN_AUTHSECRET
 
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  accessMode: ReadWriteOnce
+  size: 2Gi
+
 ingress:
   enabled: true
   className: traefik
