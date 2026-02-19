@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: wakapi
+    url: https://andreymaznyak.github.io/wakapi-helm-chart/
+
+releases:
+  - name: wakapi
+    namespace: wakapi
+    createNamespace: true
+    chart: wakapi/wakapi
+    version: 1.1.0
+    values:
+      - values.yaml
