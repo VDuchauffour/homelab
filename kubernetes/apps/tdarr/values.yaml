@@ -27,6 +27,7 @@ persistence:
     readOnly: false
     storageClass: zfs-vm-pool-dynamic
     accessMode: ReadWriteOnce
+    size: 5Gi
   media:
     enabled: true
     type: pvc
@@ -38,6 +39,14 @@ persistence:
 #   runAsUser: 1000
 #   runAsGroup: 1000
 #   fsGroup: 1000
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 192Mi
+  limits:
+    cpu: '2'
+    memory: 1Gi
 
 ingress:
   main:

@@ -1,4 +1,12 @@
 ---
+resources:
+  requests:
+    cpu: 5m
+    memory: 16Mi
+  limits:
+    cpu: '1'
+    memory: 512Mi
+
 ingress:
   enabled: true
   className: traefik

@@ -5,6 +5,13 @@ storageClass:
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
 
+resources:
+  requests:
+    cpu: 5m
+    memory: 16Mi
+  limits:
+    memory: 64Mi
+
 nodePathMap:
   - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
     paths:

@@ -16,6 +16,13 @@ persistence:
     storageClass: zfs-vm-pool-dynamic
     size: 1Gi
 
+resources:
+  requests:
+    cpu: 5m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
 ingress:
   enabled: true
   className: traefik

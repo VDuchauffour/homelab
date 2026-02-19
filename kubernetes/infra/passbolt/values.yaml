@@ -42,6 +42,13 @@ redis:
   sentinel:
     enabled: false
 
+resources:
+  requests:
+    cpu: 15m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
 cronJobEmail:
   enabled: false
 

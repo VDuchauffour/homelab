@@ -19,6 +19,13 @@ persistence:
   accessMode: ReadWriteOnce
   size: 2Gi
 
+resources:
+  requests:
+    cpu: 10m
+    memory: 768Mi
+  limits:
+    memory: 1536Mi
+
 ingress:
   enabled: true
   className: traefik

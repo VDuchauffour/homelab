@@ -2,6 +2,12 @@
 dashboard:
   persistence:
     storageClassName: zfs-vm-pool-dynamic
+  resources:
+    requests:
+      cpu: 5m
+      memory: 32Mi
+    limits:
+      memory: 64Mi
 
 ingress:
   enabled: true

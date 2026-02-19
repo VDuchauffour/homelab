@@ -18,6 +18,13 @@ service:
         port: 143
         protocol: TCP
 
+resources:
+  requests:
+    cpu: 5m
+    memory: 32Mi
+  limits:
+    memory: 64Mi
+
 persistence:
   config:
     enabled: true
