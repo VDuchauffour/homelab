@@ -80,16 +80,10 @@ data:
 
           - size: full
             widgets:
-              - type: hacker-news
-                limit: {{ (index $.Values.glance.sharedWidgets.stats 3).limit }}
-                collapse-after: {{ (index $.Values.glance.sharedWidgets.stats 3).collapseAfter }}
-
-          - size: small
-            widgets:
-              - type: server-stats
-                servers:
-                  - type: local
-                    name: Services
+              - type: extension
+                url: http://glance-k8s.glance.svc.cluster.local/extension/nodes
+                allow-potentially-dangerous-html: true
+                cache: 1s
               - type: custom-api
                 title: Gluetun status
                 cache: 1m

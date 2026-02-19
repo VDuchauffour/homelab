@@ -66,9 +66,6 @@ glance:
         units: metric
         hourFormat: 24h
       - type: todo
-      - type: hackerNews
-        limit: 15
-        collapseAfter: 10
 
   commonBookmarkGroups:
     - title: Media

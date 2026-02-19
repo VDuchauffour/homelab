@@ -1,5 +1,13 @@
 ---
 releases:
+  - name: glance-k8s
+    namespace: glance
+    createNamespace: true
+    chart: oci://ghcr.io/lukasdietrich/glance-k8s/chart/glance-k8s
+    version: v0.4.4
+    values:
+      - fullnameOverride: glance-k8s
+
   - name: glance-public
     namespace: glance
     createNamespace: true
