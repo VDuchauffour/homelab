@@ -22,7 +22,6 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
 | Monitoring | kube-prometheus-stack |
-| Auth | TinyAuth |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | IaC | Terraform |
