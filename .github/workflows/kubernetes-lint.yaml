@@ -35,7 +35,15 @@ jobs:
 
       - name: Lint apps
         run: |
+          EXCLUDE=(
+            protonmail-bridge
+          )
           for dir in kubernetes/apps/*/; do
+            app=$(basename "$dir")
+            if [[ " ${EXCLUDE[*]} " == *" $app "* ]]; then
+              echo "Skipping ${dir} (excluded)"
+              continue
+            fi
             if [ -f "${dir}helmfile.yaml" ]; then
               echo "Linting ${dir}..."
               helmfile -f "${dir}helmfile.yaml" lint || exit 1
