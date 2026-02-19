@@ -2,29 +2,29 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: minio-cnpg-credentials
+  name: rustfs-cnpg-credentials
   namespace: cnpg-clusters
 type: Opaque
 stringData:
-  ACCESS_KEY_ID: ref+envsubst://$MINIO_ROOT_USER
-  ACCESS_SECRET_KEY: ref+envsubst://$MINIO_ROOT_PASSWORD
+  ACCESS_KEY_ID: ref+envsubst://$RUSTFS_ROOT_USER
+  ACCESS_SECRET_KEY: ref+envsubst://$RUSTFS_ROOT_PASSWORD
 ---
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: cnpg-minio-store
+  name: cnpg-rustfs-store
   namespace: cnpg-clusters
 spec:
   retentionPolicy: 30d
   configuration:
     destinationPath: s3://cnpg-backups/
-    endpointURL: http://minio.minio.svc.cluster.local:9000
+    endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
     s3Credentials:
       accessKeyId:
-        name: minio-cnpg-credentials
+        name: rustfs-cnpg-credentials
         key: ACCESS_KEY_ID
       secretAccessKey:
-        name: minio-cnpg-credentials
+        name: rustfs-cnpg-credentials
         key: ACCESS_SECRET_KEY
     wal:
       compression: gzip
