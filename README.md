@@ -133,6 +133,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="32"> | radarr | Movie collection manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="32"> | sonarr | TV show collection manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/scrutiny.png" width="32"> | scrutiny | Hard drive S.M.A.R.T health monitoring | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/slskd.png" width="32"> | slskd | Soulseek client for music sharing | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="32"> | stirling-pdf | PDF manipulation toolkit | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/tdarr.png" width="32"> | tdarr | Media transcoding optimizer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="32"> | uptime-kuma | Uptime monitoring dashboard | Helmfile |

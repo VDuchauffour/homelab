@@ -1,0 +1,47 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/slskd/slskd
+  pullPolicy: IfNotPresent
+  tag: ""
+
+service:
+  type: ClusterIP
+  port: 5030
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  config:
+    enabled: false
+    storageClass: ""
+    size: 1Gi
+  music:
+    enabled: false
+    existingClaim: ""
+    mountPath: /music
+
+env: {}
+
+envFrom: []
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podSecurityContext: {}
