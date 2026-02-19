@@ -1,13 +1,13 @@
 ---
 repositories:
-  - name: minio
-    url: https://charts.min.io
+  - name: rustfs
+    url: https://charts.rustfs.com/
 releases:
-  - name: minio
-    namespace: minio
+  - name: rustfs
+    namespace: rustfs
     createNamespace: true
-    chart: minio/minio
-    version: 5.4.0
+    chart: rustfs/rustfs
+    version: 0.0.83
     values:
       - values.yaml
     hooks:
@@ -17,7 +17,8 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - vals eval -f manifests/secret.yaml | kubectl apply -f -
+          - kubectl create namespace rustfs --dry-run=client -o yaml | kubectl apply -f - && vals eval
+            -f manifests/secret.yaml | kubectl apply -f -
       - events:
           - postuninstall
         showlogs: true

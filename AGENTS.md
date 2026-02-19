@@ -60,7 +60,7 @@ app-name/
 | Container Orchestration | Kubernetes |
 | Package Management | Helmfile + Helm |
 | Storage | Rancher Local Path, OpenEBS ZFS-LocalPV (configs), NFS CSI (shared media) |
-| Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to MinIO) |
+| Database | CloudNativePG (PostgreSQL) + Barman Cloud Plugin (backups to RustFS) |
 | Ingress | Traefik |
 | TLS | cert-manager (mkcert CA for local, Let's Encrypt for public) |
 | GPU | Intel Device Plugins (iGPU/QSV) |
@@ -186,17 +186,17 @@ The cluster runs a single CloudNativePG instance (`cnpg-cluster0`) in namespace 
 - **Operator**: `kubernetes/infra/cloudnative-pg/` (Helmfile, chart v0.26.1)
 - **Cluster + Secrets**: `kubernetes/cluster/cloudnative-pg/cluster0.yaml`
 - **Database CRs**: `kubernetes/cluster/cloudnative-pg/{kan,n8n,linkwarden,linkding}.yaml`
-- **Backup config**: `kubernetes/cluster/cloudnative-pg/backup.yaml` (ObjectStore + ScheduledBackup + MinIO credentials)
+- **Backup config**: `kubernetes/cluster/cloudnative-pg/backup.yaml` (ObjectStore + ScheduledBackup + RustFS credentials)
 
 ### Backups
 
 Backups use the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) (`kubernetes/infra/plugin-barman-cloud/`):
 
-- **WAL archiving**: Continuous to MinIO with gzip compression
+- **WAL archiving**: Continuous to RustFS with gzip compression
 - **Base backups**: Daily at 2:00 AM UTC via `ScheduledBackup` CR
-- **Destination**: MinIO bucket `cnpg-backups` at `http://minio.minio.svc.cluster.local:9000`
+- **Destination**: RustFS bucket `cnpg-backups` at `http://rustfs-svc.rustfs.svc.cluster.local:9000`
 - **Retention**: 30 days
-- **Credentials**: Secret `minio-cnpg-credentials` in `cnpg-clusters` namespace (keys: `ACCESS_KEY_ID`, `ACCESS_SECRET_KEY`)
+- **Credentials**: Secret `rustfs-cnpg-credentials` in `cnpg-clusters` namespace (keys: `ACCESS_KEY_ID`, `ACCESS_SECRET_KEY`)
 
 Check backup status:
 
@@ -328,7 +328,8 @@ After deploying a new app or infra tool, complete these additional steps:
 
 1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`cd kubernetes/apps/glance && helmfile apply`)
 2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
-3. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
+3. **Warden monitoring**: Run `make warden-seed-cleanup` to discover the new app and sync monitors (adds new, removes stale)
+4. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
 
 ## CoreDNS (Split-Horizon DNS)
 

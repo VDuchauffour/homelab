@@ -27,7 +27,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: cnpg-minio-store
+        barmanObjectName: cnpg-rustfs-store
   managed:
     roles:
       - name: admin

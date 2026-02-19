@@ -450,23 +450,23 @@ data:
               path: /misc/ping
               interval: 30
               timeout: 5
-      minio-console:
-        name: MinIO Console
+      rustfs-console:
+        name: RustFS Console
         protocol: http
-        full-domain: minio-console.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        full-domain: rustfs-console.ref+envsubst://$PUBLIC_DOMAIN_NAME
         auth:
           sso-enabled: true
           whitelist-users:
             - ref+envsubst://$EMAIL_ADDRESS
         targets:
-          - hostname: minio-console.minio.svc.cluster.local
+          - hostname: rustfs-svc.rustfs.svc.cluster.local
             method: http
             port: 9001
             healthcheck:
-              hostname: minio-console.minio.svc.cluster.local
-              port: 9001
+              hostname: rustfs-svc.rustfs.svc.cluster.local
+              port: 9000
               enabled: true
-              path: /
+              path: /health
               interval: 30
               timeout: 5
       headlamp:

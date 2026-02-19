@@ -22,9 +22,9 @@ glance:
         - title: pgAdmin
           subdomain: pgadmin
           icon: di:postgresql
-        - title: MinIO
-          subdomain: minio-console
-          icon: di:minio
+        - title: RustFS
+          subdomain: rustfs-console
+          icon: di:rustfs
     - title: Monitoring
       links:
         - title: Grafana
