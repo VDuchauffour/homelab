@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: seafileltd/seafile-mc
   pullPolicy: IfNotPresent
-  tag: 11.0-latest
+  tag: 13.0-latest
 
 seafile:
   serverHostname: seafile.ref+envsubst://$LOCAL_DOMAIN_NAME
