@@ -449,6 +449,25 @@ data:
               path: /api/health
               interval: 30
               timeout: 5
+      nextcloud:
+        name: Nextcloud
+        protocol: http
+        full-domain: nextcloud.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: nextcloud.nextcloud.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: nextcloud.nextcloud.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /status.php
+              interval: 30
+              timeout: 5
       seafile:
         name: Seafile
         protocol: http

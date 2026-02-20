@@ -1,0 +1,20 @@
+---
+architecture: standalone
+
+auth:
+  enabled: false
+
+master:
+  persistence:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 128Mi
+
+replica:
+  replicaCount: 0

@@ -132,6 +132,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png" width="32"> | radarr | Movie collection manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png" width="32"> | sonarr | TV show collection manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/scrutiny.png" width="32"> | scrutiny | Hard drive S.M.A.R.T health monitoring | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/nextcloud.png" width="32"> | nextcloud | Cloud storage and collaboration with ONLYOFFICE integration | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/seafile.png" width="32"> | seafile | File management and sharing with ONLYOFFICE integration | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/slskd.png" width="32"> | slskd | Soulseek client for music sharing | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/stirling-pdf.png" width="32"> | stirling-pdf | PDF manipulation toolkit | Helmfile |
@@ -164,6 +165,16 @@ Both apps share the same host directories for projects and worktrees. PVs will l
 Each app has its own config PVC (ZFS-backed) but shares the workdir and worktree PVs.
 
 You will need to add your SSH keys for GitHub and your git config.
+
+#### Nextcloud
+
+Enable the External Storage app to browse local media files (mounted at `/media`):
+
+```shell
+kubectl exec deployment/nextcloud -n nextcloud -c nextcloud -- php occ app:enable files_external
+```
+
+Then configure a Local mount in **Settings → Administration → External storage** pointing to `/media`.
 
 #### Passbolt
 

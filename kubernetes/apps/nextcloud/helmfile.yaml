@@ -1,0 +1,25 @@
+---
+repositories:
+  - name: nextcloud
+    url: https://nextcloud.github.io/helm/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: nextcloud-redis
+    namespace: nextcloud
+    createNamespace: true
+    chart: bitnami/redis
+    version: 25.3.0
+    values:
+      - values-redis.yaml
+
+  - name: nextcloud
+    namespace: nextcloud
+    createNamespace: true
+    chart: nextcloud/nextcloud
+    version: 8.9.1
+    needs:
+      - nextcloud/nextcloud-redis
+    values:
+      - values.yaml

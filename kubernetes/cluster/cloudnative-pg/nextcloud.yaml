@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nextcloud-cnpg-credentials
+  namespace: cnpg-clusters
+  labels:
+    cnpg.io/reload: 'true'
+type: kubernetes.io/basic-auth
+stringData:
+  username: nextcloud
+  password: ref+envsubst://$CLOUDNATIVE_PG_NEXTCLOUD_PASSWORD
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: nextcloud
+  namespace: cnpg-clusters
+spec:
+  name: nextcloud
+  owner: nextcloud
+  cluster:
+    name: cnpg-cluster0
