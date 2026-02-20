@@ -1,0 +1,120 @@
+---
+image:
+  repository: nextcloud
+  flavor: apache
+  pullPolicy: IfNotPresent
+
+nextcloud:
+  host: nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
+  username: admin
+  password: ref+envsubst://$NEXTCLOUD_ADMIN_PASSWORD
+
+  trustedDomains:
+    - nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
+    - nextcloud.ref+envsubst://$PUBLIC_DOMAIN_NAME
+
+  defaultConfigs:
+    redis.config.php: false
+
+  extraVolumes:
+    - name: media-library
+      persistentVolumeClaim:
+        claimName: media-library
+
+  extraVolumeMounts:
+    - name: media-library
+      mountPath: /media
+
+  configs:
+    proxy.config.php: |-
+      <?php
+      $CONFIG = array (
+        'overwriteprotocol' => 'https',
+        'trusted_proxies' => ['10.0.0.0/8'],
+        'default_phone_region' => 'FR',
+      );
+    onlyoffice.config.php: |-
+      <?php
+      $CONFIG = array (
+        'onlyoffice' => array (
+          'DocumentServerUrl' => 'https://onlyoffice-docs.ref+envsubst://$LOCAL_DOMAIN_NAME',
+          'DocumentServerInternalUrl' => 'http://documentserver.onlyoffice-docs.svc.cluster.local:8888',
+          'StorageUrl' => 'http://nextcloud.nextcloud.svc.cluster.local:8080',
+          'jwt_secret' => 'ref+envsubst://$ONLYOFFICE_JWT_SECRET',
+          'jwt_header' => 'AuthorizationJWT',
+          'verify_peer_off' => true,
+        ),
+      );
+    redis.config.php: |-
+      <?php
+      $CONFIG = array (
+        'memcache.local' => '\\OC\\Memcache\\APCu',
+        'memcache.distributed' => '\\OC\\Memcache\\Redis',
+        'memcache.locking' => '\\OC\\Memcache\\Redis',
+        'redis' => array (
+          'host' => 'nextcloud-redis-master.nextcloud.svc.cluster.local',
+          'port' => 6379,
+        ),
+      );
+
+internalDatabase:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+  port: 5432
+  user: nextcloud
+  password: ref+envsubst://$CLOUDNATIVE_PG_NEXTCLOUD_PASSWORD
+  database: nextcloud
+
+redis:
+  enabled: false
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  accessMode: ReadWriteOnce
+  size: 20Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  tls:
+    - secretName: nextcloud-mkcert-tls
+      hosts:
+        - nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
+  hosts:
+    - host: nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+
+cronjob:
+  enabled: true
+
+phpClientHttpsFix:
+  enabled: true
+  protocol: https
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  timeoutSeconds: 10

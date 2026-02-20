@@ -143,6 +143,9 @@ glance:
           icon: di:filebrowser
     - title: Sharing
       links:
+        - title: Nextcloud
+          subdomain: nextcloud
+          icon: di:nextcloud
         - title: Seafile
           subdomain: seafile
           icon: di:seafile
