@@ -1,0 +1,31 @@
+---
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: seafile-mariadb
+    namespace: seafile
+    createNamespace: true
+    chart: bitnami/mariadb
+    version: 25.0.0
+    values:
+      - values-mariadb.yaml
+
+  - name: seafile-memcached
+    namespace: seafile
+    createNamespace: true
+    chart: bitnami/memcached
+    version: 8.3.0
+    values:
+      - values-memcached.yaml
+
+  - name: seafile
+    namespace: seafile
+    createNamespace: true
+    chart: ./charts/seafile
+    needs:
+      - seafile/seafile-mariadb
+      - seafile/seafile-memcached
+    values:
+      - values.yaml

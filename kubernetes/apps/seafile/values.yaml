@@ -1,0 +1,59 @@
+---
+replicaCount: 1
+
+image:
+  repository: seafileltd/seafile-mc
+  pullPolicy: IfNotPresent
+  tag: 11.0-latest
+
+seafile:
+  serverHostname: seafile.ref+envsubst://$LOCAL_DOMAIN_NAME
+  adminEmail: ref+envsubst://$SEAFILE_ADMIN_EMAIL
+  adminPassword: ref+envsubst://$SEAFILE_ADMIN_PASSWORD
+  timeZone: Europe/Paris
+  forceHttpsInConf: true
+
+database:
+  host: seafile-mariadb.seafile.svc.cluster.local
+  port: '3306'
+  rootPassword: ref+envsubst://$SEAFILE_MARIADB_ROOT_PASSWORD
+
+memcached:
+  host: seafile-memcached.seafile.svc.cluster.local
+  port: '11211'
+
+# OnlyOffice integration is configured post-first-boot via seahub_settings.py
+# See step 7 in the deployment checklist
+
+persistence:
+  shared:
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+  data:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 10Gi
+    mountPath: /shared/seafile-data
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: seafile.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - seafile.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: seafile-mkcert-tls

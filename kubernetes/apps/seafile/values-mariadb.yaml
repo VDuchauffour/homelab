@@ -1,0 +1,18 @@
+---
+auth:
+  rootPassword: ref+envsubst://$SEAFILE_MARIADB_ROOT_PASSWORD
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+secondary:
+  replicaCount: 0
