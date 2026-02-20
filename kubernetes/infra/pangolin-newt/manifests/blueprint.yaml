@@ -57,6 +57,10 @@ data:
         name: FileBrowser
         protocol: http
         full-domain: filebrowser.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
         targets:
           - hostname: filebrowser.filebrowser.svc.cluster.local
             method: http
@@ -443,6 +447,25 @@ data:
               port: 80
               enabled: true
               path: /api/health
+              interval: 30
+              timeout: 5
+      seafile:
+        name: Seafile
+        protocol: http
+        full-domain: seafile.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: seafile.seafile.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: seafile.seafile.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /accounts/login/
               interval: 30
               timeout: 5
       # --- Admin-only infra ---

@@ -1,0 +1,58 @@
+---
+replicaCount: 1
+
+image:
+  repository: seafileltd/seafile-mc
+  pullPolicy: IfNotPresent
+  tag: 11.0-latest
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+seafile:
+  serverHostname: seafile.example.com
+  adminEmail: me@example.com
+  adminPassword: asecret
+  timeZone: Etc/UTC
+  forceHttpsInConf: true
+
+database:
+  host: seafile-mariadb
+  port: 3306
+  rootPassword: ""
+
+memcached:
+  host: seafile-memcached
+  port: 11211
+
+onlyoffice:
+  enabled: false
+  apijsUrl: ""
+  jwtSecret: ""
+
+persistence:
+  shared:
+    storageClass: ""
+    size: 5Gi
+  data:
+    enabled: false
+    storageClass: ""
+    size: 10Gi
+    existingClaim: ""
+    mountPath: /shared/seafile-data

@@ -141,6 +141,11 @@ glance:
         - title: Filebrowser
           subdomain: filebrowser
           icon: di:filebrowser
+    - title: Sharing
+      links:
+        - title: Seafile
+          subdomain: seafile
+          icon: di:seafile
         - title: Privatebin
           subdomain: privatebin
           icon: di:privatebin
