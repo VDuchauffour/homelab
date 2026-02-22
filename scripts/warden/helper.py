@@ -11,6 +11,8 @@ from pydantic import BaseModel, Field, HttpUrl
 SKIPPED_DEPLOYMENTS: set[tuple[str, str]] = {
     ("immich", "immich-valkey"),
     ("monitoring", "monitoring-kube-prometheus-operator"),
+    ("protonmail-bridge", "protonmail-bridge"),
+    ("seafile", "seafile-memcached"),
 }
 
 structlog.configure(
