@@ -468,6 +468,23 @@ data:
               path: /status.php
               interval: 30
               timeout: 5
+      collabora:
+        name: Collabora
+        protocol: http
+        full-domain: collabora.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: false
+        targets:
+          - hostname: collabora.collabora.svc.cluster.local
+            method: http
+            port: 9980
+            healthcheck:
+              hostname: collabora.collabora.svc.cluster.local
+              port: 9980
+              enabled: true
+              path: /hosting/discovery
+              interval: 30
+              timeout: 5
       seafile:
         name: Seafile
         protocol: http
