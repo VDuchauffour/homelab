@@ -8,6 +8,6 @@ releases:
     namespace: arr
     createNamespace: true
     chart: k8s-home-lab/radarr
-    version: 17.4.0
+    version: 17.5.0
     values:
       - values.yaml
