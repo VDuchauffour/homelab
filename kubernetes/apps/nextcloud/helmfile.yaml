@@ -10,7 +10,7 @@ releases:
     namespace: nextcloud
     createNamespace: true
     chart: bitnami/redis
-    version: 25.3.0
+    version: 25.3.2
     values:
       - values-redis.yaml
 
