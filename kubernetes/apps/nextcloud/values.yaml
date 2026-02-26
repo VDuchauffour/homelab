@@ -33,18 +33,6 @@ nextcloud:
         'trusted_proxies' => ['10.0.0.0/8'],
         'default_phone_region' => 'FR',
       );
-    onlyoffice.config.php: |-
-      <?php
-      $CONFIG = array (
-        'onlyoffice' => array (
-          'DocumentServerUrl' => 'https://onlyoffice-docs.ref+envsubst://$LOCAL_DOMAIN_NAME',
-          'DocumentServerInternalUrl' => 'http://documentserver.onlyoffice-docs.svc.cluster.local:8888',
-          'StorageUrl' => 'http://nextcloud.nextcloud.svc.cluster.local:8080',
-          'jwt_secret' => 'ref+envsubst://$ONLYOFFICE_JWT_SECRET',
-          'jwt_header' => 'AuthorizationJWT',
-          'verify_peer_off' => true,
-        ),
-      );
     redis.config.php: |-
       <?php
       $CONFIG = array (
