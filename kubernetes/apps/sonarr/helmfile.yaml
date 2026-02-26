@@ -8,6 +8,6 @@ releases:
     namespace: arr
     createNamespace: true
     chart: k8s-home-lab/sonarr
-    version: 17.2.1
+    version: 17.3.0
     values:
       - values.yaml
