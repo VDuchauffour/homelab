@@ -136,8 +136,6 @@ glance:
         - title: Stirling PDF
           subdomain: stirling-pdf
           icon: sh:stirling-pdf
-    - title: Sharing
-      links:
         - title: Filebrowser
           subdomain: filebrowser
           icon: di:filebrowser
