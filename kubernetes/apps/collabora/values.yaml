@@ -4,9 +4,8 @@ fullnameOverride: collabora
 collabora:
   aliasgroups:
     - host: https://nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME:443
-    - host: https://nextcloud.ref+envsubst://$PUBLIC_DOMAIN_NAME:443
 
-  server_name: collabora.ref+envsubst://$PUBLIC_DOMAIN_NAME
+  server_name: collabora.ref+envsubst://$LOCAL_DOMAIN_NAME
 
   username: admin
   password: ref+envsubst://$COLLABORA_ADMIN_PASSWORD
@@ -24,15 +23,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-    - host: collabora.ref+envsubst://$PUBLIC_DOMAIN_NAME
-      paths:
-        - path: /
-          pathType: Prefix
   tls:
     - secretName: collabora-mkcert-tls
       hosts:
         - collabora.ref+envsubst://$LOCAL_DOMAIN_NAME
-        - collabora.ref+envsubst://$PUBLIC_DOMAIN_NAME
 
 resources:
   requests:
