@@ -163,6 +163,3 @@ glance:
         - title: OpenCode
           subdomain: opencode
           icon: di:opencode
-        - title: OpenClaw
-          subdomain: openclaw
-          icon: https://raw.githubusercontent.com/openclaw/openclaw/main/assets/chrome-extension/icons/icon32.png
