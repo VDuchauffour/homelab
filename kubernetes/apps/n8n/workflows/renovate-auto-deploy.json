@@ -20,7 +20,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "// Validate this is a merged Renovate PR\nconst input = $input.first().json;\nconst body = input.body || input;\n\n// Must be a closed + merged pull request\nif (body.action !== 'closed' || !body.pull_request?.merged) {\n  return [];\n}\n\nconst pr = body.pull_request;\nconst branch = pr.head.ref;\n\n// Must be from Renovate (branch pattern or 'dependencies' label)\nconst isRenovate =\n  branch.startsWith('renovate/') ||\n  branch.startsWith('renovate-') ||\n  pr.labels?.some(l => l.name === 'dependencies');\n\nif (!isRenovate) {\n  return [];\n}\n\nreturn [{\n  json: {\n    prNumber: pr.number,\n    prTitle: pr.title,\n    branch,\n    repoFullName: body.repository.full_name,\n  }\n}];"
+        "jsCode": "// Validate this is a merged Renovate PR\nconst input = $input.first().json;\nconst body = input.body || input;\n\n// Must be a closed + merged pull request\nif (body.action !== 'closed' || !body.pull_request?.merged) {\n  return [];\n}\n\nconst pr = body.pull_request;\n\n// Must be merged into main\nif (pr.base.ref !== 'main') {\n  return [];\n}\n\nconst branch = pr.head.ref;\n\n// Must be from Renovate (branch pattern or 'dependencies' label)\nconst isRenovate =\n  branch.startsWith('renovate/') ||\n  branch.startsWith('renovate-') ||\n  pr.labels?.some(l => l.name === 'dependencies');\n\nif (!isRenovate) {\n  return [];\n}\n\nreturn [{\n  json: {\n    prNumber: pr.number,\n    prTitle: pr.title,\n    branch,\n    repoFullName: body.repository.full_name,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
