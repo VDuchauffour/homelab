@@ -7,7 +7,7 @@ releases:
     namespace: monitoring
     createNamespace: true
     chart: prometheus-community/kube-prometheus-stack
-    version: 82.4.1
+    version: 82.4.2
     disableValidationOnInstall: true
     values:
       - values.yaml
