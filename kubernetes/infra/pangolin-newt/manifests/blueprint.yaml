@@ -632,3 +632,22 @@ data:
               path: /login
               interval: 30
               timeout: 5
+      pihole:
+        name: Pi-hole
+        protocol: http
+        full-domain: pihole.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: pihole-web.pihole.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: pihole-web.pihole.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /admin/
+              interval: 30
+              timeout: 5
