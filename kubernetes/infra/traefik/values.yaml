@@ -1,0 +1,76 @@
+---
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+    protocol: TCP
+  websecure:
+    port: 8443
+    exposedPort: 443
+    protocol: TCP
+    http:
+      tls:
+        enabled: true
+  metrics:
+    port: 9100
+    expose:
+      default: false
+    protocol: TCP
+
+service:
+  type: LoadBalancer
+
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowEmptyServices: true
+  kubernetesIngress:
+    enabled: true
+    allowEmptyServices: true
+    publishedService:
+      enabled: true
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+api:
+  dashboard: true
+
+ingressRoute:
+  dashboard:
+    enabled: false
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    service:
+      enabled: true
+    serviceMonitor:
+      enabled: true
+
+logs:
+  general:
+    level: INFO
+priorityClassName: system-cluster-critical
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+podSecurityContext:
+  runAsUser: 65532
+  runAsGroup: 65532
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
