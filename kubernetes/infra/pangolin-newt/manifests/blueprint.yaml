@@ -87,6 +87,21 @@ data:
               path: /
               interval: 30
               timeout: 5
+      linkding:
+        name: Linkding
+        protocol: http
+        full-domain: linkding.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: linkding.linkding.svc.cluster.local
+            method: http
+            port: 9090
+            healthcheck:
+              hostname: linkding.linkding.svc.cluster.local
+              port: 9090
+              enabled: true
+              path: /health
+              interval: 30
+              timeout: 5
       # --- Admin-only apps ---
       bazarr:
         name: Bazarr
@@ -314,25 +329,6 @@ data:
               port: 80
               enabled: true
               path: /
-              interval: 30
-              timeout: 5
-      linkding:
-        name: Linkding
-        protocol: http
-        full-domain: linkding.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
-        targets:
-          - hostname: linkding.linkding.svc.cluster.local
-            method: http
-            port: 9090
-            healthcheck:
-              hostname: linkding.linkding.svc.cluster.local
-              port: 9090
-              enabled: true
-              path: /health
               interval: 30
               timeout: 5
       kan:
