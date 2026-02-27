@@ -61,7 +61,7 @@ glance:
           subdomain: grafana
           path: /d/j4a-DMWRk/ups-statistics
           icon: di:ups
-        - title: WakaTime
+        - title: Wakapi
           subdomain: grafana
           path: /d/BRqbRfVGz/wakatime
           icon: di:wakapi
