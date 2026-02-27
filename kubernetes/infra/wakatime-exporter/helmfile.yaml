@@ -1,0 +1,8 @@
+---
+releases:
+  - name: wakatime-exporter
+    namespace: monitoring
+    createNamespace: false
+    chart: ./charts/wakatime-exporter
+    values:
+      - values.yaml
