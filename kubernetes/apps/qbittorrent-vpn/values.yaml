@@ -6,15 +6,15 @@ gluetun:
     type: openvpn
     serverCountries: Switzerland
     openvpn:
-      PROTONVPN_TIER: '2'  # 0 is free, 2 is paid (Plus/Visionary)
-      SERVER_FEATURES: p2p  # For torrent support
+      PROTONVPN_TIER: '2'
+      SERVER_FEATURES: p2p
   credentials:
     create: false
     existingSecret: qbittorrent-vpn-proton
     usernameKey: username
     passwordKey: password
   settings:
-    VPN_PORT_FORWARDING: 'on'
+    VPN_PORT_FORWARDING: 'off'
     STATUS_FILE: /gluetun-status.json
   persistence:
     enabled: true
