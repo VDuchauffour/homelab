@@ -72,6 +72,21 @@ data:
               path: /
               interval: 30
               timeout: 5
+      n8n:
+        name: n8n
+        protocol: http
+        full-domain: n8n.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: n8n.n8n.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: n8n.n8n.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /healthz
+              interval: 30
+              timeout: 5
       privatebin:
         name: PrivateBin
         protocol: http
@@ -287,25 +302,6 @@ data:
               port: 8080
               enabled: true
               path: /
-              interval: 30
-              timeout: 5
-      n8n:
-        name: n8n
-        protocol: http
-        full-domain: n8n.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
-        targets:
-          - hostname: n8n.n8n.svc.cluster.local
-            method: http
-            port: 80
-            healthcheck:
-              hostname: n8n.n8n.svc.cluster.local
-              port: 80
-              enabled: true
-              path: /healthz
               interval: 30
               timeout: 5
       memos:
