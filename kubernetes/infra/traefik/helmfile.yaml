@@ -6,7 +6,7 @@ releases:
   - name: traefik
     namespace: kube-system
     chart: traefik/traefik
-    version: 39.0.0
+    version: 39.0.2
     values:
       - values.yaml
     hooks:
