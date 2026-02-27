@@ -10,6 +10,15 @@ extraEnvVars:
   TZ: Europe/Paris
   FTLCONF_dns_listeningMode: all
 
+dnsmasq:
+  customDnsEntries:
+    - address=/home.arpa/192.168.1.18
+  upstreamServers:
+    - server=/bytel.fr/192.168.1.254
+  customSettings:
+    otherSettings: |
+      domain=home.arpa
+
 serviceDns:
   type: LoadBalancer
 
