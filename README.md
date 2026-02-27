@@ -210,6 +210,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | nut-exporter | Prometheus exporter for Network UPS Tools (NUT) metrics | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="32"> | qbittorrent-exporter | Prometheus exporter for qBittorrent metrics | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | smartctl-exporter | Prometheus exporter for disk S.M.A.R.T. health metrics | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/traefik.png" width="32"> | traefik | Ingress controller and reverse proxy | Helmfile |
 
 </details>
 

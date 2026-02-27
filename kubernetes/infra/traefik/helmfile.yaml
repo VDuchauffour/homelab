@@ -1,0 +1,26 @@
+---
+repositories:
+  - name: traefik
+    url: https://traefik.github.io/charts
+releases:
+  - name: traefik
+    namespace: kube-system
+    chart: traefik/traefik
+    version: 39.0.0
+    values:
+      - values.yaml
+    hooks:
+      - events:
+          - postsync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - kubectl apply -f manifests/middlewares.yaml
+      - events:
+          - postuninstall
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - kubectl delete -f manifests/middlewares.yaml --ignore-not-found
