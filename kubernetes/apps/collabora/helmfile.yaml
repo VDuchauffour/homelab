@@ -8,6 +8,6 @@ releases:
     namespace: collabora
     createNamespace: true
     chart: collabora-online/collabora-online
-    version: 1.1.57
+    version: 1.1.58
     values:
       - values.yaml
