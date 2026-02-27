@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wakatime-exporter.fullname" . }}
+  labels:
+    {{- include "wakatime-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "wakatime-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "wakatime-exporter.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: WAKA_API_KEY
+              value: {{ .Values.wakatime.apiKey | quote }}
+            - name: WAKA_SCRAPE_URI
+              value: {{ .Values.wakatime.scrapeUri | quote }}
+            - name: WAKA_USER
+              value: {{ .Values.wakatime.user | quote }}
+            - name: WAKA_TIMEOUT
+              value: {{ .Values.wakatime.timeout | quote }}
+            - name: WAKA_SSL_VERIFY
+              value: {{ .Values.wakatime.sslVerify | quote }}
+            - name: WAKA_COLLECTOR_ALLTIME
+              value: {{ .Values.wakatime.collectors.allTime | quote }}
+            - name: WAKA_COLLECTOR_GOAL
+              value: {{ .Values.wakatime.collectors.goal | quote }}
+            - name: WAKA_COLLECTOR_LEADER
+              value: {{ .Values.wakatime.collectors.leader | quote }}
+            - name: WAKA_COLLECTOR_SUMMARY
+              value: {{ .Values.wakatime.collectors.summary | quote }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

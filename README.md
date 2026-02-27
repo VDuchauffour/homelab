@@ -94,6 +94,7 @@ direnv allow
 | `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
 | `PANGOLIN_PROXY_IP` | Public IP of the Scaleway proxy instance (for CoreDNS split-horizon) | `163.172.x.x` |
 | `TRAEFIK_CLUSTER_IP` | ClusterIP of the Traefik service (for CoreDNS split-horizon) | `10.43.x.x` |
+| `WAKATIME_API_KEY` | API key for WakaTime / Wakapi (used by wakatime-exporter) | (keep secure) |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
@@ -211,6 +212,7 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png" width="32"> | qbittorrent-exporter | Prometheus exporter for qBittorrent metrics | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | smartctl-exporter | Prometheus exporter for disk S.M.A.R.T. health metrics | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/traefik.png" width="32"> | traefik | Ingress controller and reverse proxy | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | wakatime-exporter | Prometheus exporter for WakaTime / Wakapi coding statistics | Helmfile |
 
 </details>
 
