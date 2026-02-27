@@ -1,0 +1,42 @@
+---
+replicaCount: 1
+
+adminPassword: ref+envsubst://$PIHOLE_ADMIN_PASSWORD
+
+DNS1: 1.1.1.1
+DNS2: 1.0.0.1
+
+extraEnvVars:
+  TZ: Europe/Paris
+  FTLCONF_dns_listeningMode: all
+
+serviceDns:
+  type: LoadBalancer
+
+serviceWeb:
+  type: ClusterIP
+
+persistentVolumeClaim:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - pihole.ref+envsubst://$LOCAL_DOMAIN_NAME
+  tls:
+    - hosts:
+        - pihole.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: pihole-mkcert-tls

@@ -31,6 +31,9 @@ glance:
         - title: RustFS
           subdomain: rustfs-console
           icon: di:rustfs
+        - title: Pi-hole
+          subdomain: pihole
+          icon: di:pi-hole
     - title: Monitoring
       links:
         - title: Grafana
