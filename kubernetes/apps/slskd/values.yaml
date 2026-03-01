@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/slskd/slskd
   pullPolicy: IfNotPresent
-  tag: 0.24.4
+  tag: 0.24.5
 
 service:
   type: ClusterIP
