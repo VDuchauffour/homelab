@@ -103,3 +103,25 @@ kubectl get gpudeviceplugins
 # On host
 intel_gpu_top
 ```
+
+## iGPU App Restart (Scale-Down/Scale-Up)
+
+Apps using Intel iGPU resources (`gpu.intel.com/i915`) and hostPath `/dev/dri` may not cleanly release the GPU device on a simple `kubectl rollout restart`. Use the scale-down/scale-up procedure instead:
+
+```shell
+# 1. Scale deployment to 0
+kubectl scale deployment <app-name> -n <namespace> --replicas=0
+
+# 2. Wait for pod to fully terminate
+kubectl wait --for=delete pod -l app.kubernetes.io/name=<app-name> -n <namespace> --timeout=120s
+
+# 3. Scale back to 1
+kubectl scale deployment <app-name> -n <namespace> --replicas=1
+
+# 4. Verify pod is running
+kubectl get pods -n <namespace> -l app.kubernetes.io/name=<app-name> -w
+```
+
+**When to use this**: GPU device stuck, transcoding errors, or after host-level changes to `/dev/dri`.
+
+**Known iGPU apps**: jellyfin (`media-center`), tdarr (`media-center`).
