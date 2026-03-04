@@ -20,13 +20,44 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "// Validate this is a merged Renovate PR\nconst input = $input.first().json;\nconst body = input.body || input;\n\n// Must be a closed + merged pull request\nif (body.action !== 'closed' || !body.pull_request?.merged) {\n  return [];\n}\n\nconst pr = body.pull_request;\n\n// Must be merged into main\nif (pr.base.ref !== 'main') {\n  return [];\n}\n\nconst branch = pr.head.ref;\n\n// Must be from Renovate (branch pattern or 'dependencies' label)\nconst isRenovate =\n  branch.startsWith('renovate/') ||\n  branch.startsWith('renovate-') ||\n  pr.labels?.some(l => l.name === 'dependencies');\n\nif (!isRenovate) {\n  return [];\n}\n\nreturn [{\n  json: {\n    prNumber: pr.number,\n    prTitle: pr.title,\n    branch,\n    repoFullName: body.repository.full_name,\n  }\n}];"
+        "jsCode": "// Validate this is a merged PR to main\nconst input = $input.first().json;\nconst body = input.body || input;\n\n// Must be a closed + merged pull request\nif (body.action !== 'closed' || !body.pull_request?.merged) {\n  return [];\n}\n\nconst pr = body.pull_request;\n\n// Must be merged into main\nif (pr.base.ref !== 'main') {\n  return [];\n}\n\nconst branch = pr.head.ref;\n\n// Check if from Renovate (branch pattern or 'dependencies' label)\nconst isRenovate =\n  branch.startsWith('renovate/') ||\n  branch.startsWith('renovate-') ||\n  pr.labels?.some(l => l.name === 'dependencies');\n\nreturn [{\n  json: {\n    prNumber: pr.number,\n    prTitle: pr.title,\n    branch,\n    repoFullName: body.repository.full_name,\n    isRenovate,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [280, 340],
       "id": "a1b2c3d4-0002-4000-8000-000000000002",
       "name": "Validate Renovate PR"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a1b2c3d4-cond-4000-8000-000000000001",
+              "leftValue": "={{ $json.isRenovate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [560, 340],
+      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "name": "Is Renovate PR?"
     },
     {
       "parameters": {
@@ -47,7 +78,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [560, 340],
+      "position": [840, 340],
       "id": "a1b2c3d4-0003-4000-8000-000000000003",
       "name": "Get PR Changed Files",
       "credentials": {
@@ -64,7 +95,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [840, 340],
+      "position": [1120, 340],
       "id": "a1b2c3d4-0004-4000-8000-000000000004",
       "name": "Build Deploy Command"
     },
@@ -75,7 +106,7 @@
       },
       "type": "n8n-nodes-base.ssh",
       "typeVersion": 1,
-      "position": [1120, 340],
+      "position": [1400, 340],
       "id": "a1b2c3d4-0005-4000-8000-000000000005",
       "name": "Deploy via SSH",
       "credentials": {
@@ -87,7 +118,7 @@
     },
     {
       "parameters": {
-        "content": "## Renovate Auto-Deploy\n\nAutomatically runs `helmfile apply` + `kubectl rollout restart` when a Renovate PR is merged.\n\n### Flow\n1. GitHub sends a PR webhook on close\n2. Validates it's a merged Renovate PR (branch or label)\n3. Fetches changed files via GitHub API\n4. Extracts affected `kubernetes/apps/` and `kubernetes/infra/` directories\n5. SSHes to the host: stash changes → checkout main → fetch & ff-merge → `helmfile apply` + `kubectl rollout restart` for each dir → restore branch & stash\n\n### Deploy Details\n- Uses `trap cleanup EXIT` to always restore the previous branch and stash\n- Safe stash handling: only pops if we actually stashed (tracks stash count)\n- Uses `git fetch + merge --ff-only` instead of `git pull` (compatible with `pull.rebase = true`)\n- Restarts deployments after helmfile apply to handle stale volume mounts\n\n### Prerequisites\n\n**Credentials to create in n8n (Settings → Credentials):**\n- **Header Auth** — name `Authorization`, value `Bearer ghp_YOUR_TOKEN` (GitHub PAT with `repo` scope)\n- **SSH Private Key** — host, port, user, private key for your K8s node\n\n**GitHub Webhook (repo Settings → Webhooks):**\n- URL: `https://<n8n-external-url>/webhook/renovate-deploy`\n- Content type: `application/json`\n- Events: select only **Pull requests**\n- Secret: (optional, add header check in Validate node if used)\n\n**⚠️ n8n must be reachable from the internet** for GitHub webhooks.\nExpose it via Pangolin or use a GitHub Action as a proxy.",
+        "content": "## Renovate Auto-Deploy\n\nAutomatically runs `helmfile apply` + `kubectl rollout restart` when a Renovate PR is merged.\n\n### Flow\n1. GitHub sends a PR webhook on close\n2. Validates it's a merged PR targeting main\n3. IF node checks if it's a Renovate PR (branch or label) — non-Renovate PRs stop here\n4. Fetches changed files via GitHub API\n5. Extracts affected `kubernetes/apps/` and `kubernetes/infra/` directories\n6. SSHes to the host: stash changes → checkout main → fetch & ff-merge → `helmfile apply` + `kubectl rollout restart` for each dir → restore branch & stash\n\n### Deploy Details\n- Uses `trap cleanup EXIT` to always restore the previous branch and stash\n- Safe stash handling: only pops if we actually stashed (tracks stash count)\n- Uses `git fetch + merge --ff-only` instead of `git pull` (compatible with `pull.rebase = true`)\n- Restarts deployments after helmfile apply to handle stale volume mounts\n\n### Prerequisites\n\n**Credentials to create in n8n (Settings → Credentials):**\n- **Header Auth** — name `Authorization`, value `Bearer ghp_YOUR_TOKEN` (GitHub PAT with `repo` scope)\n- **SSH Private Key** — host, port, user, private key for your K8s node\n\n**GitHub Webhook (repo Settings → Webhooks):**\n- URL: `https://<n8n-external-url>/webhook/renovate-deploy`\n- Content type: `application/json`\n- Events: select only **Pull requests**\n- Secret: (optional, add header check in Validate node if used)\n\n**⚠️ n8n must be reachable from the internet** for GitHub webhooks.\nExpose it via Pangolin or use a GitHub Action as a proxy.",
         "height": 700,
         "width": 498,
         "color": 4
@@ -115,11 +146,23 @@
       "main": [
         [
           {
-            "node": "Get PR Changed Files",
+            "node": "Is Renovate PR?",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Is Renovate PR?": {
+      "main": [
+        [
+          {
+            "node": "Get PR Changed Files",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     },
     "Get PR Changed Files": {
