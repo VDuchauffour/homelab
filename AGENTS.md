@@ -117,7 +117,7 @@ The cluster uses three storage backends optimized for different use cases:
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
-| `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
+| `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss.
 
@@ -142,7 +142,7 @@ spec:
       storage: 1Gi
 ```
 
-### NFS Storage (Shared Media)
+### NFS Storage (Shared Tank)
 
 ReadWriteMany (RWX) volumes via an in-cluster NFS server, following the OpenEBS NFS provisioning pattern.
 
@@ -155,6 +155,8 @@ Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
 - **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static)
 - **NFS Server**: `nfs-server.nfs-server.svc.cluster.local`
 - **Backend**: hostPath to `/mnt/tank/media` on single node
+
+The NFS server exports `/mnt/tank/media`. Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per app. Filebrowser additionally mounts `/mnt/tank/share` via a hostPath PV for access to the share dataset.
 
 #### Components
 
@@ -176,8 +178,8 @@ cd kubernetes/infra/nfs-csi-driver && helmfile apply
 
 #### Static vs Dynamic NFS PVCs
 
-- **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent to share the same `/mnt/tank/media` root
-- **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC, useful for isolated app data
+- **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent, filebrowser, slskd, nextcloud, immich. Each PV specifies a `share` subpath (e.g. `/`, `/photos/immich`) to scope access. Filebrowser also has a hostPath PV for `/mnt/tank/share`.
+- **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC under `/mnt/tank/media`, useful for isolated app data
 
 ## Database (CloudNativePG)
 

@@ -138,6 +138,43 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: pv-share-library-filebrowser
+spec:
+  storageClassName: nfs-share-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - ref+envsubst://$SINGLE_NODE_NAME
+  hostPath:
+    path: /mnt/tank/share
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: share-library
+  namespace: filebrowser
+spec:
+  storageClassName: nfs-share-library
+  volumeName: pv-share-library-filebrowser
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: pv-media-library-slskd
 spec:
   storageClassName: nfs-media-library

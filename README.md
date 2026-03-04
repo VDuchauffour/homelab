@@ -226,7 +226,7 @@ The cluster uses three storage backends optimized for different use cases:
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
-| `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
+| `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss. You can use the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help manage the storage volumes.
 
@@ -255,7 +255,7 @@ spec:
       storage: 1Gi
 ```
 
-#### NFS Storage (Shared Media)
+#### NFS Storage (Shared Tank)
 
 ReadWriteMany (RWX) volumes via an in-cluster NFS server, following the OpenEBS NFS provisioning pattern.
 
@@ -267,7 +267,9 @@ Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
 - **NFS Server**: `nfs-server.nfs-server.svc.cluster.local`
 - **Backend**: hostPath to `/mnt/tank/media` on single node
 
-Static PVs for shared media are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
+The NFS server exports `/mnt/tank/media`. Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per app. Filebrowser additionally mounts `/mnt/tank/share` via a hostPath PV for access to the share dataset.
+
+Static PVs are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
 ### Database (PostgreSQL)
 
