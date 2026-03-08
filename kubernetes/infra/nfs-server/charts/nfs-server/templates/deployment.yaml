@@ -2,29 +2,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nfs-server-media
-  namespace: nfs-server-media
+  name: {{ include "nfs-server.fullname" . }}
+  labels:
+    {{- include "nfs-server.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: nfs-server-media
+      {{- include "nfs-server.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        role: nfs-server-media
+        {{- include "nfs-server.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-        kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: nfs-vol
           hostPath:
-            path: /mnt/tank/media
+            path: {{ .Values.hostPath }}
             type: Directory
       restartPolicy: Always
       containers:
         - name: nfs-server
-          image: itsthenetwork/nfs-server-alpine:12
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: SHARED_DIRECTORY
               value: /nfsshare
@@ -36,9 +40,7 @@ spec:
           volumeMounts:
             - mountPath: /nfsshare
               name: nfs-vol
+          {{- with .Values.resources }}
           resources:
-            limits:
-              memory: 256Mi
-            requests:
-              cpu: 100m
-              memory: 128Mi
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: nfs-server
+description: In-cluster NFS server exposing a host directory via NFS
+type: application
+version: 0.1.0
+appVersion: "12"
