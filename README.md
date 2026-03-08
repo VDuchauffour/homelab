@@ -41,7 +41,7 @@ homelab/
 ```
 
 - **`kubernetes/apps/`** — Each subdirectory is a user-facing application deployed via Helmfile (e.g. Jellyfin, Sonarr, n8n).
-- **`kubernetes/infra/`** — Cluster infrastructure services: storage backends, database operator, cert-manager, monitoring, GPU plugins. Also deployed via Helmfile (or kustomize for nfs-server).
+- **`kubernetes/infra/`** — Cluster infrastructure services: storage backends, database operator, cert-manager, monitoring, GPU plugins. Also deployed via Helmfile (or kustomize for nfs-server-media and nfs-server-share).
 - **`kubernetes/cluster/`** — Cluster-level definitions that don't belong to a single app: namespaces, storage classes, certificate issuers, CloudNativePG cluster and database CRs, persistent volumes.
 - **`infra/`** — Terraform modules for resources outside the cluster (currently the Scaleway reverse proxy).
 
@@ -203,7 +203,8 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | local-path-provisioner | Local hostpath storage provisioner | Helmfile |
 | <img src="https://raw.githubusercontent.com/rustfs/rustfs/main/.github/logo.png" width="32"> | rustfs | High-performance S3-compatible object storage | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-csi-driver | NFS CSI driver for RWX volumes | Helmfile |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server | In-cluster NFS server for shared media | Kustomize |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server-media | In-cluster NFS server for shared media | Kustomize |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | nfs-server-share | In-cluster NFS server for shared files | Kustomize |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | node-feature-discovery | Hardware feature discovery | Helmfile |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="32"> | openebs | Container-native storage solution | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pangolin.png" width="32"> | pangolin-newt | Newt tunnel client for external access via Pangolin | Helmfile |
@@ -226,7 +227,7 @@ The cluster uses three storage backends optimized for different use cases:
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
-| `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
+| `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss. You can use the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help manage the storage volumes.
 
@@ -255,19 +256,25 @@ spec:
       storage: 1Gi
 ```
 
-#### NFS Storage (Shared Media)
+#### NFS Storage (Shared Tank)
 
 ReadWriteMany (RWX) volumes via an in-cluster NFS server, following the OpenEBS NFS provisioning pattern.
 
 ```
-Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
+Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media or /mnt/tank/share)
 ```
 
-- **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static)
-- **NFS Server**: `nfs-server.nfs-server.svc.cluster.local`
-- **Backend**: hostPath to `/mnt/tank/media` on single node
+Two NFS server instances export different ZFS datasets:
 
-Static PVs for shared media are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
+- **Media NFS Server** (`nfs-server-media.nfs-server-media.svc.cluster.local`): Exports `/mnt/tank/media`
+
+- **Share NFS Server** (`nfs-server-share.nfs-server-share.svc.cluster.local`): Exports `/mnt/tank/share`
+
+- **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static media), `nfs-share-library` (static share)
+
+Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per app.
+
+Static PVs are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
 ### Database (PostgreSQL)
 

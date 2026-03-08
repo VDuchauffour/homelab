@@ -16,7 +16,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-arr
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -50,7 +50,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-media-center
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -84,7 +84,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-qbittorrent
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -118,7 +118,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-filebrowser
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -129,6 +129,40 @@ metadata:
 spec:
   storageClassName: nfs-media-library
   volumeName: pv-media-library-filebrowser
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-share-library-filebrowser
+spec:
+  storageClassName: nfs-share-library
+  capacity:
+    storage: 2Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeHandle: nfs-share-library-filebrowser
+    volumeAttributes:
+      server: nfs-server-share.nfs-server-share.svc.cluster.local
+      share: /
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: share-library
+  namespace: filebrowser
+spec:
+  storageClassName: nfs-share-library
+  volumeName: pv-share-library-filebrowser
   accessModes:
     - ReadWriteMany
   resources:
@@ -152,7 +186,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-slskd
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -186,7 +220,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-nextcloud
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /
 ---
 apiVersion: v1
@@ -220,7 +254,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-immich-library
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /photos/immich
 ---
 apiVersion: v1
@@ -254,7 +288,7 @@ spec:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-downloads
     volumeAttributes:
-      server: nfs-server.nfs-server.svc.cluster.local
+      server: nfs-server-media.nfs-server-media.svc.cluster.local
       share: /downloads
 ---
 apiVersion: v1

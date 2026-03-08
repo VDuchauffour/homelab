@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server-share
+  namespace: nfs-server-share
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server-share
+  template:
+    metadata:
+      labels:
+        role: nfs-server-share
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+      volumes:
+        - name: nfs-vol
+          hostPath:
+            path: /mnt/tank/share
+            type: Directory
+      restartPolicy: Always
+      containers:
+        - name: nfs-server
+          image: itsthenetwork/nfs-server-alpine:12
+          env:
+            - name: SHARED_DIRECTORY
+              value: /nfsshare
+          ports:
+            - name: nfs
+              containerPort: 2049
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /nfsshare
+              name: nfs-vol
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

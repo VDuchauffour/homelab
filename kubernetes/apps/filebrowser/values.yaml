@@ -37,5 +37,12 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: media-library
     globalMounts:
-      - path: /srv
+      - path: /srv/media
+        readOnly: false
+  share:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: share-library
+    globalMounts:
+      - path: /srv/share
         readOnly: false

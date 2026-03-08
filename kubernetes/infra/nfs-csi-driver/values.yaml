@@ -3,7 +3,7 @@ storageClass:
   create: true
   name: nfs-tank-media
   parameters:
-    server: nfs-server.nfs-server.svc.cluster.local
+    server: nfs-server-media.nfs-server-media.svc.cluster.local
     share: /
   reclaimPolicy: Retain
   volumeBindingMode: Immediate

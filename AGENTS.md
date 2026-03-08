@@ -117,7 +117,7 @@ The cluster uses three storage backends optimized for different use cases:
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
 | `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
-| `nfs-tank-media` | NFS CSI | RWX | Shared media (arr suite, Jellyfin) |
+| `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss.
 
@@ -142,42 +142,54 @@ spec:
       storage: 1Gi
 ```
 
-### NFS Storage (Shared Media)
+### NFS Storage (Shared Tank)
 
 ReadWriteMany (RWX) volumes via an in-cluster NFS server, following the OpenEBS NFS provisioning pattern.
 
 #### Architecture
 
 ```
-Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media)
+Pod → NFS CSI Driver → NFS Server Pod → hostPath (/mnt/tank/media or /mnt/tank/share)
 ```
 
-- **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static)
-- **NFS Server**: `nfs-server.nfs-server.svc.cluster.local`
-- **Backend**: hostPath to `/mnt/tank/media` on single node
+Two NFS server instances export different ZFS datasets:
+
+- **Media NFS Server** (`nfs-server-media.nfs-server-media.svc.cluster.local`): Exports `/mnt/tank/media`
+
+- **Share NFS Server** (`nfs-server-share.nfs-server-share.svc.cluster.local`): Exports `/mnt/tank/share`
+
+- **StorageClass**: `nfs-tank-media` (dynamic), `nfs-media-library` (static media), `nfs-share-library` (static share)
+
+Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per app.
 
 #### Components
 
-1. **NFS Server** (`kubernetes/infra/nfs-server/`)
+1. **NFS Server — Media** (`kubernetes/infra/nfs-server-media/`)
 
    - Deployment + Service exposing `/mnt/tank/media` via NFS
    - Pinned to single node via nodeSelector
 
-2. **NFS CSI Driver** (`kubernetes/infra/nfs-csi-driver/`)
+2. **NFS Server — Share** (`kubernetes/infra/nfs-server-share/`)
+
+   - Deployment + Service exposing `/mnt/tank/share` via NFS
+   - Pinned to single node via nodeSelector
+
+3. **NFS CSI Driver** (`kubernetes/infra/nfs-csi-driver/`)
 
    - kubernetes-csi/csi-driver-nfs for dynamic PVC provisioning
 
 #### Deployment
 
 ```shell
-kubectl apply -k kubernetes/infra/nfs-server/manifests/
+kubectl apply -k kubernetes/infra/nfs-server-media/manifests/
+kubectl apply -k kubernetes/infra/nfs-server-share/manifests/
 cd kubernetes/infra/nfs-csi-driver && helmfile apply
 ```
 
 #### Static vs Dynamic NFS PVCs
 
-- **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent to share the same `/mnt/tank/media` root
-- **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC, useful for isolated app data
+- **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent, filebrowser, slskd, nextcloud, immich. Each PV specifies a `share` subpath (e.g. `/`, `/photos/immich`) to scope access. Filebrowser's share PV uses the share NFS server.
+- **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC under `/mnt/tank/media`, useful for isolated app data
 
 ## Database (CloudNativePG)
 

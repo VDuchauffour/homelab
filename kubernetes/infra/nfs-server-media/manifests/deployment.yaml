@@ -2,17 +2,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nfs-server
-  namespace: nfs-server
+  name: nfs-server-media
+  namespace: nfs-server-media
 spec:
   replicas: 1
   selector:
     matchLabels:
-      role: nfs-server
+      role: nfs-server-media
   template:
     metadata:
       labels:
-        role: nfs-server
+        role: nfs-server-media
     spec:
       nodeSelector:
         kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
