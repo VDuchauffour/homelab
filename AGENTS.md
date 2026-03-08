@@ -164,25 +164,19 @@ Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per
 
 #### Components
 
-1. **NFS Server — Media** (`kubernetes/infra/nfs-server-media/`)
+1. **NFS Servers** (`kubernetes/infra/nfs-server/`)
 
-   - Deployment + Service exposing `/mnt/tank/media` via NFS
-   - Pinned to single node via nodeSelector
+   - Shared Helm chart with two Helmfile releases (nfs-server-media, nfs-server-share)
+   - Each pinned to single node via nodeSelector
 
-2. **NFS Server — Share** (`kubernetes/infra/nfs-server-share/`)
-
-   - Deployment + Service exposing `/mnt/tank/share` via NFS
-   - Pinned to single node via nodeSelector
-
-3. **NFS CSI Driver** (`kubernetes/infra/nfs-csi-driver/`)
+2. **NFS CSI Driver** (`kubernetes/infra/nfs-csi-driver/`)
 
    - kubernetes-csi/csi-driver-nfs for dynamic PVC provisioning
 
 #### Deployment
 
 ```shell
-kubectl apply -k kubernetes/infra/nfs-server-media/manifests/
-kubectl apply -k kubernetes/infra/nfs-server-share/manifests/
+cd kubernetes/infra/nfs-server && helmfile apply
 cd kubernetes/infra/nfs-csi-driver && helmfile apply
 ```
 

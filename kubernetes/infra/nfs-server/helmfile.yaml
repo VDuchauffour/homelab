@@ -1,0 +1,19 @@
+---
+releases:
+  - name: nfs-server-media
+    namespace: nfs-server-media
+    createNamespace: true
+    chart: ./charts/nfs-server
+    values:
+      - hostPath: /mnt/tank/media
+      - nodeSelector:
+          kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+
+  - name: nfs-server-share
+    namespace: nfs-server-share
+    createNamespace: true
+    chart: ./charts/nfs-server
+    values:
+      - hostPath: /mnt/tank/share
+      - nodeSelector:
+          kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME

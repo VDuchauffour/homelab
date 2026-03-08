@@ -1,0 +1,16 @@
+---
+image:
+  repository: itsthenetwork/nfs-server-alpine
+  tag: "12"
+  pullPolicy: IfNotPresent
+
+hostPath: ""
+
+nodeSelector: {}
+
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
