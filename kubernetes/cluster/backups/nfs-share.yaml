@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: restic-rustfs-credentials
+  namespace: nfs-server-share
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: ref+envsubst://$RUSTFS_ROOT_USER
+  AWS_SECRET_ACCESS_KEY: ref+envsubst://$RUSTFS_ROOT_PASSWORD
+  RESTIC_PASSWORD: ref+envsubst://$RESTIC_PASSWORD
+  RESTIC_REPOSITORY: s3:http://rustfs-svc.rustfs.svc.cluster.local:9000/restic-backups/nfs-share
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restic-init-nfs-share
+  namespace: nfs-server-share
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: restic
+          image: restic/restic:0.17.3
+          command:
+            - sh
+            - -c
+            - |
+              restic snapshots 2>/dev/null && echo "Repository already initialized" || restic init
+          envFrom:
+            - secretRef:
+                name: restic-rustfs-credentials
+      nodeSelector:
+        kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restic-backup-nfs-share
+  namespace: nfs-server-share
+spec:
+  schedule: 0 4 * * 0
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: restic
+              image: restic/restic:0.17.3
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  echo "Starting NFS share backup..."
+                  restic backup /data \
+                    --tag nfs-share \
+                    --host nfs-share \
+                    --verbose
+                  echo "Pruning old snapshots..."
+                  restic forget --keep-weekly 3 --prune
+                  echo "Done."
+              envFrom:
+                - secretRef:
+                    name: restic-rustfs-credentials
+              volumeMounts:
+                - name: nfs-share-data
+                  mountPath: /data
+                  readOnly: true
+          volumes:
+            - name: nfs-share-data
+              hostPath:
+                path: /mnt/tank/share
+                type: Directory
+          nodeSelector:
+            kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+      backoffLimit: 1
