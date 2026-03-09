@@ -22,6 +22,9 @@ categories:
     labels:
       - documentation
       - docs
+  - title: ⚙️ dependencies
+    labels:
+      - dependencies
 change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: \<*_& # You can add  # and @ to disable mentions
 version-resolver:
