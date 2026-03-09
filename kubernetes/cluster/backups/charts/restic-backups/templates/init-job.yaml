@@ -1,0 +1,32 @@
+{{- range $appName, $app := .Values.apps }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restic-init-{{ $appName }}
+  namespace: {{ $app.namespace }}
+  labels:
+    {{- include "restic-backups.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $appName }}
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: restic
+          image: {{ $.Values.global.resticImage }}
+          command:
+            - sh
+            - -c
+            - |
+              restic snapshots 2>/dev/null && echo "Repository already initialized" || restic init
+          envFrom:
+            - secretRef:
+                name: {{ include "restic-backups.secretName" (dict "appName" $appName "app" $app) }}
+      nodeSelector:
+        {{- toYaml $.Values.global.nodeSelector | nindent 8 }}
+  backoffLimit: 1
+{{- end }}

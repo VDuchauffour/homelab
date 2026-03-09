@@ -1,0 +1,60 @@
+{{- range $appName, $app := .Values.apps }}
+{{- if ne (default "orchestrated" $app.mode) "direct" }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+  namespace: {{ $app.namespace }}
+  labels:
+    {{- include "restic-backups.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $appName }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+  namespace: {{ $app.namespace }}
+  labels:
+    {{- include "restic-backups.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $appName }}
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      {{- include "restic-backups.scaleResources" $app | nindent 6 }}
+    verbs:
+      - get
+      - patch
+  - apiGroups:
+      - ''
+    resources:
+      - pods
+    verbs:
+      - list
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - get
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+  namespace: {{ $app.namespace }}
+  labels:
+    {{- include "restic-backups.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $appName }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+roleRef:
+  kind: Role
+  name: {{ include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}

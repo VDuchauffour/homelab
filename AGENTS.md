@@ -20,6 +20,7 @@ homelab/
 │   ├── infra/                   # Infrastructure services
 │   │   └── pangolin-newt/       # Newt tunnel client + blueprint for external access
 │   └── cluster/                 # Cluster-wide definitions
+│       ├── backups/             # Restic backup CronJobs (custom Helm chart)
 │       ├── coredns/             # CoreDNS custom config (split-horizon DNS)
 │       └── cloudnative-pg/      # CNPG cluster, databases, backups
 │
@@ -68,6 +69,7 @@ app-name/
 | Auth | TinyAuth |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
+| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) |
 | IaC | Terraform |
 
 ## Deployment Patterns
@@ -234,6 +236,90 @@ kubectl get pv -o custom-columns='NAME:.metadata.name,RECLAIM:.spec.persistentVo
 kubectl patch pv <pv-name> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
 ```
 
+## Backups (Restic)
+
+All app config PVCs are backed up to RustFS using [Restic](https://restic.net/). Backups are managed by a single custom Helm chart (`kubernetes/cluster/backups/charts/restic-backups/`) deployed via Helmfile.
+
+### Architecture
+
+```
+CronJob (orchestrator) → scales down app → creates inner Job (restic container with PVC mounts) → restic backup to RustFS → scales app back up
+```
+
+Two backup modes:
+
+- **Orchestrated** (default): Scales down the app, runs backup in an inner Job, scales back up via EXIT trap
+- **Direct**: Simple CronJob with restic container directly mounting volumes (used for nfs-share)
+
+### Configuration
+
+- **Chart**: `kubernetes/cluster/backups/charts/restic-backups/`
+- **Helmfile**: `kubernetes/cluster/backups/helmfile.yaml`
+- **App values**: `kubernetes/cluster/backups/values.yaml` — all 21 apps defined here
+- **Destination**: RustFS bucket `restic-backups` at `http://rustfs-svc.rustfs.svc.cluster.local:9000`
+- **Schedule**: Weekly on Sundays, staggered 5-minute intervals starting at 3:00 AM
+- **Retention**: 3 weekly snapshots
+
+### Environment Variables
+
+- `RUSTFS_ROOT_USER` — RustFS access key
+- `RUSTFS_ROOT_PASSWORD` — RustFS secret key
+- `RESTIC_PASSWORD` — Restic repository encryption password
+- `SINGLE_NODE_NAME` — Node name for nodeSelector
+
+### Backed-Up Apps
+
+| App | Namespace | Schedule | Mode | Notes |
+|-----|-----------|----------|------|-------|
+| arr (6 apps) | arr | Sun 3:00 | orchestrated | bazarr, lidarr, prowlarr, radarr, sonarr, tdarr |
+| jellyfin | media-center | Sun 3:00 | orchestrated | excludes transcodes |
+| nfs-share | nfs-server-share | Sun 4:00 | direct | hostPath /mnt/tank/share |
+| filebrowser | filebrowser | Sun 3:05 | orchestrated | |
+| linkding | linkding | Sun 3:10 | orchestrated | |
+| linkwarden | linkwarden | Sun 3:15 | orchestrated | |
+| memos | memos | Sun 3:20 | orchestrated | |
+| n8n | n8n | Sun 3:25 | orchestrated | |
+| pgadmin | pgadmin | Sun 3:30 | orchestrated | |
+| pihole | pihole | Sun 3:35 | orchestrated | |
+| protonmail-bridge | protonmail-bridge | Sun 3:40 | orchestrated | |
+| slskd | slskd | Sun 3:45 | orchestrated | |
+| wakapi | wakapi | Sun 3:50 | orchestrated | |
+| helm-dashboard | kube-system | Sun 3:55 | orchestrated | shared ns, unique names |
+| jellyseerr | media-center | Sun 4:00 | orchestrated | shared ns, unique names |
+| nextcloud | nextcloud | Sun 4:10 | orchestrated | excludes updater- \*/ |
+| privatebin | privatebin | Sun 4:20 | orchestrated | StatefulSet |
+| qbittorrent-vpn | qbittorrent-vpn | Sun 4:25 | orchestrated | 2 PVCs |
+| scrutiny | scrutiny | Sun 4:30 | orchestrated | 2 PVCs |
+| seafile | seafile | Sun 4:35 | orchestrated | deploy + StatefulSet, 3 PVCs |
+| zfdash | zfdash | Sun 4:45 | orchestrated | 2 PVCs |
+
+### Deployment
+
+```shell
+cd kubernetes/cluster/backups
+helmfile apply
+```
+
+### Adding a New App Backup
+
+1. Add an entry to `kubernetes/cluster/backups/values.yaml` under `apps:`
+2. Specify: `namespace`, `schedule`, `targets` (deployments/statefulsets to scale), `pvcs` (name + mountPath), and optional `excludes`
+3. If the app shares a namespace with another backed-up app, set `uniqueNames: true`
+4. Deploy: `cd kubernetes/cluster/backups && helmfile apply`
+
+### Manual Trigger
+
+```shell
+kubectl create job --from=cronjob/restic-backup-<app> manual-backup-<app> -n <namespace>
+```
+
+### Check Backup Status
+
+```shell
+kubectl get cronjobs -A | grep restic
+kubectl get jobs -A | grep restic
+```
+
 ## Dashboard (Glance)
 
 The homelab uses [Glance](https://github.com/glanceapp/glance) as a personal dashboard. It runs as **two instances** (public + local) from a single helmfile in `kubernetes/apps/glance/`.
@@ -335,7 +421,8 @@ After deploying a new app or infra tool, complete these additional steps:
 1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`cd kubernetes/apps/glance && helmfile apply`)
 2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
 3. **Warden monitoring**: Run `make warden-seed-cleanup` to discover the new app and sync monitors (adds new, removes stale)
-4. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
+4. **Restic backup** (if app has config PVCs): Add an entry to `kubernetes/cluster/backups/values.yaml`, then redeploy (`cd kubernetes/cluster/backups && helmfile apply`)
+5. **README.md**: Add the app/tool to the appropriate table (Apps or Infrastructure Tools) in `README.md` — run `make check-readme` to verify
 
 ## CoreDNS (Split-Horizon DNS)
 

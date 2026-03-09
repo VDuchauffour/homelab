@@ -24,6 +24,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | Monitoring | kube-prometheus-stack |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
+| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -42,7 +43,7 @@ homelab/
 
 - **`kubernetes/apps/`** — Each subdirectory is a user-facing application deployed via Helmfile (e.g. Jellyfin, Sonarr, n8n).
 - **`kubernetes/infra/`** — Cluster infrastructure services: storage backends, database operator, cert-manager, monitoring, GPU plugins. Also deployed via Helmfile.
-- **`kubernetes/cluster/`** — Cluster-level definitions that don't belong to a single app: namespaces, storage classes, certificate issuers, CloudNativePG cluster and database CRs, persistent volumes.
+- **`kubernetes/cluster/`** — Cluster-level definitions that don't belong to a single app: namespaces, storage classes, certificate issuers, CloudNativePG cluster and database CRs, persistent volumes, restic backups.
 - **`infra/`** — Terraform modules for resources outside the cluster (currently the Scaleway reverse proxy).
 
 ## Getting Started
@@ -344,6 +345,25 @@ More info [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd
 ### Monitoring
 
 The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) for monitoring and alerting. Configuration is in `kubernetes/infra/kube-prometheus-stack/`.
+
+### Backups (Restic)
+
+All app config PVCs are backed up weekly to [RustFS](https://github.com/rustfs/rustfs) using [Restic](https://restic.net/). A single custom Helm chart (`kubernetes/cluster/backups/charts/restic-backups/`) manages all 21 backup CronJobs.
+
+The orchestrated backup pattern scales down the app, runs a restic backup in an inner Job, and scales back up via an EXIT trap. All backups run on Sundays with staggered 5-minute intervals starting at 3:00 AM. Retention is 3 weekly snapshots.
+
+```shell
+cd kubernetes/cluster/backups
+helmfile apply
+```
+
+To trigger a backup manually:
+
+```shell
+kubectl create job --from=cronjob/restic-backup-<app> manual-backup-<app> -n <namespace>
+```
+
+To add a new app backup, add an entry to `kubernetes/cluster/backups/values.yaml` and redeploy.
 
 ## External Access
 

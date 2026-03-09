@@ -1,0 +1,18 @@
+global:
+  resticImage: restic/restic:0.17.3
+  orchestratorImage: alpine/curl:latest
+  retention:
+    keepWeekly: 3
+  nodeSelector:
+    kubernetes.io/hostname: ""
+
+credentials:
+  accessKeyId: ""
+  secretAccessKey: ""
+  resticPassword: ""
+
+rustfs:
+  endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
+  bucket: restic-backups
+
+apps: {}
