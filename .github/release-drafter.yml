@@ -21,7 +21,7 @@ categories:
     labels:
       - documentation
       - docs
-  - title: ⚙️ dependencies
+  - title: ⚙️ Dependencies
     labels:
       - dependencies
 change-template: '- $TITLE (#$NUMBER)'
