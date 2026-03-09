@@ -1,0 +1,13 @@
+---
+releases:
+  - name: restic-backups
+    chart: ./charts/restic-backups
+    values:
+      - values.yaml
+      - global:
+          nodeSelector:
+            kubernetes.io/hostname: ref+envsubst://$SINGLE_NODE_NAME
+      - credentials:
+          accessKeyId: ref+envsubst://$RUSTFS_ROOT_USER
+          secretAccessKey: ref+envsubst://$RUSTFS_ROOT_PASSWORD
+          resticPassword: ref+envsubst://$RESTIC_PASSWORD

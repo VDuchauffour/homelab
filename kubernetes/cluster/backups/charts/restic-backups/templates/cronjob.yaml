@@ -1,0 +1,218 @@
+{{- range $appName, $app := .Values.apps }}
+{{- $secretName := include "restic-backups.secretName" (dict "appName" $appName "app" $app) }}
+{{- $saName := include "restic-backups.resourceName" (dict "appName" $appName "app" $app) }}
+{{- $excludeFlags := "" }}
+{{- range $app.excludes }}
+{{- $excludeFlags = printf "%s --exclude='%s'" $excludeFlags . }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restic-backup-{{ $appName }}
+  namespace: {{ $app.namespace }}
+  labels:
+    {{- include "restic-backups.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $appName }}
+spec:
+  schedule: {{ $app.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if ne (default "orchestrated" $app.mode) "direct" }}
+          serviceAccountName: {{ $saName }}
+          {{- end }}
+          restartPolicy: Never
+          containers:
+            {{- if eq (default "orchestrated" $app.mode) "direct" }}
+            - name: restic
+              image: {{ $.Values.global.resticImage }}
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  echo "Starting backup..."
+                  restic backup /data \
+                    --tag {{ $appName }} \
+                    --host {{ $appName }} \
+                    {{- range $app.excludes }}
+                    --exclude='{{ . }}' \
+                    {{- end }}
+                    --verbose
+                  echo "Pruning old snapshots..."
+                  restic forget --keep-weekly {{ $.Values.global.retention.keepWeekly }} --prune
+                  echo "Done."
+              envFrom:
+                - secretRef:
+                    name: {{ $secretName }}
+              volumeMounts:
+                {{- if $app.pvcs }}
+                {{- range $app.pvcs }}
+                - name: {{ .name }}
+                  mountPath: {{ .mountPath }}
+                  readOnly: true
+                {{- end }}
+                {{- end }}
+                {{- if $app.hostPaths }}
+                {{- range $app.hostPaths }}
+                - name: {{ .name }}
+                  mountPath: {{ .mountPath }}
+                  readOnly: true
+                {{- end }}
+                {{- end }}
+          volumes:
+            {{- if $app.pvcs }}
+            {{- range $app.pvcs }}
+            - name: {{ .name }}
+              persistentVolumeClaim:
+                claimName: {{ .name }}
+            {{- end }}
+            {{- end }}
+            {{- if $app.hostPaths }}
+            {{- range $app.hostPaths }}
+            - name: {{ .name }}
+              hostPath:
+                path: {{ .path }}
+                type: Directory
+            {{- end }}
+            {{- end }}
+          {{- else }}
+            - name: orchestrator
+              image: {{ $.Values.global.orchestratorImage }}
+              env:
+                - name: NODE_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: spec.nodeName
+              command:
+                - sh
+                - -c
+                - |
+                  apk add --no-cache jq > /dev/null 2>&1
+
+                  APISERVER=https://kubernetes.default.svc
+                  TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+                  CACERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                  NAMESPACE={{ $app.namespace }}
+
+                  api() {
+                    curl -s "$APISERVER$1" \
+                      -H "Authorization: Bearer $TOKEN" \
+                      --cacert "$CACERT" \
+                      "${@:2}"
+                  }
+                  {{- range $app.targets }}
+
+                  scale_{{ .name | replace "-" "_" }}() {
+                    api "/apis/apps/v1/namespaces/$NAMESPACE/{{ .type }}s/{{ .name }}/scale" \
+                      -X PATCH \
+                      -H "Content-Type: application/strategic-merge-patch+json" \
+                      -d "{\"spec\":{\"replicas\":$1}}" > /dev/null
+                  }
+                  {{- end }}
+
+                  cleanup() {
+                    echo "Scaling back up..."
+                    {{ range $app.targets }}scale_{{ .name | replace "-" "_" }} 1
+                    {{ end -}}
+                  }
+                  trap cleanup EXIT INT TERM
+                  {{- range $app.targets }}
+
+                  echo "Scaling down {{ .name }}..."
+                  scale_{{ .name | replace "-" "_" }} 0
+                  {{- end }}
+
+                  echo "Waiting for pods to terminate..."
+                  for i in $(seq 1 60); do
+                    ALL_DOWN=true
+                    {{- range $app.targets }}
+                    REPLICAS=$(api "/apis/apps/v1/namespaces/$NAMESPACE/{{ .type }}s/{{ .name }}/scale" | jq '.status.replicas // 0')
+                    [ "$REPLICAS" -ne 0 ] && ALL_DOWN=false
+                    {{- end }}
+                    $ALL_DOWN && break
+                    sleep 5
+                  done
+                  sleep 5
+
+                  JOB_NAME="restic-{{ $appName }}-$(date +%s)"
+                  echo "Creating backup job $JOB_NAME..."
+
+                  {{- $volMounts := list }}
+                  {{- range $app.pvcs }}
+                  {{- $volMounts = append $volMounts (printf "{\\\"name\\\": \\\"%s\\\", \\\"mountPath\\\": \\\"%s\\\", \\\"readOnly\\\": true}" .name .mountPath) }}
+                  {{- end }}
+                  {{- $vols := list }}
+                  {{- range $app.pvcs }}
+                  {{- $vols = append $vols (printf "{\\\"name\\\": \\\"%s\\\", \\\"persistentVolumeClaim\\\": {\\\"claimName\\\": \\\"%s\\\"}}" .name .name) }}
+                  {{- end }}
+
+                  RESULT=$(api "/apis/batch/v1/namespaces/$NAMESPACE/jobs" \
+                    -X POST \
+                    -H "Content-Type: application/json" \
+                    -d "{
+                      \"apiVersion\": \"batch/v1\",
+                      \"kind\": \"Job\",
+                      \"metadata\": {
+                        \"name\": \"$JOB_NAME\",
+                        \"namespace\": \"$NAMESPACE\"
+                      },
+                      \"spec\": {
+                        \"backoffLimit\": 1,
+                        \"template\": {
+                          \"spec\": {
+                            \"restartPolicy\": \"Never\",
+                            \"nodeSelector\": {
+                              \"kubernetes.io/hostname\": \"$NODE_NAME\"
+                            },
+                            \"containers\": [{
+                              \"name\": \"restic\",
+                              \"image\": \"{{ $.Values.global.resticImage }}\",
+                              \"command\": [\"sh\", \"-c\", \"set -e; echo Starting backup...; restic backup /data --tag {{ $appName }} --tag config --host {{ $appName }}{{ $excludeFlags }} --verbose; echo Pruning...; restic forget --keep-weekly {{ $.Values.global.retention.keepWeekly }} --prune; echo Done.\"],
+                              \"envFrom\": [{\"secretRef\": {\"name\": \"{{ $secretName }}\"}}],
+                              \"volumeMounts\": [{{ join ", " $volMounts }}]
+                            }],
+                            \"volumes\": [{{ join ", " $vols }}]
+                          }
+                        }
+                      }
+                    }")
+                  if echo "$RESULT" | jq -e '.kind == "Job"' > /dev/null 2>&1; then
+                    echo "Backup job created."
+                  else
+                    echo "ERROR: Failed to create backup job:"
+                    echo "$RESULT" | jq -r '.message // .' 2>/dev/null || echo "$RESULT"
+                    exit 1
+                  fi
+
+                  echo "Waiting for backup job to complete..."
+                  for i in $(seq 1 120); do
+                    JOB_JSON=$(api "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB_NAME")
+                    STATUS=$(echo "$JOB_JSON" | jq -r '(.status.conditions // [])[] | select(.status == "True") | .type' 2>/dev/null)
+                    case "$STATUS" in
+                      *Complete*)
+                        echo "Backup job completed successfully."
+                        api "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB_NAME?propagationPolicy=Background" -X DELETE > /dev/null
+                        exit 0
+                        ;;
+                      *Failed*)
+                        echo "ERROR: Backup job failed."
+                        api "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB_NAME?propagationPolicy=Background" -X DELETE > /dev/null
+                        exit 1
+                        ;;
+                    esac
+                    sleep 5
+                  done
+                  echo "ERROR: Backup job timed out."
+                  api "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB_NAME?propagationPolicy=Background" -X DELETE > /dev/null
+                  exit 1
+          {{- end }}
+          nodeSelector:
+            {{- toYaml $.Values.global.nodeSelector | nindent 12 }}
+      backoffLimit: 0
+{{- end }}

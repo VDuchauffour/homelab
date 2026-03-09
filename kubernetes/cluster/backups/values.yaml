@@ -1,0 +1,280 @@
+---
+apps:
+  # --- Original 3 backups ---
+
+  arr:
+    namespace: arr
+    schedule: 0 3 * * 0
+    targets:
+      - type: deployment
+        name: bazarr
+      - type: deployment
+        name: lidarr
+      - type: deployment
+        name: prowlarr
+      - type: deployment
+        name: radarr
+      - type: deployment
+        name: sonarr
+      - type: deployment
+        name: tdarr
+    pvcs:
+      - name: bazarr-config
+        mountPath: /data/bazarr
+      - name: lidarr-config
+        mountPath: /data/lidarr
+      - name: prowlarr-config
+        mountPath: /data/prowlarr
+      - name: radarr-config
+        mountPath: /data/radarr
+      - name: sonarr-config
+        mountPath: /data/sonarr
+      - name: tdarr-config
+        mountPath: /data/tdarr
+
+  jellyfin:
+    namespace: media-center
+    schedule: 0 3 * * 0
+    targets:
+      - type: deployment
+        name: jellyfin
+    pvcs:
+      - name: jellyfin-config
+        mountPath: /data
+    excludes:
+      - '*.log'
+      - transcodes/**
+
+  nfs-share:
+    namespace: nfs-server-share
+    schedule: 0 4 * * 0
+    mode: direct
+    hostPaths:
+      - name: nfs-share-data
+        path: /mnt/tank/share
+        mountPath: /data
+
+  # --- Simple single-PVC apps ---
+
+  filebrowser:
+    namespace: filebrowser
+    schedule: 5 3 * * 0
+    targets:
+      - type: deployment
+        name: filebrowser
+    pvcs:
+      - name: filebrowser
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  linkding:
+    namespace: linkding
+    schedule: 10 3 * * 0
+    targets:
+      - type: deployment
+        name: linkding
+    pvcs:
+      - name: linkding
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  linkwarden:
+    namespace: linkwarden
+    schedule: 15 3 * * 0
+    targets:
+      - type: deployment
+        name: linkwarden
+    pvcs:
+      - name: linkwarden-pvc
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  memos:
+    namespace: memos
+    schedule: 20 3 * * 0
+    targets:
+      - type: deployment
+        name: memos
+    pvcs:
+      - name: memos
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  n8n:
+    namespace: n8n
+    schedule: 25 3 * * 0
+    targets:
+      - type: deployment
+        name: n8n
+    pvcs:
+      - name: n8n
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  pgadmin:
+    namespace: pgadmin
+    schedule: 30 3 * * 0
+    targets:
+      - type: deployment
+        name: pgadmin-pgadmin4
+    pvcs:
+      - name: pgadmin-pgadmin4
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  pihole:
+    namespace: pihole
+    schedule: 35 3 * * 0
+    targets:
+      - type: deployment
+        name: pihole
+    pvcs:
+      - name: pihole
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  protonmail-bridge:
+    namespace: protonmail-bridge
+    schedule: 40 3 * * 0
+    targets:
+      - type: deployment
+        name: protonmail-bridge
+    pvcs:
+      - name: protonmail-bridge-config
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  slskd:
+    namespace: slskd
+    schedule: 45 3 * * 0
+    targets:
+      - type: deployment
+        name: slskd
+    pvcs:
+      - name: slskd-config
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  wakapi:
+    namespace: wakapi
+    schedule: 50 3 * * 0
+    targets:
+      - type: deployment
+        name: wakapi
+    pvcs:
+      - name: wakapi
+        mountPath: /data
+    excludes:
+      - '*.log'
+
+  # --- Shared namespace apps (uniqueNames: true) ---
+
+  helm-dashboard:
+    namespace: kube-system
+    schedule: 55 3 * * 0
+    uniqueNames: true
+    targets:
+      - type: deployment
+        name: helm-dashboard
+    pvcs:
+      - name: helm-dashboard
+        mountPath: /data
+
+  jellyseerr:
+    namespace: media-center
+    schedule: 0 4 * * 0
+    uniqueNames: true
+    targets:
+      - type: deployment
+        name: jellyseerr
+    pvcs:
+      - name: jellyseerr-config
+        mountPath: /data
+
+  # --- Complex apps ---
+
+  nextcloud:
+    namespace: nextcloud
+    schedule: 10 4 * * 0
+    targets:
+      - type: deployment
+        name: nextcloud
+    pvcs:
+      - name: nextcloud-nextcloud
+        mountPath: /data
+    excludes:
+      - '*.log'
+      - updater-*/
+
+  privatebin:
+    namespace: privatebin
+    schedule: 20 4 * * 0
+    targets:
+      - type: statefulset
+        name: privatebin
+    pvcs:
+      - name: storage-privatebin-0
+        mountPath: /data
+
+  qbittorrent-vpn:
+    namespace: qbittorrent-vpn
+    schedule: 25 4 * * 0
+    targets:
+      - type: deployment
+        name: qbittorrent-vpn
+    pvcs:
+      - name: qbittorrent-vpn-config
+        mountPath: /data/config
+      - name: qbittorrent-vpn-gluetun
+        mountPath: /data/gluetun
+    excludes:
+      - '*.log'
+
+  scrutiny:
+    namespace: scrutiny
+    schedule: 30 4 * * 0
+    targets:
+      - type: deployment
+        name: scrutiny
+    pvcs:
+      - name: scrutiny-config
+        mountPath: /data/config
+      - name: scrutiny-influxdb
+        mountPath: /data/influxdb
+
+  seafile:
+    namespace: seafile
+    schedule: 35 4 * * 0
+    targets:
+      - type: deployment
+        name: seafile
+      - type: statefulset
+        name: seafile-mariadb
+    pvcs:
+      - name: seafile-shared
+        mountPath: /data/shared
+      - name: seafile-data
+        mountPath: /data/data
+      - name: data-seafile-mariadb-0
+        mountPath: /data/mariadb
+
+  zfdash:
+    namespace: zfdash
+    schedule: 45 4 * * 0
+    targets:
+      - type: deployment
+        name: zfdash
+    pvcs:
+      - name: zfdash-config
+        mountPath: /data/config
+      - name: zfdash-data
+        mountPath: /data/data
