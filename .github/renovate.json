@@ -48,9 +48,15 @@
     {
       "customType": "regex",
       "description": "see https://regex101.com/r/Bf1hmQ/1 and https://regex101.com/r/SjTpfT/1",
-      "managerFilePatterns": ["Dockerfile", "compose.yaml", "compose.yml"],
+      "managerFilePatterns": [
+        "Dockerfile",
+        "compose.yaml",
+        "compose.yml",
+        "compose.yaml.tftpl"
+      ],
       "matchStrings": [
-        "#.*https:\\/\\/github\\.com/(?<depName>[^\\/]+\\/[^\\/]+)\\/(?<sourceType>(releases|tags)+).*\n(?:ENV|ARG)\\s.*_VERSION[\\s|=](?<currentValue>.*)"
+        "#.*https:\\/\\/github\\.com/(?<depName>[^\\/]+\\/[^\\/]+)\\/(?<sourceType>(releases|tags)+).*\n(?:ENV|ARG)\\s.*_VERSION[\\s|=](?<currentValue>.*)",
+        "#\\s*https:\\/\\/github\\.com\\/(?<depName>[^\\/]+\\/[^\\/]+)\\/(?<sourceType>(releases|tags)+).*\n\\s*image:\\s*\\S+:(?:postgresql-)?(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "github-{{{sourceType}}}"
     }
