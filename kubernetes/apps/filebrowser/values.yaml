@@ -8,7 +8,7 @@ controllers:
             cpu: 50m
             memory: 50Mi
           limits:
-            memory: 100Mi
+            memory: 256Mi
 
 ingress:
   main:
