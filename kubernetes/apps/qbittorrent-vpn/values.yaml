@@ -38,8 +38,6 @@ qbittorrent:
       value: 1000
     - name: TZ
       value: Europe/Paris
-    - name: WEBUI_HOST_HEADER_VALIDATION_DOMAINS
-      value: qbittorrent.ref+envsubst://$LOCAL_DOMAIN_NAME,qbittorrent.ref+envsubst://$PUBLIC_DOMAIN_NAME
 resources:
   gluetun:
     requests:
