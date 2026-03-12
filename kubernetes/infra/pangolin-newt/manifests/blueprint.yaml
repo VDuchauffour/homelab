@@ -414,6 +414,21 @@ data:
               path: /api/health
               interval: 30
               timeout: 5
+      navidrome:
+        name: Navidrome
+        protocol: http
+        full-domain: navidrome.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: navidrome.navidrome.svc.cluster.local
+            method: http
+            port: 4533
+            healthcheck:
+              hostname: navidrome.navidrome.svc.cluster.local
+              port: 4533
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       slskd:
         name: slskd
         protocol: http

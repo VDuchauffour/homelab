@@ -97,6 +97,9 @@ glance:
         - title: qBittorrent
           subdomain: qbittorrent
           icon: di:qbittorrent
+        - title: Navidrome
+          subdomain: navidrome
+          icon: di:navidrome
         - title: slskd
           subdomain: slskd
           icon: di:slskd
