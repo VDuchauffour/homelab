@@ -33,4 +33,4 @@ export WAKATIME_API_KEY=
 
 export PIHOLE_ADMIN_PASSWORD=
 
-export IMMICH_KEY=
+export IMMICH_API_KEY=

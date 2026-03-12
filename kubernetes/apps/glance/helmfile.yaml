@@ -16,8 +16,6 @@ releases:
       - values-common.yaml
       - values-public.yaml
       - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME
-      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
-      - immichApiKey: ref+envsubst://$IMMICH_KEY
       - glance:
           auth:
             secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
@@ -32,8 +30,6 @@ releases:
       - values-common.yaml
       - values-local.yaml
       - domainName: ref+envsubst://$LOCAL_DOMAIN_NAME
-      - gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
-      - immichApiKey: ref+envsubst://$IMMICH_KEY
       - glance:
           auth:
             secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
