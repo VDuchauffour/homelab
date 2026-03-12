@@ -9,7 +9,8 @@ image:
 domainName: ''
 gluetunUrl: ''
 gluetunApiKey: ''
-qbittorrentUrl: ''
+immichUrl: ''
+immichApiKey: ''
 
 
 service:

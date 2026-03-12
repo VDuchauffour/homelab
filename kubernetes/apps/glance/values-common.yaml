@@ -6,7 +6,9 @@ resources:
   limits:
     memory: 64Mi
 gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
-qbittorrentUrl: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
+immichUrl: immich-server.immich.svc.cluster.local:2283
+gluetunApiKey: ref+envsubst://$GLUETUN_API_KEY
+immichApiKey: ref+envsubst://$IMMICH_API_KEY
 glance:
   instanceBookmarkGroups:
     - title: Proxy
