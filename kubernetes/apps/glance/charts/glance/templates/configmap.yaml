@@ -71,8 +71,47 @@ data:
           - size: full
             widgets:
               - type: custom-api
+                title: Gluetun status
+                cache: 1m
+                url: http://{{ $.Values.gluetunUrl }}/v1/publicip/ip
+                headers:
+                  X-API-Key: {{ $.Values.gluetunApiKey }}
+                template: |
+                  {{`{{ if eq .Response.StatusCode 200 }}`}}
+                    {{`{{ $ip := (.JSON.String "public_ip") }}`}}
+                    {{`{{ $city := (.JSON.String "city") }}`}}
+                    {{`{{ $country := (.JSON.String "country") }}`}}
+                    {{`{{ if eq $ip "" }}`}}
+                      <div>
+                        <div>
+                          <div>
+                            <div class="color-highlight size-h3">
+                              Your VPN is not connected!
+                              <span class="color-negative">●</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {{`{{ else }}`}}
+                      <div>
+                        <div>
+                          <div>
+                            <div class="color-highlight size-h3">
+                              Your VPN is connected!
+                              <span class="color-positive">●</span>
+                            </div>
+                          </div>
+                          <div class="size-h5">{{`{{ $ip }}`}} - {{`{{ $city }}`}}, {{`{{ $country }}`}}</div>
+                        </div>
+                      </div>
+                    {{`{{ end }}`}}
+                  {{`{{ else }}`}}
+                    <div style="text-align: center; color: var(--color-negative);">
+                      Error: {{`{{ .Response.StatusCode }}`}} - {{`{{ .Response.Status }}`}}
+                    </div>
+                  {{`{{ end }}`}}
+              - type: custom-api
                 title: Immich Stats
-                hide-header: true
                 cache: 10m
                 url: http://{{ $.Values.immichUrl }}/api/server/statistics
                 headers:
@@ -160,50 +199,14 @@ data:
                     </div>
                   </div>
                   {{`{{ end }}`}}
+      - name: Cluster
+        columns:
+          - size: full
+            widgets:
               - type: extension
                 url: http://glance-k8s.glance.svc.cluster.local/extension/nodes
                 allow-potentially-dangerous-html: true
                 cache: 1s
-              - type: custom-api
-                title: Gluetun status
-                cache: 1m
-                url: http://{{ $.Values.gluetunUrl }}/v1/publicip/ip
-                headers:
-                  X-API-Key: {{ $.Values.gluetunApiKey }}
-                template: |
-                  {{`{{ if eq .Response.StatusCode 200 }}`}}
-                    {{`{{ $ip := (.JSON.String "public_ip") }}`}}
-                    {{`{{ $city := (.JSON.String "city") }}`}}
-                    {{`{{ $country := (.JSON.String "country") }}`}}
-                    {{`{{ if eq $ip "" }}`}}
-                      <div>
-                        <div>
-                          <div>
-                            <div class="color-highlight size-h3">
-                              Your VPN is not connected!
-                              <span class="color-negative">●</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    {{`{{ else }}`}}
-                      <div>
-                        <div>
-                          <div>
-                            <div class="color-highlight size-h3">
-                              Your VPN is connected!
-                              <span class="color-positive">●</span>
-                            </div>
-                          </div>
-                          <div class="size-h5">{{`{{ $ip }}`}} - {{`{{ $city }}`}}, {{`{{ $country }}`}}</div>
-                        </div>
-                      </div>
-                    {{`{{ end }}`}}
-                  {{`{{ else }}`}}
-                    <div style="text-align: center; color: var(--color-negative);">
-                      Error: {{`{{ .Response.StatusCode }}`}} - {{`{{ .Response.Status }}`}}
-                    </div>
-                  {{`{{ end }}`}}
               - type: extension
                 url: http://glance-k8s/extension/apps
                 allow-potentially-dangerous-html: true
