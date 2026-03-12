@@ -278,3 +278,15 @@ apps:
         mountPath: /data/config
       - name: zfdash-data
         mountPath: /data/data
+
+  navidrome:
+    namespace: navidrome
+    schedule: 50 4 * * 0
+    targets:
+      - type: deployment
+        name: navidrome
+    pvcs:
+      - name: navidrome-config
+        mountPath: /data
+    excludes:
+      - '*.log'

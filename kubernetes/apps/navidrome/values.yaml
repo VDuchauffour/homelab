@@ -1,0 +1,48 @@
+---
+env:
+  TZ: Europe/Paris
+  ND_LOGLEVEL: info
+  ND_SESSIONTIMEOUT: 24h
+  ND_ENABLETRANSCODINGCONFIG: 'false'
+  ND_MUSICFOLDER: /music/music
+  ND_ENABLESHARING: 'false'
+
+service:
+  main:
+    ports:
+      http:
+        port: 4533
+
+persistence:
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+    mountPath: /data
+  music:
+    enabled: true
+    existingClaim: media-library
+    mountPath: /music
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    hosts:
+      - host: navidrome.ref+envsubst://$LOCAL_DOMAIN_NAME
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - navidrome.ref+envsubst://$LOCAL_DOMAIN_NAME
+        secretName: navidrome-mkcert-tls
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 128Mi
+  limits:
+    memory: 512Mi

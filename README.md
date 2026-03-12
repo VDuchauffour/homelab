@@ -126,6 +126,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/memos.png" width="32"> | memos | Lightweight self-hosted memo hub | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/mlflow.png" width="32"> | mlflow | ML experiment tracking and model registry | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/navidrome.png" width="32"> | navidrome | Web-based music collection server and streamer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="32"> | opencode | AI-powered coding assistant with built-in web UI | Helmfile |
 | <img src="https://raw.githubusercontent.com/btriapitsyn/openchamber/20f158f2b71b66aef0235531b5092ba82cda720f/packages/vscode/assets/app-icon.png" width="32"> | openchamber | [OpenChamber](https://github.com/btriapitsyn/openchamber) web UI for OpenCode | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |
