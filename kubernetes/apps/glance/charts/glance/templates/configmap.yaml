@@ -68,62 +68,8 @@ data:
 
       - name: Stats
         columns:
-          - size: small
-            widgets:
-              - type: calendar
-                first-day-of-week: {{ $.Values.glance.sharedWidgets.stats | first | dig "firstDayOfWeek" "monday" }}
-              - type: weather
-                location: {{ (index $.Values.glance.sharedWidgets.stats 1).location }}
-                units: {{ (index $.Values.glance.sharedWidgets.stats 1).units }}
-                hour-format: {{ (index $.Values.glance.sharedWidgets.stats 1).hourFormat }}
-              - type: to-do
-
           - size: full
             widgets:
-              - type: extension
-                url: http://glance-k8s.glance.svc.cluster.local/extension/nodes
-                allow-potentially-dangerous-html: true
-                cache: 1s
-              - type: custom-api
-                title: Gluetun status
-                cache: 1m
-                url: http://{{ $.Values.gluetunUrl }}/v1/publicip/ip
-                headers:
-                  X-API-Key: {{ $.Values.gluetunApiKey }}
-                template: |
-                  {{`{{ if eq .Response.StatusCode 200 }}`}}
-                    {{`{{ $ip := (.JSON.String "public_ip") }}`}}
-                    {{`{{ $city := (.JSON.String "city") }}`}}
-                    {{`{{ $country := (.JSON.String "country") }}`}}
-                    {{`{{ if eq $ip "" }}`}}
-                      <div>
-                        <div>
-                          <div>
-                            <div class="color-highlight size-h3">
-                              Your VPN is not connected!
-                              <span class="color-negative">●</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    {{`{{ else }}`}}
-                      <div>
-                        <div>
-                          <div>
-                            <div class="color-highlight size-h3">
-                              Your VPN is connected!
-                              <span class="color-positive">●</span>
-                            </div>
-                          </div>
-                          <div class="size-h5">{{`{{ $ip }}`}} - {{`{{ $city }}`}}, {{`{{ $country }}`}}</div>
-                        </div>
-                      </div>
-                    {{`{{ end }}`}}
-                  {{`{{ else }}`}}
-                    <div style="text-align: center; color: var(--color-negative);">
-                      Error: {{`{{ .Response.StatusCode }}`}} - {{`{{ .Response.Status }}`}}
-                    </div>
-                  {{`{{ end }}`}}
               - type: custom-api
                 title: Immich Stats
                 hide-header: true
@@ -214,3 +160,55 @@ data:
                     </div>
                   </div>
                   {{`{{ end }}`}}
+              - type: extension
+                url: http://glance-k8s.glance.svc.cluster.local/extension/nodes
+                allow-potentially-dangerous-html: true
+                cache: 1s
+              - type: custom-api
+                title: Gluetun status
+                cache: 1m
+                url: http://{{ $.Values.gluetunUrl }}/v1/publicip/ip
+                headers:
+                  X-API-Key: {{ $.Values.gluetunApiKey }}
+                template: |
+                  {{`{{ if eq .Response.StatusCode 200 }}`}}
+                    {{`{{ $ip := (.JSON.String "public_ip") }}`}}
+                    {{`{{ $city := (.JSON.String "city") }}`}}
+                    {{`{{ $country := (.JSON.String "country") }}`}}
+                    {{`{{ if eq $ip "" }}`}}
+                      <div>
+                        <div>
+                          <div>
+                            <div class="color-highlight size-h3">
+                              Your VPN is not connected!
+                              <span class="color-negative">●</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {{`{{ else }}`}}
+                      <div>
+                        <div>
+                          <div>
+                            <div class="color-highlight size-h3">
+                              Your VPN is connected!
+                              <span class="color-positive">●</span>
+                            </div>
+                          </div>
+                          <div class="size-h5">{{`{{ $ip }}`}} - {{`{{ $city }}`}}, {{`{{ $country }}`}}</div>
+                        </div>
+                      </div>
+                    {{`{{ end }}`}}
+                  {{`{{ else }}`}}
+                    <div style="text-align: center; color: var(--color-negative);">
+                      Error: {{`{{ .Response.StatusCode }}`}} - {{`{{ .Response.Status }}`}}
+                    </div>
+                  {{`{{ end }}`}}
+              - type: extension
+                url: http://glance-k8s/extension/apps
+                allow-potentially-dangerous-html: true
+                cache: 1s
+                parameters:
+                  show-if: |
+                    namespace != "kube-system" and
+                    ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
