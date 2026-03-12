@@ -3,6 +3,7 @@ name: pangolin
 
 services:
   pangolin:
+    # https://github.com/fosrl/pangolin/releases
     image: docker.io/fosrl/pangolin:postgresql-1.15.4
     container_name: pangolin
     restart: unless-stopped
@@ -34,7 +35,8 @@ services:
       retries: 5
 
   gerbil:
-    image: docker.io/fosrl/gerbil:latest
+    # https://github.com/fosrl/gerbil/releases
+    image: docker.io/fosrl/gerbil:1.3.0
     container_name: gerbil
     restart: unless-stopped
     depends_on:
@@ -56,7 +58,8 @@ services:
       - 80:80
 
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:latest
+    # https://github.com/crowdsecurity/crowdsec/releases
+    image: docker.io/crowdsecurity/crowdsec:v1.7.6
     container_name: crowdsec
     restart: unless-stopped
     environment:
@@ -81,7 +84,8 @@ services:
       - "127.0.0.1:8080:8080"
 
   traefik:
-    image: docker.io/traefik:v3.6
+    # https://github.com/traefik/traefik/releases
+    image: docker.io/traefik:v3.6.10
     container_name: traefik
     restart: unless-stopped
     network_mode: service:gerbil
