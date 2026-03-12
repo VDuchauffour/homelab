@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: community-charts
+    url: https://community-charts.github.io/helm-charts
+
+releases:
+  - name: mlflow
+    namespace: mlflow
+    createNamespace: true
+    chart: community-charts/mlflow
+    version: 1.8.1
+    values:
+      - values.yaml

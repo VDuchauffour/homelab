@@ -1,0 +1,74 @@
+---
+image:
+  repository: burakince/mlflow
+  pullPolicy: IfNotPresent
+
+backendStore:
+  databaseMigration: true
+  databaseConnectionCheck: true
+  postgres:
+    enabled: true
+    host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+    port: 5432
+    database: mlflow
+    user: mlflow
+    password: ref+envsubst://$CLOUDNATIVE_PG_MLFLOW_PASSWORD
+
+artifactRoot:
+  proxiedArtifactStorage: true
+  s3:
+    enabled: true
+    bucket: mlflow-artifacts
+    awsAccessKeyId: ref+envsubst://$RUSTFS_ROOT_USER
+    awsSecretAccessKey: ref+envsubst://$RUSTFS_ROOT_PASSWORD
+
+log:
+  enabled: false
+
+extraArgs:
+  allowedHosts: ref+envsubst://mlflow.$LOCAL_DOMAIN_NAME,mlflow.$PUBLIC_DOMAIN_NAME,mlflow.mlflow.svc.cluster.local
+
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: http://rustfs-svc.rustfs.svc.cluster.local:9000
+  MLFLOW_S3_IGNORE_TLS: 'true'
+
+auth:
+  enabled: true
+  adminUsername: ref+envsubst://$MLFLOW_ADMIN_USERNAME
+  adminPassword: ref+envsubst://$MLFLOW_ADMIN_PASSWORD
+flaskServerSecretKey: ref+envsubst://$MLFLOW_FLASK_SECRET_KEY
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  containerPort: 5000
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: mlflow.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - mlflow.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: mlflow-mkcert-tls
+
+serviceMonitor:
+  enabled: true
+  namespace: monitoring
+  labels:
+    release: monitoring

@@ -471,6 +471,25 @@ data:
               path: /accounts/login/
               interval: 30
               timeout: 5
+      mlflow:
+        name: MLflow
+        protocol: http
+        full-domain: mlflow.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: mlflow.mlflow.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: mlflow.mlflow.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /health
+              interval: 30
+              timeout: 5
       # --- Admin-only infra ---
       passbolt:
         name: Passbolt
