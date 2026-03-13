@@ -35,7 +35,7 @@ ingress:
 For publicly accessible apps through the Scaleway proxy:
 
 1. App uses regular ingress with local TLS (same as above)
-2. Add a resource block to the Pangolin blueprint: `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`
+2. Add a resource block to the Pangolin blueprint: `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml` (maintain alphabetical order by resource key)
 3. Set `full-domain`, target `hostname`/`port`, auth settings (`sso-enabled`, `whitelist-users`), and healthcheck
 4. Deploy: `vals eval -f manifests/blueprint.yaml | kubectl apply -f - && kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial`
 

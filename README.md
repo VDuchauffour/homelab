@@ -393,7 +393,7 @@ All externally-accessible services are defined in a blueprint file (`kubernetes/
 - **Public (no auth)**: jellyfin, jellyseerr, immich
 - **Admin-only (SSO whitelist)**: all other apps and infra tools
 
-To add a new externally-accessible service, add a resource block to the blueprint and redeploy:
+To add a new externally-accessible service, add a resource block to the blueprint (maintaining alphabetical order by resource key) and redeploy:
 
 ```shell
 # Deploy blueprint + Newt together

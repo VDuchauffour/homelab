@@ -390,6 +390,7 @@ Each resource specifies: domain, target hostname/port, auth settings, and health
 
 - `sso-roles` cannot include "Admin" (reserved by Pangolin) — use `whitelist-users` with email addresses instead
 - The blueprint YAML lives inside a ConfigMap literal block (`|`) — indentation errors are silently ignored by Pangolin, always validate with `vals eval`
+- Resource blocks must be ordered **alphabetically** by key name
 - Healthcheck blocks must be nested under each target, not at the resource level
 
 ### Deployment
@@ -408,7 +409,7 @@ kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
 ### Adding a New Externally-Accessible Service
 
-1. Add a new resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`
+1. Add a new resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml` (maintain alphabetical order by resource key)
 2. Set `full-domain`, target `hostname`/`port`, auth settings, and healthcheck
 3. Apply with `vals eval -f manifests/blueprint.yaml | kubectl apply -f -`
 4. Restart Newt: `kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial`

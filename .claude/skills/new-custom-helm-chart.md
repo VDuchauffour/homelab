@@ -127,7 +127,7 @@ cd kubernetes/apps/glance && helmfile apply
 
 ### 2. Update Pangolin Blueprint (if externally accessible)
 
-Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`:
+Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, maintaining **alphabetical order** by resource key:
 
 ```yaml
 myapp:
