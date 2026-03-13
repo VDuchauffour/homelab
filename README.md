@@ -111,6 +111,7 @@ Once configured, these variables will be automatically loaded whenever you enter
 |:--:|-----|-------------|:------------:|
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="32"> | bazarr | Subtitle management for media | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bentopdf.png" width="32"> | bentopdf | Privacy-first PDF toolkit with client-side processing | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/changedetection-io.png" width="32"> | changedetection-io | Website change detection and monitoring | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="32"> | dozzle | Real-time log viewer for containers | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/filebrowser.png" width="32"> | filebrowser | Web-based file manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="32"> | glance | Personal dashboard | Helmfile |

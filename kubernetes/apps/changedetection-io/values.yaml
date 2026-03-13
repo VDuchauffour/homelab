@@ -1,0 +1,35 @@
+---
+env:
+  TZ: Europe/Paris
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+persistence:
+  data:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /datastore
+
+ingress:
+  main:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    hosts:
+      - host: changedetection.ref+envsubst://$LOCAL_DOMAIN_NAME
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - changedetection.ref+envsubst://$LOCAL_DOMAIN_NAME
+        secretName: changedetection-io-mkcert-tls

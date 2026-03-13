@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: zekker6
+    url: https://zekker6.github.io/helm-charts/
+
+releases:
+  - name: changedetection-io
+    namespace: changedetection-io
+    createNamespace: true
+    chart: zekker6/changedetection-io
+    version: 1.86.0
+    values:
+      - values.yaml

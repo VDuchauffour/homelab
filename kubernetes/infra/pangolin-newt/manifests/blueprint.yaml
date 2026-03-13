@@ -45,6 +45,25 @@ data:
               path: /healthz
               interval: 30
               timeout: 5
+      changedetection:
+        name: ChangeDetection
+        protocol: http
+        full-domain: changedetection.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: changedetection-io.changedetection-io.svc.cluster.local
+            method: http
+            port: 5000
+            healthcheck:
+              hostname: changedetection-io.changedetection-io.svc.cluster.local
+              port: 5000
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       dashboard:
         name: Dashboard
         protocol: http
