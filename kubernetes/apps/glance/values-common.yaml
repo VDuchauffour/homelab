@@ -178,4 +178,4 @@ glance:
           icon: https://raw.githubusercontent.com/btriapitsyn/openchamber/20f158f2b71b66aef0235531b5092ba82cda720f/packages/vscode/assets/app-icon.png
         - title: OpenCode
           subdomain: opencode
-          icon: di:opencode
+          icon: di:opencode-dark
