@@ -139,6 +139,9 @@ glance:
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
     - title: Tools
       links:
+        - title: ChangeDetection
+          subdomain: changedetection
+          icon: di:changedetection
         - title: Wakapi
           subdomain: wakapi
           icon: di:wakapi
