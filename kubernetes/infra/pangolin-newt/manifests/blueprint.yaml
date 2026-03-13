@@ -324,9 +324,7 @@ data:
         protocol: http
         full-domain: linkwarden.ref+envsubst://$PUBLIC_DOMAIN_NAME
         auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
+          sso-enabled: false
         targets:
           - hostname: linkwarden.linkwarden.svc.cluster.local
             method: http
