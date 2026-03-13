@@ -475,10 +475,6 @@ data:
         name: qBittorrent
         protocol: http
         full-domain: qbittorrent.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
         targets:
           - hostname: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local
             method: http
