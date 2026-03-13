@@ -6,6 +6,8 @@ image:
 qbittorrent:
   host: qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local
   port: 8080
+  username: ref+envsubst://$QBITTORRENT_WEBUI_USERNAME
+  password: ref+envsubst://$QBITTORRENT_WEBUI_PASSWORD
 
 serviceMonitor:
   enabled: true
