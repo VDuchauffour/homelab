@@ -9,7 +9,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: kan
-  password: ref+envsubst://$CLOUDNATIVE_PG_KAN_PASSWORD
+  password: ref+scw:///homelab/cnpg#/kan-password
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

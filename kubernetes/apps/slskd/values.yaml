@@ -16,8 +16,8 @@ env:
   SLSKD_NO_HTTPS: 'true'
   SLSKD_SHARED_DIR: /music
   SLSKD_DOWNLOADS_DIR: /music/downloads/slskd
-  SLSKD_SLSK_USERNAME: ref+envsubst://$SLSKD_SLSK_USERNAME
-  SLSKD_SLSK_PASSWORD: ref+envsubst://$SLSKD_SLSK_PASSWORD
+  SLSKD_SLSK_USERNAME: ref+scw:///homelab/slskd#/username
+  SLSKD_SLSK_PASSWORD: ref+scw:///homelab/slskd#/password
 
 persistence:
   config:

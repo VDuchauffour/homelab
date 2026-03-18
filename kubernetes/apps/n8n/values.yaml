@@ -6,7 +6,7 @@ image:
 main:
   secret:
     n8n:
-      encryption_key: ref+envsubst://$N8N_ENCRYPTION_KEY
+      encryption_key: ref+scw:///homelab/n8n#/encryption-key
   config:
     db:
       type: postgresdb

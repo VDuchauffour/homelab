@@ -4,7 +4,7 @@ image:
   tag: 0.1.0
 
 wakatime:
-  apiKey: ref+envsubst://$WAKATIME_API_KEY
+  apiKey: ref+scw:///homelab/wakatime#/api-key
   scrapeUri: http://wakapi.wakapi.svc.cluster.local/api/compat/wakatime/v1
   user: current
   timeout: 5s

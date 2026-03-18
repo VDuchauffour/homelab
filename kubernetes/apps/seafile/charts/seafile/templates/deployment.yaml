@@ -33,7 +33,7 @@ spec:
               value: {{ .Values.database.rootPassword | quote }}
             - name: TIME_ZONE
               value: {{ .Values.seafile.timeZone | quote }}
-            - name: SEAFILE_ADMIN_EMAIL
+            - name: EMAIL_ADDRESS
               value: {{ .Values.seafile.adminEmail | quote }}
             - name: SEAFILE_ADMIN_PASSWORD
               value: {{ .Values.seafile.adminPassword | quote }}

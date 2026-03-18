@@ -24,6 +24,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | Monitoring | kube-prometheus-stack |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
+| Secret Management | Scaleway CLI (via vals `ref+scw://` provider) |
 | Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) |
 | IaC | Terraform |
 
@@ -100,6 +101,12 @@ direnv allow
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
+## Secret Management (Scaleway CLI + vals)
+
+The homelab uses [Scaleway Secret Manager](https://www.scaleway.com/en/docs/identity-and-access-management/api-access-and-secret-manager/) via the `vals` tool's `ref+scw://` provider. This eliminates hardcoded secrets in Helm charts and provides a centralized, auditable secret store.
+
+For detailed Scaleway CLI usage and vals provider documentation, see the `scaleway-secrets` skill: `skill scaleway-secrets`
+
 ## Kubernetes — Applications
 
 ### Available Apps
@@ -148,7 +155,6 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wakapi.png" width="32"> | wakapi | Self-hosted WakaTime-compatible coding statistics | Helmfile |
 | <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
 | <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
-| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="32"> | vibe-kanban | Kanban project management for vibe coding | Helmfile |
 
 </details>
 

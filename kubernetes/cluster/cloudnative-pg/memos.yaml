@@ -9,7 +9,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: memos
-  password: ref+envsubst://$CLOUDNATIVE_PG_MEMOS_PASSWORD
+  password: ref+scw:///homelab/cnpg#/memos-password
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Database

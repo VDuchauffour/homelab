@@ -8,15 +8,15 @@ image:
 
 seafile:
   serverHostname: seafile.ref+envsubst://$LOCAL_DOMAIN_NAME
-  adminEmail: ref+envsubst://$SEAFILE_ADMIN_EMAIL
-  adminPassword: ref+envsubst://$SEAFILE_ADMIN_PASSWORD
+  adminEmail: ref+envsubst://$EMAIL_ADDRESS
+  adminPassword: ref+scw:///homelab/seafile#/admin-password
   timeZone: Europe/Paris
   forceHttpsInConf: true
 
 database:
   host: seafile-mariadb.seafile.svc.cluster.local
   port: '3306'
-  rootPassword: ref+envsubst://$SEAFILE_MARIADB_ROOT_PASSWORD
+  rootPassword: ref+scw:///homelab/seafile#/mariadb-root-password
 
 memcached:
   host: seafile-memcached.seafile.svc.cluster.local

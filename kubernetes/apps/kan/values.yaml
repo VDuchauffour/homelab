@@ -9,7 +9,7 @@ domainName: '{{ .Values.domainName }}'
 
 kan:
   baseUrl: https://kan.ref+envsubst://$LOCAL_DOMAIN_NAME
-  authSecret: ref+envsubst://$KAN_AUTHSECRET
+  authSecret: ref+scw:///homelab/kan#/auth-secret
   allowCredentials: true
 
 postgres:
@@ -17,7 +17,7 @@ postgres:
   port: 5432
   database: kan
   user: kan
-  password: ref+envsubst://$KAN_POSTGRESURL_PASSWORD
+  password: ref+scw:///homelab/kan#/postgres-password
 
 resources:
   requests:

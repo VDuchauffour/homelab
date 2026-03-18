@@ -6,8 +6,8 @@ metadata:
   namespace: cnpg-clusters
 type: Opaque
 stringData:
-  ACCESS_KEY_ID: ref+envsubst://$RUSTFS_ROOT_USER
-  ACCESS_SECRET_KEY: ref+envsubst://$RUSTFS_ROOT_PASSWORD
+  ACCESS_KEY_ID: ref+scw:///homelab/rustfs#/user
+  ACCESS_SECRET_KEY: ref+scw:///homelab/rustfs#/password
 ---
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore

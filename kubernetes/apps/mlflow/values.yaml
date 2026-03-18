@@ -12,15 +12,15 @@ backendStore:
     port: 5432
     database: mlflow
     user: mlflow
-    password: ref+envsubst://$CLOUDNATIVE_PG_MLFLOW_PASSWORD
+    password: ref+scw:///homelab/cnpg#/mlflow-password
 
 artifactRoot:
   proxiedArtifactStorage: true
   s3:
     enabled: true
     bucket: mlflow-artifacts
-    awsAccessKeyId: ref+envsubst://$RUSTFS_ROOT_USER
-    awsSecretAccessKey: ref+envsubst://$RUSTFS_ROOT_PASSWORD
+    awsAccessKeyId: ref+scw:///homelab/rustfs#/user
+    awsSecretAccessKey: ref+scw:///homelab/rustfs#/password
 
 log:
   enabled: false
@@ -34,9 +34,9 @@ extraEnvVars:
 
 auth:
   enabled: true
-  adminUsername: ref+envsubst://$MLFLOW_ADMIN_USERNAME
-  adminPassword: ref+envsubst://$MLFLOW_ADMIN_PASSWORD
-flaskServerSecretKey: ref+envsubst://$MLFLOW_FLASK_SECRET_KEY
+  adminUsername: ref+scw:///homelab/mlflow#/admin-username
+  adminPassword: ref+scw:///homelab/mlflow#/admin-password
+flaskServerSecretKey: ref+scw:///homelab/mlflow#/flask-secret-key
 
 service:
   enabled: true
