@@ -1,6 +1,7 @@
 ---
 env:
   TZ: Europe/Paris
+  PLAYWRIGHT_DRIVER_URL: ws://localhost:3000
 
 resources:
   requests:
@@ -9,6 +10,29 @@ resources:
   limits:
     memory: 512Mi
 
+additionalContainers:
+  browser-chrome:
+    image: dgtlmoon/sockpuppetbrowser:latest
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: SCREEN_WIDTH
+        value: '1920'
+      - name: SCREEN_HEIGHT
+        value: '1024'
+      - name: SCREEN_DEPTH
+        value: '16'
+      - name: MAX_CONCURRENT_CHROME_PROCESSES
+        value: '10'
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        memory: 2Gi
+    volumeMounts:
+      - name: shm
+        mountPath: /dev/shm
+
 persistence:
   data:
     enabled: true
@@ -16,6 +40,12 @@ persistence:
     accessMode: ReadWriteOnce
     size: 1Gi
     mountPath: /datastore
+  shm:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 2Gi
+    mountPath: /dev/shm
 
 ingress:
   main:
