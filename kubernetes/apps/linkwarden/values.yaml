@@ -3,7 +3,7 @@ postgres:
   enabled: false
   external:
     enabled: true
-    uri: ref+envsubst://$CLOUDNATIVE_PG_LINKWARDEN_URI
+    uri: ref+scw:///homelab/linkwarden#/database-uri
 
 configuration:
   authentication:
@@ -11,7 +11,7 @@ configuration:
     PublicCredentialsEnabled: true
     disableNewSSOUsers: true
     authURL: http://localhost:3000/api/v1/auth
-    authSecret: ref+envsubst://$LINKWARDEN_AUTHSECRET
+    authSecret: ref+scw:///homelab/linkwarden#/auth-secret
 
 persistence:
   enabled: true

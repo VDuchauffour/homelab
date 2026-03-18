@@ -1,7 +1,7 @@
 ---
 replicaCount: 1
 
-adminPassword: ref+envsubst://$PIHOLE_ADMIN_PASSWORD
+adminPassword: ref+scw:///homelab/pihole#/admin-password
 
 DNS1: 1.1.1.1
 DNS2: 1.0.0.1

@@ -108,3 +108,15 @@ variable "crowdsec_firewall_bouncer_key" {
   type        = string
   sensitive   = true
 }
+
+variable "crowdsec_capi_whitelisted_cidrs" {
+  description = "CIDR ranges to exempt from CrowdSec CAPI community bans (e.g. mobile carrier ranges to avoid CGNAT false positives)"
+  type        = list(string)
+  default     = []
+}
+
+variable "pangolin_backup_retention_days" {
+  description = "Number of days to retain Pangolin database backups in the S3 bucket (lifecycle expiration)"
+  type        = number
+  default     = 30
+}

@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+
+BUCKET="s3://${pangolin_backup_bucket}"
+ENDPOINT="https://s3.${region}.scw.cloud"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+DUMP_FILE="/tmp/pangolin-db-$${TIMESTAMP}.sql.gz"
+
+export AWS_ACCESS_KEY_ID="${scaleway_access_key}"
+export AWS_SECRET_ACCESS_KEY="${scaleway_secret_key}"
+
+# Dump and compress
+docker exec postgres pg_dump -U ${pangolin_pg_user} pangolin | gzip > "$DUMP_FILE"
+
+# Upload to S3
+aws s3 cp "$DUMP_FILE" "$${BUCKET}/pangolin-db-$${TIMESTAMP}.sql.gz" --endpoint-url "$ENDPOINT"
+
+# Cleanup local file
+rm -f "$DUMP_FILE"
+
+echo "$(date): Backup completed: pangolin-db-$${TIMESTAMP}.sql.gz"

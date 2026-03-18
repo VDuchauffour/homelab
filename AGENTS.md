@@ -69,7 +69,8 @@ app-name/
 | Auth | TinyAuth |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
-| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) |
+| Secret Management | Scaleway CLI (via vals `ref+scw://` provider) |
+| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) |
 | IaC | Terraform |
 
 ## Deployment Patterns
@@ -262,10 +263,14 @@ Two backup modes:
 
 ### Environment Variables
 
-- `RUSTFS_ROOT_USER` — RustFS access key
-- `RUSTFS_ROOT_PASSWORD` — RustFS secret key
-- `RESTIC_PASSWORD` — Restic repository encryption password
+- `RUSTFS_ROOT_USER` — RustFS access key (from Scaleway CLI: `scw secret get name=rustfs --field user`)
+- `RUSTFS_ROOT_PASSWORD` — RustFS secret key (from Scaleway CLI: `scw secret get name=rustfs --field password`)
+- `RESTIC_PASSWORD` — Restic repository encryption password (from Scaleway CLI: `scw secret get name=restic --field password`)
 - `SINGLE_NODE_NAME` — Node name for nodeSelector
+- `SCW_ACCESS_KEY` — Scaleway API access key for vals `ref+scw://` provider
+- `SCW_SECRET_KEY` — Scaleway API secret key for vals `ref+scw://` provider
+- `SCW_PROJECT_ID` — Scaleway project ID for vals `ref+scw://` provider
+- `SCW_REGION` — Scaleway region for vals `ref+scw://` provider
 
 ### Backed-Up Apps
 
@@ -464,6 +469,139 @@ The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer se
 - Collections: `crowdsecurity/traefik`, `crowdsecurity/appsec-virtual-patching`, `crowdsecurity/appsec-generic-rules`, `crowdsecurity/linux`
 - Acquis configs: `config/crowdsec/acquis.d/{traefik,syslog,appsec}.yaml`
 - Ban page: `config/traefik/ban.html` (default from crowdsec-bouncer-traefik-plugin)
+
+## Pangolin DB Backup
+
+Pangolin's PostgreSQL database is backed up weekly to a Scaleway Object Storage bucket, managed via Terraform.
+
+- **Bucket**: `<instance_name>-pangolin-backups` in `fr-par` (Terraform resource: `scaleway_object_bucket.pangolin_backups`)
+- **Script**: `backup-db.sh.tftpl` → rendered to `/home/<username>/pangolin/backup-db.sh` on the instance
+- **Schedule**: Weekly on Sunday at 3:00 AM via `/etc/cron.d/pangolin-db-backup`
+- **Retention**: 30 days (S3 lifecycle rule, configurable via `pangolin_backup_retention_days`)
+- **Logs**: `/var/log/pangolin-backup.log`
+
+### How It Works
+
+```
+Cron (Sunday 3am) → backup-db.sh → docker exec postgres pg_dump → gzip → aws s3 cp → Scaleway Object Storage
+```
+
+The script uses the same Scaleway API credentials as Traefik's DNS challenge (`scaleway_access_key`, `scaleway_secret_key`). The `awscli` package is installed via cloud-init.
+
+### Manual Backup
+
+```shell
+ssh <username>@<instance-ip>
+/home/<username>/pangolin/backup-db.sh
+```
+
+### Restore on New Instance
+
+After `terraform apply` creates a fresh instance and `docker compose up -d` starts the stack:
+
+```shell
+# List available backups
+export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
+export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
+aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Download the latest dump
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Stop Pangolin (keep Postgres running)
+docker stop pangolin gerbil traefik
+
+# Restore
+gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
+
+# Restart all services
+docker compose -f ~/pangolin/compose.yaml up -d
+```
+
+### Configuration
+
+- **Terraform files**: `infra/modules/scaleway-proxy/` — `main.tf` (bucket resource), `backup-db.sh.tftpl` (script template), `cloud-init.yaml.tftpl` (cron + script delivery)
+- **Variable**: `pangolin_backup_retention_days` (default: 30) in `variables.tf`
+
+## Secret Management (Scaleway CLI + vals)
+
+The homelab uses [Scaleway Secret Manager](https://www.scaleway.com/en/docs/identity-and-access-management/api-access-and-secret-manager/) via the `vals` tool's `ref+scw://` provider. This eliminates hardcoded secrets in Helm charts and provides a centralized, auditable secret store.
+
+### Architecture
+
+```
+Helmfile with vals → ref+scw:// → Scaleway Secret Manager API → secret value
+```
+
+### Secret Reference Pattern
+
+```yaml
+# Simple field lookup
+password: ref+scw:///homelab/rustfs#/password
+
+# Multiple fields from same secret
+username: ref+scw:///homelab/cnpg#/user
+password: ref+scw:///homelab/cnpg#/password
+
+# Nested path
+apiKey: ref+scw:///homelab/wakatime#/api-key
+```
+
+### Environment Variables
+
+Required in `.envrc` for vals to authenticate with Scaleway:
+
+```bash
+export SCW_ACCESS_KEY="<your-access-key>"
+export SCW_SECRET_KEY="<your-secret-key>"
+export SCW_PROJECT_ID="<project-id>"
+export SCW_REGION="fr-par"
+```
+
+### Adding a New Secret
+
+Use the Scaleway CLI to create a new secret:
+
+```bash
+# Install Scaleway CLI (if not already installed)
+scw secret create name=homelab
+# Add fields
+scw secret add name=homelab --field name=rustfs --field value=admin
+scw secret add name=homelab --field name=rustfs --field password=s3cret
+```
+
+### Managing Secrets
+
+```bash
+# List all secrets
+scw secret list
+
+# Get specific secret details
+scw secret get name=homelab
+
+# List secret versions/revisions
+scw secret list name=homelab
+```
+
+### Using Secrets in Helm
+
+After secrets are stored in Scaleway, reference them in Helm values using the `ref+scw://` provider. Vals automatically resolves these at deploy time:
+
+```bash
+# Vals resolves ref+scw:// at deploy time
+cd kubernetes/apps/myapp
+helmfile apply
+```
+
+**Key Benefits:**
+
+- Secrets never committed to Git
+- Single source of truth for all homelab secrets
+- Auditable access logs in Scaleway console
+- Track secret history and revisions
+- Dynamic resolution at deploy time
+
+For detailed usage, see the `scaleway-secrets` skill: `skill scaleway-secrets`
 
 ## Utility Scripts (`scripts/`)
 

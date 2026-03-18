@@ -18,10 +18,10 @@ releases:
       - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME
       - glance:
           auth:
-            secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
+            secretKey: ref+scw:///homelab/glance#/auth-secret-key
             users:
               admin:
-                password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD
+                password: ref+scw:///homelab/glance#/admin-password
 
   - name: glance-local
     namespace: glance
@@ -32,10 +32,10 @@ releases:
       - domainName: ref+envsubst://$LOCAL_DOMAIN_NAME
       - glance:
           auth:
-            secretKey: ref+envsubst://$GLANCE_AUTH_SECRET_KEY
+            secretKey: ref+scw:///homelab/glance#/auth-secret-key
             users:
               admin:
-                password: ref+envsubst://$GLANCE_AUTH_USERS_ADMIN_PASSWORD
+                password: ref+scw:///homelab/glance#/admin-password
       - ingress:
           hosts:
             - host: dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME

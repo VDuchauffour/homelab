@@ -7,7 +7,7 @@ image:
 nextcloud:
   host: nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
   username: admin
-  password: ref+envsubst://$NEXTCLOUD_ADMIN_PASSWORD
+  password: ref+scw:///homelab/nextcloud#/admin-password
 
   trustedDomains:
     - nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
@@ -54,7 +54,7 @@ externalDatabase:
   host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
   port: 5432
   user: nextcloud
-  password: ref+envsubst://$CLOUDNATIVE_PG_NEXTCLOUD_PASSWORD
+  password: ref+scw:///homelab/cnpg#/nextcloud-password
   database: nextcloud
 
 redis:

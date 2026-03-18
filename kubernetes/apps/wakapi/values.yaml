@@ -75,7 +75,7 @@ wakapi_config:
     host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
     port: 5432
     user: wakapi
-    password: ref+envsubst://$CLOUDNATIVE_PG_WAKAPI_PASSWORD
+    password: ref+scw:///homelab/cnpg#/wakapi-password
     name: wakapi
     dialect: postgres
     charset: utf8mb4
@@ -85,7 +85,7 @@ wakapi_config:
     socket: ''
 
   security:
-    password_salt: ref+envsubst://$WAKAPI_PASSWORD_SALT
+    password_salt: ref+scw:///homelab/wakapi#/password-salt
     insecure_cookies: false
     cookie_max_age: 172800
     allow_signup: true
@@ -125,9 +125,9 @@ wakapi_config:
 
 wakapi_secrets:
   db:
-    password: ref+envsubst://$CLOUDNATIVE_PG_WAKAPI_PASSWORD
+    password: ref+scw:///homelab/cnpg#/wakapi-password
   security:
-    password_salt: ref+envsubst://$WAKAPI_PASSWORD_SALT
+    password_salt: ref+scw:///homelab/wakapi#/password-salt
   mail:
     smtp:
       password: ''

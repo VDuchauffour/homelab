@@ -24,7 +24,8 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | Monitoring | kube-prometheus-stack |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
-| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) |
+| Secret Management | Scaleway CLI (via vals `ref+scw://` provider) |
+| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -100,6 +101,12 @@ direnv allow
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
+## Secret Management (Scaleway CLI + vals)
+
+The homelab uses [Scaleway Secret Manager](https://www.scaleway.com/en/docs/identity-and-access-management/api-access-and-secret-manager/) via the `vals` tool's `ref+scw://` provider. This eliminates hardcoded secrets in Helm charts and provides a centralized, auditable secret store.
+
+For detailed Scaleway CLI usage and vals provider documentation, see the `scaleway-secrets` skill: `skill scaleway-secrets`
+
 ## Kubernetes — Applications
 
 ### Available Apps
@@ -148,7 +155,6 @@ Once configured, these variables will be automatically loaded whenever you enter
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wakapi.png" width="32"> | wakapi | Self-hosted WakaTime-compatible coding statistics | Helmfile |
 | <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
 | <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
-| <img src="./kubernetes/apps/glance/assets/favicons/vibe-kanban.png" width="32"> | vibe-kanban | Kanban project management for vibe coding | Helmfile |
 
 </details>
 
@@ -465,6 +471,45 @@ docker exec crowdsec cscli decisions list                       # List active ba
 docker exec crowdsec cscli decisions add --ip <IP> -d 1m --type ban  # Manually ban an IP (1 min)
 systemctl status crowdsec-firewall-bouncer                      # Host bouncer status
 ```
+
+### Pangolin DB Backup
+
+Pangolin's PostgreSQL database is backed up weekly to a Scaleway Object Storage bucket (`<instance_name>-pangolin-backups`), managed via Terraform. Backups are retained for 30 days (S3 lifecycle rule).
+
+```
+Cron (Sunday 3am) → backup-db.sh → docker exec pg_dump → gzip → aws s3 cp → Scaleway S3
+```
+
+The backup script and cron job are deployed via cloud-init. Credentials reuse the same Scaleway API keys as Traefik's DNS challenge.
+
+**Manual backup** (SSH into the proxy):
+
+```shell
+/home/<username>/pangolin/backup-db.sh
+```
+
+**Restore on a new instance** — after `terraform apply` + `docker compose up -d`:
+
+```shell
+# List available backups
+export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
+export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
+aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Download the latest dump
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Stop Pangolin (keep Postgres running)
+docker stop pangolin gerbil traefik
+
+# Restore
+gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
+
+# Restart all services
+docker compose -f ~/pangolin/compose.yaml up -d
+```
+
+Check backup logs: `cat /var/log/pangolin-backup.log`
 
 ### Destroy
 

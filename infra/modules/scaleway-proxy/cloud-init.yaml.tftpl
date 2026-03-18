@@ -35,6 +35,7 @@ packages:
   - sudo
   - zsh
   - apt-utils
+  - unzip
 
 write_files:
   - path: /home/${username}/init.sh
@@ -90,6 +91,30 @@ write_files:
       source: appsec
       labels:
         type: appsec
+  - path: /home/${username}/pangolin/config/crowdsec/config.yaml.local
+    permissions: "0644"
+    owner: root:root
+    content: |
+      api:
+        server:
+          capi_whitelists_path: /etc/crowdsec/capi-whitelists.yaml
+  - path: /home/${username}/pangolin/config/crowdsec/capi-whitelists.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ips: []
+      cidrs: ${jsonencode(crowdsec_capi_whitelisted_cidrs)}
+  - path: /home/${username}/pangolin/backup-db.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      ${indent(6, backup_script)}
+  - path: /etc/cron.d/pangolin-db-backup
+    permissions: "0644"
+    owner: root:root
+    content: |
+      # Weekly Pangolin database backup - Sunday at 3:00 AM
+      0 3 * * 0 root /home/${username}/pangolin/backup-db.sh >> /var/log/pangolin-backup.log 2>&1
   - path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
     permissions: "0600"
     owner: root:root
@@ -121,5 +146,6 @@ runcmd:
   - curl -sLo /home/${username}/pangolin/config/traefik/ban.html https://raw.githubusercontent.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/main/ban.html
   - chown -R ${username}:${username} /home/${username}/pangolin
   - /home/${username}/init.sh ${username}
+  - curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip && unzip -q /tmp/awscliv2.zip -d /tmp/aws-install && /tmp/aws-install/aws/install && rm -rf /tmp/awscliv2.zip /tmp/aws-install
   - systemctl enable --now docker
   - docker compose -f /home/${username}/pangolin/compose.yaml up -d

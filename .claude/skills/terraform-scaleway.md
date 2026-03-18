@@ -83,13 +83,55 @@ terraform destroy -auto-approve \
   # ... rest of vars (can use empty strings for most)
 ```
 
+## Pangolin DB Backup
+
+Pangolin's PostgreSQL database is backed up weekly to a Scaleway Object Storage bucket (`<instance_name>-pangolin-backups`) in `fr-par`.
+
+- **Schedule**: Weekly on Sunday at 3:00 AM (cron in `/etc/cron.d/pangolin-db-backup`)
+- **Script**: `/home/<username>/pangolin/backup-db.sh` — dumps via `docker exec postgres pg_dump`, gzips, uploads to S3
+- **Retention**: 30 days (bucket lifecycle rule, configurable via `pangolin_backup_retention_days`)
+- **Credentials**: Reuses existing Scaleway access/secret keys (same as Traefik DNS challenge)
+- **Logs**: `/var/log/pangolin-backup.log`
+
+### Manual Backup
+
+```shell
+ssh <username>@<instance-ip>
+/home/<username>/pangolin/backup-db.sh
+```
+
+### Restore on New Instance
+
+After `terraform apply` + `docker compose up -d` on a fresh instance:
+
+```shell
+# List available backups
+export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
+export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
+aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Download the latest dump
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Stop Pangolin (keep Postgres running)
+docker stop pangolin gerbil traefik
+
+# Restore
+gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
+
+# Restart all services
+docker compose -f ~/pangolin/compose.yaml up -d
+```
+
 ## Files
 
-- `main.tf`: Instance, security groups, DNS records
+- `main.tf`: Instance, security groups, DNS records, S3 backup bucket
 - `variables.tf`: Input variables
 - `outputs.tf`: Instance IP output
 - `cloud-init.yaml.tftpl`: Cloud-init configuration
-- `compose.yaml.tftpl`: Docker Compose for Pangolin, Gerbil, Traefik
+- `compose.yaml.tftpl`: Docker Compose for Pangolin, Gerbil, Traefik, CrowdSec
 - `config.yml.tftpl`: Pangolin configuration
 - `traefik_config.yml.tftpl`: Traefik static configuration
 - `dynamic_config.yml.tftpl`: Traefik dynamic configuration
+- `backup-db.sh.tftpl`: Pangolin DB backup script (weekly dump to S3)
+- `init.sh`: Instance initialization (Docker, CrowdSec firewall bouncer)
