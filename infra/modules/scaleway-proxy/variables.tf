@@ -108,3 +108,9 @@ variable "crowdsec_firewall_bouncer_key" {
   type        = string
   sensitive   = true
 }
+
+variable "crowdsec_capi_whitelisted_cidrs" {
+  description = "CIDR ranges to exempt from CrowdSec CAPI community bans (e.g. mobile carrier ranges to avoid CGNAT false positives)"
+  type        = list(string)
+  default     = []
+}

@@ -99,11 +99,12 @@ resource "scaleway_instance_server" "dev" {
       domain_name          = var.domain_name
       crowdsec_bouncer_key = var.crowdsec_bouncer_key
     })
-    domain_name                   = var.domain_name
-    username                      = var.username
-    password_hash                 = var.password_hash
-    ssh_public_keys               = var.ssh_public_keys
-    crowdsec_firewall_bouncer_key = var.crowdsec_firewall_bouncer_key
+    domain_name                     = var.domain_name
+    username                        = var.username
+    password_hash                   = var.password_hash
+    ssh_public_keys                 = var.ssh_public_keys
+    crowdsec_firewall_bouncer_key   = var.crowdsec_firewall_bouncer_key
+    crowdsec_capi_whitelisted_cidrs = var.crowdsec_capi_whitelisted_cidrs
   })
 
   tags = var.tags
