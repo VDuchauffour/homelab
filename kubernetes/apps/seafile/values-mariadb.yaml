@@ -1,6 +1,6 @@
 ---
 auth:
-  rootPassword: ref+envsubst://$SEAFILE_MARIADB_ROOT_PASSWORD
+  rootPassword: ref+scw:///homelab/seafile#/mariadb-root-password
 
 primary:
   persistence:

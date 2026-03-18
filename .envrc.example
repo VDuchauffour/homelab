@@ -1,3 +1,6 @@
+export PATH="/path/to/vals/bin:$PATH"
+export HELMFILE_VALS_PATH=/path/to/vals/bin/vals
+
 export HOME_DIR=
 
 export EMAIL_ADDRESS=
@@ -5,37 +8,12 @@ export PUBLIC_DOMAIN_NAME=
 export LOCAL_DOMAIN_NAME=home.arpa
 export TRAEFIK_CLUSTER_IP=
 export SINGLE_NODE_NAME=
-
-export PASSBOLT_BASE_URL=http://passbolt.home.arpa
-export PASSBOLT_GPG_KEY_FILE=
-export PASSBOLT_GPG_PASSPHRASE=
+export SINGLE_NODE_IP=
 
 export PANGOLIN_PROXY_IP=
 
-export WARDEN_API_KEY=
-
-export RUSTFS_ROOT_USER=
-export RUSTFS_ROOT_PASSWORD=
-
-export RESTIC_PASSWORD=
-
-export KUBE_PROMETHEUS_STACK_GRAFANA_ADMIN_USERNAME=admin
-export KUBE_PROMETHEUS_STACK_GRAFANA_ADMIN_PASSWORD=
-export CLOUDNATIVE_PG_GRAFANA_PASSWORD=
-
-export SLSKD_SLSK_USERNAME=
-export SLSKD_SLSK_PASSWORD=
-
-export CLOUDNATIVE_PG_WAKAPI_PASSWORD=
-export WAKAPI_PASSWORD_SALT=
-
-export WAKATIME_API_KEY=
-
-export PIHOLE_ADMIN_PASSWORD=
-
-export IMMICH_API_KEY=
-
-export CLOUDNATIVE_PG_MLFLOW_PASSWORD=
-export MLFLOW_ADMIN_USERNAME=admin
-export MLFLOW_ADMIN_PASSWORD=
-export MLFLOW_FLASK_SECRET_KEY=
+# Scaleway Secret Manager (used by vals ref+scw:// provider)
+export SCW_ACCESS_KEY=
+export SCW_SECRET_KEY=
+export SCW_PROJECT_ID=
+export SCW_REGION=fr-par

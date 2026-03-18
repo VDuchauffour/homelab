@@ -11,11 +11,11 @@ config:
     port: '5432'
 
 secrets:
-  LD_SUPERUSER_NAME: ref+envsubst://$LINKDING_SUPERUSER_NAME
-  LD_SUPERUSER_PASSWORD: ref+envsubst://$LINKDING_SUPERUSER_PASSWORD
-  LD_SECRET_KEY: ref+envsubst://$LINKDING_SECRET_KEY
+  LD_SUPERUSER_NAME: ref+scw:///homelab/linkding#/superuser-name
+  LD_SUPERUSER_PASSWORD: ref+scw:///homelab/linkding#/superuser-password
+  LD_SECRET_KEY: ref+scw:///homelab/linkding#/secret-key
   database:
-    password: ref+envsubst://$CLOUDNATIVE_PG_LINKDING_PASSWORD
+    password: ref+scw:///homelab/cnpg#/linkding-password
 
 persistence:
   enabled: true

@@ -8,7 +8,7 @@ collabora:
   server_name: collabora.ref+envsubst://$LOCAL_DOMAIN_NAME
 
   username: admin
-  password: ref+envsubst://$COLLABORA_ADMIN_PASSWORD
+  password: ref+scw:///homelab/collabora#/admin-password
 
   extra_params: --o:ssl.enable=false --o:ssl.termination=true
 

@@ -139,7 +139,7 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: noop
-  password: ref+envsubst://$CLOUDNATIVE_PG_NOOP_PASSWORD
+  password: ref+scw:///homelab/cnpg#/noop-password
 ---
 apiVersion: v1
 kind: Secret
@@ -151,4 +151,4 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
-  password: ref+envsubst://$CLOUDNATIVE_PG_ADMIN_PASSWORD
+  password: ref+scw:///homelab/cnpg#/admin-password
