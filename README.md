@@ -24,6 +24,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | Monitoring | kube-prometheus-stack |
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
+| Secret Management | Scaleway CLI (via vals `ref+scw://` provider) |
 | Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) |
 | IaC | Terraform |
 
@@ -99,6 +100,12 @@ direnv allow
 | `PIHOLE_ADMIN_PASSWORD` | Admin password for Pi-hole web UI | (keep secure) |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
+
+## Secret Management (Scaleway CLI + vals)
+
+The homelab uses [Scaleway Secret Manager](https://www.scaleway.com/en/docs/identity-and-access-management/api-access-and-secret-manager/) via the `vals` tool's `ref+scw://` provider. This eliminates hardcoded secrets in Helm charts and provides a centralized, auditable secret store.
+
+For detailed Scaleway CLI usage and vals provider documentation, see the `scaleway-secrets` skill: `skill scaleway-secrets`
 
 ## Kubernetes — Applications
 
