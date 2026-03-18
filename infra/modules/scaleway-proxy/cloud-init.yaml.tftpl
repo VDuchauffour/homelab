@@ -90,6 +90,19 @@ write_files:
       source: appsec
       labels:
         type: appsec
+  - path: /home/${username}/pangolin/config/crowdsec/config.yaml.local
+    permissions: "0644"
+    owner: root:root
+    content: |
+      api:
+        server:
+          capi_whitelists_path: /etc/crowdsec/capi-whitelists.yaml
+  - path: /home/${username}/pangolin/config/crowdsec/capi-whitelists.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ips: []
+      cidrs: ${jsonencode(crowdsec_capi_whitelisted_cidrs)}
   - path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
     permissions: "0600"
     owner: root:root

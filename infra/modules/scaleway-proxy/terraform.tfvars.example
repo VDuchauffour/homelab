@@ -16,3 +16,4 @@ scaleway_access_key = "foo"            # From: ~/.config/scw/config.yaml (access
 scaleway_secret_key = "foo"            # From: ~/.config/scw/config.yaml (secret_key)
 crowdsec_bouncer_key          = "foo"  # Generate with: openssl rand -base64 32
 crowdsec_firewall_bouncer_key = "foo"  # Generate with: openssl rand -base64 32
+crowdsec_capi_whitelisted_cidrs = []   # CIDR ranges exempt from CAPI bans (e.g. ["90.0.0.0/8"] for mobile carrier ranges)
