@@ -114,3 +114,9 @@ variable "crowdsec_capi_whitelisted_cidrs" {
   type        = list(string)
   default     = []
 }
+
+variable "pangolin_backup_retention_days" {
+  description = "Number of days to retain Pangolin database backups in the S3 bucket (lifecycle expiration)"
+  type        = number
+  default     = 30
+}

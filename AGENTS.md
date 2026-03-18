@@ -465,6 +465,59 @@ The Scaleway proxy runs [CrowdSec](https://www.crowdsec.net/) for multi-layer se
 - Acquis configs: `config/crowdsec/acquis.d/{traefik,syslog,appsec}.yaml`
 - Ban page: `config/traefik/ban.html` (default from crowdsec-bouncer-traefik-plugin)
 
+## Pangolin DB Backup
+
+Pangolin's PostgreSQL database is backed up weekly to a Scaleway Object Storage bucket, managed via Terraform.
+
+- **Bucket**: `<instance_name>-pangolin-backups` in `fr-par` (Terraform resource: `scaleway_object_bucket.pangolin_backups`)
+- **Script**: `backup-db.sh.tftpl` → rendered to `/home/<username>/pangolin/backup-db.sh` on the instance
+- **Schedule**: Weekly on Sunday at 3:00 AM via `/etc/cron.d/pangolin-db-backup`
+- **Retention**: 30 days (S3 lifecycle rule, configurable via `pangolin_backup_retention_days`)
+- **Logs**: `/var/log/pangolin-backup.log`
+
+### How It Works
+
+```
+Cron (Sunday 3am) → backup-db.sh → docker exec postgres pg_dump → gzip → aws s3 cp → Scaleway Object Storage
+```
+
+The script uses the same Scaleway API credentials as Traefik's DNS challenge (`scaleway_access_key`, `scaleway_secret_key`). The `awscli` package is installed via cloud-init.
+
+### Manual Backup
+
+```shell
+ssh <username>@<instance-ip>
+/home/<username>/pangolin/backup-db.sh
+```
+
+### Restore on New Instance
+
+After `terraform apply` creates a fresh instance and `docker compose up -d` starts the stack:
+
+```shell
+# List available backups
+export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
+export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
+aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Download the latest dump
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Stop Pangolin (keep Postgres running)
+docker stop pangolin gerbil traefik
+
+# Restore
+gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
+
+# Restart all services
+docker compose -f ~/pangolin/compose.yaml up -d
+```
+
+### Configuration
+
+- **Terraform files**: `infra/modules/scaleway-proxy/` — `main.tf` (bucket resource), `backup-db.sh.tftpl` (script template), `cloud-init.yaml.tftpl` (cron + script delivery)
+- **Variable**: `pangolin_backup_retention_days` (default: 30) in `variables.tf`
+
 ## Utility Scripts (`scripts/`)
 
 Python utility scripts managed with **uv** (Python 3.12+). All packages live under `scripts/` with a shared `pyproject.toml`.

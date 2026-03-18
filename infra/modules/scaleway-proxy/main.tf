@@ -77,6 +77,13 @@ resource "scaleway_instance_server" "dev" {
 
   cloud_init = templatefile("cloud-init.yaml.tftpl", {
     init_script = file("init.sh")
+    backup_script = templatefile("backup-db.sh.tftpl", {
+      pangolin_backup_bucket = scaleway_object_bucket.pangolin_backups.name
+      region                 = var.region
+      scaleway_access_key    = var.scaleway_access_key
+      scaleway_secret_key    = var.scaleway_secret_key
+      pangolin_pg_user       = var.pangolin_pg_user
+    })
     compose_file = templatefile("compose.yaml.tftpl", {
       scaleway_access_key           = var.scaleway_access_key
       scaleway_secret_key           = var.scaleway_secret_key
@@ -111,6 +118,23 @@ resource "scaleway_instance_server" "dev" {
 
   root_volume {
     size_in_gb = var.root_volume_size
+  }
+}
+
+resource "scaleway_object_bucket" "pangolin_backups" {
+  name   = "${var.instance_name}-pangolin-backups"
+  region = var.region
+
+  lifecycle_rule {
+    enabled = true
+
+    expiration {
+      days = var.pangolin_backup_retention_days
+    }
+  }
+
+  tags = {
+    managed-by = "terraform"
   }
 }
 
