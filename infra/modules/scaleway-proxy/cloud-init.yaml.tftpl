@@ -142,10 +142,14 @@ runcmd:
   - mkdir -p /home/${username}/.ssh
   - cp /root/.ssh/authorized_keys /home/${username}/.ssh/authorized_keys
   - chown -R ${username}:${username} /home/${username}/.ssh
-  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db
+  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db /home/${username}/pangolin/config/crowdsec-web-ui
   - curl -sLo /home/${username}/pangolin/config/traefik/ban.html https://raw.githubusercontent.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/main/ban.html
   - chown -R ${username}:${username} /home/${username}/pangolin
   - /home/${username}/init.sh ${username}
   - curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip && unzip -q /tmp/awscliv2.zip -d /tmp/aws-install && /tmp/aws-install/aws/install && rm -rf /tmp/awscliv2.zip /tmp/aws-install
   - systemctl enable --now docker
   - docker compose -f /home/${username}/pangolin/compose.yaml up -d
+  - |
+    # Wait for CrowdSec LAPI to be healthy, then register the web UI machine account
+    for i in $(seq 1 30); do docker exec crowdsec cscli lapi status >/dev/null 2>&1 && break || sleep 5; done
+    docker exec crowdsec cscli machines add crowdsec-web-ui --password "${crowdsec_webui_machine_password}" -f /dev/null

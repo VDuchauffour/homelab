@@ -4,7 +4,7 @@ name: pangolin
 services:
   pangolin:
     # https://github.com/fosrl/pangolin/releases
-    image: docker.io/fosrl/pangolin:postgresql-1.15.4
+    image: docker.io/fosrl/pangolin:postgresql-1.16.2
     container_name: pangolin
     restart: unless-stopped
     depends_on:
@@ -82,6 +82,21 @@ services:
       - /var/log/syslog:/var/log/syslog:ro
     ports:
       - "127.0.0.1:8080:8080"
+
+  crowdsec-web-ui:
+    # https://github.com/TheDuffman85/crowdsec-web-ui/releases
+    image: ghcr.io/theduffman85/crowdsec-web-ui:latest
+    container_name: crowdsec_web_ui
+    restart: unless-stopped
+    depends_on:
+      crowdsec:
+        condition: service_healthy
+    environment:
+      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_USER=crowdsec-web-ui
+      - CROWDSEC_PASSWORD=${crowdsec_webui_machine_password}
+    volumes:
+      - ./config/crowdsec-web-ui:/app/data
 
   traefik:
     # https://github.com/traefik/traefik/releases
