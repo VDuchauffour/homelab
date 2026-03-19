@@ -4,6 +4,10 @@ http:
       plugin:
         badger:
           disableForwardAuth: true
+    crowdsec-ui-auth:
+      basicAuth:
+        users:
+          - "${crowdsec_webui_basic_auth}"
     redirect-to-https:
       redirectScheme:
         scheme: https
@@ -77,7 +81,22 @@ http:
       tls:
         certResolver: letsencrypt
 
+    crowdsec-ui-router:
+      rule: "Host(`crowdsec.${domain_name}`)"
+      service: crowdsec-ui-service
+      entryPoints:
+        - websecure
+      middlewares:
+        - crowdsec-ui-auth
+      tls:
+        certResolver: letsencrypt
+
   services:
+    crowdsec-ui-service:
+      loadBalancer:
+        servers:
+          - url: "http://crowdsec-web-ui:3000"
+
     next-service:
       loadBalancer:
         servers:

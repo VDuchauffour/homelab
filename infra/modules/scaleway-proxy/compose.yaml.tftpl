@@ -83,6 +83,21 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
 
+  crowdsec-web-ui:
+    # https://github.com/TheDuffman85/crowdsec-web-ui/releases
+    image: ghcr.io/theduffman85/crowdsec-web-ui:latest
+    container_name: crowdsec_web_ui
+    restart: unless-stopped
+    depends_on:
+      crowdsec:
+        condition: service_healthy
+    environment:
+      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_USER=crowdsec-web-ui
+      - CROWDSEC_PASSWORD=${crowdsec_webui_machine_password}
+    volumes:
+      - ./config/crowdsec-web-ui:/app/data
+
   traefik:
     # https://github.com/traefik/traefik/releases
     image: docker.io/traefik:v3.6.10
