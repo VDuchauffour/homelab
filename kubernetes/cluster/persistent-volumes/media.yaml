@@ -249,7 +249,14 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   mountOptions:
-    - nfsvers=4
+    - nfsvers=4.2
+    - lookupcache=none
+    - actimeo=1
+    - noatime
+    - nodiratime
+    - hard
+    - rsize=262144
+    - wsize=262144
   csi:
     driver: nfs.csi.k8s.io
     volumeHandle: nfs-media-library-navidrome
