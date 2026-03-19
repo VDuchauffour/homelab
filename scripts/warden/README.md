@@ -5,8 +5,7 @@ Kubernetes-to-Warden monitoring integration scripts.
 ## Installation
 
 ```bash
-cd scripts
-uv sync
+uv sync --directory scripts
 ```
 
 ## Features
@@ -45,31 +44,31 @@ Discover Kubernetes deployments with HTTP liveness probes and register them in W
 export WARDEN_API_KEY="your-api-key"
 
 # Seed only user-facing apps (recommended - auto-discovers from kubernetes/apps/)
-uv run warden-seed --apps-only --host http://warden.home.arpa
+uv run --directory scripts warden-seed --apps-only --host http://warden.home.arpa
 
 # Seed with cleanup (removes monitors not in apps directory)
-uv run warden-seed --apps-only --cleanup --host http://warden.home.arpa
+uv run --directory scripts warden-seed --apps-only --cleanup --host http://warden.home.arpa
 
 # Seed all namespaces
-uv run warden-seed --host http://warden.home.arpa
+uv run --directory scripts warden-seed --host http://warden.home.arpa
 
 # Seed specific namespace
-uv run warden-seed --namespace media-center --host http://warden.home.arpa
+uv run --directory scripts warden-seed --namespace media-center --host http://warden.home.arpa
 
 # Seed multiple namespaces
-uv run warden-seed --namespaces arr,media-center,n8n --host http://warden.home.arpa
+uv run --directory scripts warden-seed --namespaces arr,media-center,n8n --host http://warden.home.arpa
 
 # Seed with cleanup for specific namespaces
-uv run warden-seed --namespaces arr,n8n --cleanup --host http://warden.home.arpa
+uv run --directory scripts warden-seed --namespaces arr,n8n --cleanup --host http://warden.home.arpa
 
 # Override check interval
-uv run warden-seed --interval 60 --apps-only --host http://warden.home.arpa
+uv run --directory scripts warden-seed --interval 60 --apps-only --host http://warden.home.arpa
 
 # Dry-run (preview without creating)
-uv run warden-seed --dry-run --apps-only --host http://warden.home.arpa
+uv run --directory scripts warden-seed --dry-run --apps-only --host http://warden.home.arpa
 
 # Verbose logging
-uv run warden-seed -v --apps-only --host http://warden.home.arpa
+uv run --directory scripts warden-seed -v --apps-only --host http://warden.home.arpa
 ```
 
 ### Delete All Monitors
@@ -78,13 +77,13 @@ Delete all monitors and groups from Warden:
 
 ```bash
 # Preview what would be deleted
-uv run warden-delete --dry-run --host http://warden.home.arpa
+uv run --directory scripts warden-delete --dry-run --host http://warden.home.arpa
 
 # Delete with confirmation prompts
-uv run warden-delete --host http://warden.home.arpa
+uv run --directory scripts warden-delete --host http://warden.home.arpa
 
 # Delete without prompts (dangerous!)
-uv run warden-delete --force --host http://warden.home.arpa
+uv run --directory scripts warden-delete --force --host http://warden.home.arpa
 ```
 
 ### Compare Kubernetes vs Warden
@@ -92,7 +91,7 @@ uv run warden-delete --force --host http://warden.home.arpa
 See which deployments have HTTP probes and which are monitored in Warden:
 
 ```bash
-uv run warden-compare
+uv run --directory scripts warden-compare
 ```
 
 ## Architecture

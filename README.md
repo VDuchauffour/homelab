@@ -91,13 +91,11 @@ direnv allow
 | `PUBLIC_DOMAIN_NAME` | Your homelab public domain name | `example.com` |
 | `LOCAL_DOMAIN_NAME` | Your homelab internal domain name | `home.arpa` |
 | `SINGLE_NODE_NAME` | Name of the single Kubernetes node | `k8s-node` |
-| `PASSBOLT_BASE_URL` | Base URL for Passbolt password manager | `http://passbolt.ref+envsubst://$LOCAL_DOMAIN_NAME` |
-| `PASSBOLT_GPG_KEY_FILE` | Path to your Passbolt GPG private key file | `/home/user/.gnupg/passbolt-key.asc` |
-| `PASSBOLT_GPG_PASSPHRASE` | Passphrase for your Passbolt GPG key | (keep secure) |
 | `PANGOLIN_PROXY_IP` | Public IP of the Scaleway proxy instance (for CoreDNS split-horizon) | `163.172.x.x` |
 | `TRAEFIK_CLUSTER_IP` | ClusterIP of the Traefik service (for CoreDNS split-horizon) | `10.43.x.x` |
 | `WAKATIME_API_KEY` | API key for WakaTime / Wakapi (used by wakatime-exporter) | (keep secure) |
 | `PIHOLE_ADMIN_PASSWORD` | Admin password for Pi-hole web UI | (keep secure) |
+| `JELLYFIN_API_KEY` | API key for Jellyfin (used by jellyfin-move script) | (keep secure) |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
@@ -191,14 +189,6 @@ kubectl exec deployment/nextcloud -n nextcloud -c nextcloud -- php occ app:enabl
 
 Then configure a Local mount in **Settings → Administration → External storage** pointing to `/media`.
 
-#### Passbolt
-
-Once the chart is applied, run the following command to set up an admin user:
-
-```shell
-kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt register_user -u <email> -f <firstname> -l <lastname> -r admin" -s /bin/bash www-data
-```
-
 ## Kubernetes — Infrastructure
 
 ### Available Infrastructure tools
@@ -219,7 +209,6 @@ kubectl exec -it -n passbolt <passbolt-pod-name> -- su -c "bin/cake passbolt reg
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png" width="32"> | node-feature-discovery | Hardware feature discovery | Helmfile |
 | <img src="https://raw.githubusercontent.com/cncf/artwork/master/projects/openebs/stacked/color/openebs-stacked-color.png" width="32"> | openebs | Container-native storage solution | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pangolin.png" width="32"> | pangolin-newt | Newt tunnel client for external access via Pangolin | Helmfile |
-| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/passbolt.png" width="32"> | passbolt | Team password manager | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pi-hole.png" width="32"> | pihole | Network-wide ad blocking DNS sinkhole | Helmfile |
 | <img src="https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg.github.io/refs/heads/main/assets/images/hero_image.png" width="32"> | plugin-barman-cloud | Backup plugin for CloudNativePG (WAL archiving + base backups to RustFS) | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prometheus.png" width="32"> | nut-exporter | Prometheus exporter for Network UPS Tools (NUT) metrics | Helmfile |
@@ -528,12 +517,21 @@ The `scripts/` directory contains utility scripts for managing the homelab clust
 
 ### Media Library Management
 
-A shell script moves completed downloads from qBittorrent to the media library:
+The `jellyfin/` package provides a script to move completed downloads from qBittorrent to the organized media library while preserving manually identified metadata (TMDB/IMDB IDs).
 
 ```shell
-cd scripts
-./move-to-library.sh /path/to/source /path/to/destination
+make jellyfin-move           # Move files and update Jellyfin
+make jellyfin-move-dry-run   # Preview moves without executing
 ```
+
+The script moves files via `kubectl exec` in the Jellyfin pod, then uses the Jellyfin API to:
+
+1. Capture ProviderIds (TMDB/IMDB) from the old item before moving
+2. Delete the old library entry to prevent duplicates
+3. Trigger a library scan and wait for the new item to appear
+4. Copy the ProviderIds to the new item, preserving manual identifications
+
+Files are moved from `/media/downloads/<category>/` to `/media/videos/<category>/` (movies, shows, documentaries, stand-up, tv-programs, tv-shows).
 
 ### Warden Monitoring Tools
 
@@ -549,16 +547,6 @@ make warden-compare       # Compare K8s vs Warden
 ```
 
 See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
-
-### Passbolt Custom Field Tool
-
-The `passbolt/` package adds custom key-value fields to new or existing Passbolt secrets via the GPG-authenticated API. Requires `PASSBOLT_BASE_URL`, `PASSBOLT_GPG_KEY_FILE`, `PASSBOLT_GPG_PASSPHRASE`.
-
-```shell
-cd scripts
-uv run passbolt-add-field --name "MyApp" --password "s3cret" --field-name "api_key" --field-value "tok-123"
-uv run passbolt-add-field --resource-name "MyApp" --field-name "env" --field-value "production"
-```
 
 ## Useful Commands
 

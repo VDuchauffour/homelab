@@ -19,3 +19,5 @@ export SCW_PROJECT_ID=
 export SCW_REGION=fr-par
 
 export WARDEN_API_KEY=
+
+export JELLYFIN_API_KEY=
