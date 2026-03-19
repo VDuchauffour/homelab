@@ -91,6 +91,9 @@ glance:
         - title: Jellyseerr
           subdomain: jellyseerr
           icon: di:jellyseerr
+        - title: MediaLyze
+          subdomain: medialyze
+          icon: https://raw.githubusercontent.com/frederikemmer/MediaLyze/refs/heads/main/frontend/public/favicon-32x32.png
         - title: Immich
           subdomain: immich
           icon: di:immich

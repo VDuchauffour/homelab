@@ -1,0 +1,17 @@
+apiVersion: v2
+name: medialyze
+description: A Helm chart for MediaLyze - media library analyzer
+
+type: application
+
+version: 0.1.0
+
+appVersion: "latest"
+home: https://github.com/frederikemmer/MediaLyze
+sources:
+  - https://github.com/frederikemmer/MediaLyze
+keywords:
+  - medialyze
+  - media
+  - ffprobe
+  - analyzer
