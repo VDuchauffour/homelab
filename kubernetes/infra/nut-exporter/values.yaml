@@ -1,7 +1,7 @@
 ---
 image:
   repository: ghcr.io/druggeri/nut_exporter
-  tag: 3.2.3
+  tag: 3.2.5
 
 nut:
   server: ref+envsubst://$SINGLE_NODE_NAME
