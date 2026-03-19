@@ -42,7 +42,15 @@ Deploy or update a Kubernetes application using Helmfile.
    helmfile apply
    ```
 
-6. Verify deployment:
+6. **Glance only** — Helm doesn't detect ConfigMap content changes, so force a restart:
+
+   ```shell
+   cd kubernetes/apps/glance
+   helmfile apply
+   kubectl rollout restart deployment -n glance
+   ```
+
+7. Verify deployment:
 
    ```shell
    kubectl get pods -n <namespace>
