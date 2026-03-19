@@ -17,7 +17,6 @@ on:
 env:
   SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
   SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-  SCW_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
   SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
 
 jobs:
