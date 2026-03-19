@@ -1,0 +1,368 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: simplify-genres
+  namespace: navidrome
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: simplify-genres
+          image: python:3.12-slim
+          command:
+            - python3
+            - -u
+            - /scripts/simplify_genres.py
+          env:
+            - name: DRY_RUN
+              value: 'false'
+          volumeMounts:
+            - name: music
+              mountPath: /music
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: music
+          persistentVolumeClaim:
+            claimName: media-library
+        - name: script
+          configMap:
+            name: simplify-genres-script
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simplify-genres-script
+  namespace: navidrome
+data:
+  simplify_genres.py: |-
+    """Simplify genre tags across the music library using folder structure.
+
+    Walks the music directory tree and sets genre tags based on the folder
+    hierarchy. Top-level folders map to a main genre; for electronic music,
+    second-level sub-folders add a sub-genre.
+
+    Supports MP3, FLAC, OGG, M4A, AIFF, and OPUS.
+
+    Set DRY_RUN=true (default) to preview changes without writing.
+    """
+
+    import os
+    import re
+    import subprocess
+    import sys
+    from dataclasses import dataclass, field
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "mutagen"])
+
+    from mutagen import File as MutagenFile
+    from mutagen.flac import FLAC
+    from mutagen.mp3 import MP3
+    from mutagen.mp4 import MP4
+    from mutagen.oggvorbis import OggVorbis
+    from mutagen.oggopus import OggOpus
+    from mutagen.aiff import AIFF
+    from mutagen.id3 import TCON
+
+    MUSIC_ROOT = "/music/music"
+    DRY_RUN = os.environ.get("DRY_RUN", "true").lower() in ("true", "1", "yes")
+
+    AUDIO_EXTENSIONS = {".mp3", ".flac", ".ogg", ".m4a", ".aiff", ".aif", ".opus"}
+
+    # ── Genre mapping ──────────────────────────────────────────────────────
+    #
+    # Top-level folder name -> (main genre, optional sub-genre)
+    # For "Musiques Electroniques", the sub-genre comes from the level-2 folder.
+
+    FOLDER_GENRE_MAP: dict[str, tuple[str, str | None]] = {
+        "Citypop": ("City Pop", None),
+        "Disco - Soul - Funk - RnB - New Jack Swing": ("Funk / Soul", None),
+        "Dub - Trip Hop": ("Dub", None),
+        "Hip Hop - Rap - G-Funk": ("Hip-Hop", None),
+        "Jazz": ("Jazz", None),
+        "Livres Audio": ("Audiobook", None),
+        "Musiques Savantes": ("Classical", None),
+        "OST": ("Soundtrack", None),
+        "Pop": ("Pop", None),
+        "Smooth Jazz - Fusion Jazz": ("Jazz", "Smooth Jazz"),
+        "Variété francaise": ("Chanson", None),
+        "World music": ("World", None),
+    }
+
+    # Sub-genre mapping for Rock - Metal - Punk artist/album folders.
+    # Unlike Electronic (which has sub-genre folders), Rock is flat so we map
+    # each artist/album folder directly to a sub-genre.
+    ROCK_SUBGENRE_MAP: dict[str, str] = {
+        # Metal
+        "Atreyu - The curse (2004)": "Metal",
+        "Deftones": "Metal",
+        "Infectious Grooves - Groove Family Cyco": "Metal",
+        "Iron Maiden": "Metal",
+        "Megadeth - Rust In Peace (1990)": "Metal",
+        "Metallica": "Metal",
+        "Powermad - Absolute Power (1989)": "Metal",
+        "Powermad - Infinite (Pentacat Records, 2015) [FLAC]": "Metal",
+        "Power Trip": "Metal",
+        "Slayer - Reign In Blood  1986": "Metal",
+        "Suicidal Tendencies - Lights... Camera... Revolution": "Metal",
+        # Alternative
+        "David Bowie - 1. Outside": "Alternative",
+        "Drugstore Fanatics": "Alternative",
+        "Nine Inch Nails": "Alternative",
+        "Nirvana": "Alternative",
+        "Pavement": "Alternative",
+        "Rage Against the Machine": "Alternative",
+        "Thirty Secons to Mars": "Alternative",
+        # Classic Rock
+        "Dakota": "Classic Rock",
+        "Led Zeppelin": "Classic Rock",
+        "Neil Young - Harvest (1972) (1990 Remastered)": "Classic Rock",
+        "Pat Benabar - Crimes Of Passion": "Classic Rock",
+        "Van Halen": "Classic Rock",
+        # Punk
+        "Autopilot Off - Make a Sound (2004)": "Punk",
+        "Black Flag": "Punk",
+        "Raw mud - No future": "Punk",
+        "Raw mud - Today your life is worthless": "Punk",
+        "Yellowcard - Ocean Avenue": "Punk",
+    }
+
+    # Sub-genre mapping for Musiques Electroniques sub-folders.
+    ELECTRONIC_SUBGENRE_MAP: dict[str, str] = {
+        "Ambient - Electronica - IDM": "Ambient",
+        "Chillwave": "Chillwave",
+        "Coldwave - New wave - Synth-Pop": "New Wave",
+        "Deep House": "Deep House",
+        "Deep Techno - Dub Techno - Hyptonic Techno": "Dub Techno",
+        "Drum & Bass - Jungle - Dubstep": "Drum & Bass",
+        "Electro": "Electro",
+        "French Touch": "French Touch",
+        "Future funk": "Future Funk",
+        "Hard groove": "Hard Groove",
+        "Hard Techno - Hard Trance - Rave": "Hard Techno",
+        "House - Disco House - Balearic - Exotic": "House",
+        "Industrial Techno - EBM": "Industrial",
+        "LoFi - Leftfield - Detroit": "Lo-Fi",
+        "Micro House - Minimal House": "Minimal",
+        "Modern Funk - Nu-Disco": "Nu-Disco",
+        "Progressive House": "Progressive House",
+        "Synthwave": "Synthwave",
+        "Tech House": "Tech House",
+        "Techno": "Techno",
+        "Trance": "Trance",
+        "Vaporwave": "Vaporwave",
+    }
+
+    # Folders to skip entirely.
+    SKIP_FOLDERS = {"downloads", "Compositions et DJing"}
+
+    # ── Helpers ─────────────────────────────────────────────────────────────
+
+    EXT_ID3 = {".mp3", ".aiff", ".aif"}
+    EXT_VORBIS = {".flac", ".ogg", ".opus"}
+    EXT_MP4 = {".m4a"}
+
+    OPENERS: dict[str, type] = {
+        ".mp3": MP3,
+        ".flac": FLAC,
+        ".ogg": OggVorbis,
+        ".opus": OggOpus,
+        ".m4a": MP4,
+        ".aiff": AIFF,
+        ".aif": AIFF,
+    }
+
+    def resolve_genres(filepath: str) -> list[str] | None:
+        rel = os.path.relpath(filepath, MUSIC_ROOT)
+        parts = rel.split(os.sep)
+
+        if not parts:
+            return None
+
+        top_folder = parts[0]
+        if top_folder in SKIP_FOLDERS:
+            return None
+
+        if top_folder == "Musiques Electroniques":
+            genres = ["Electronic"]
+            if len(parts) >= 2:
+                sub_genre = ELECTRONIC_SUBGENRE_MAP.get(parts[1])
+                if sub_genre:
+                    genres.append(sub_genre)
+            return genres
+
+        if top_folder == "Rock - Metal - Punk":
+            genres = ["Rock"]
+            if len(parts) >= 2:
+                sub_genre = ROCK_SUBGENRE_MAP.get(parts[1])
+                if sub_genre:
+                    genres.append(sub_genre)
+            return genres
+
+        mapping = FOLDER_GENRE_MAP.get(top_folder)
+        if mapping is None:
+            return None
+
+        main_genre, sub_genre = mapping
+        genres = [main_genre]
+        if sub_genre:
+            genres.append(sub_genre)
+        return genres
+
+    def read_genres(audio, ext: str) -> list[str]:
+        if ext in EXT_ID3:
+            tcon = audio.tags.get("TCON") if audio.tags else None
+            return list(tcon.genres) if tcon else []
+        if ext in EXT_VORBIS:
+            return list(audio.get("GENRE", []))
+        if ext in EXT_MP4:
+            raw = audio.get("\xa9gen", [])
+            return [g.strip() for entry in raw for g in re.split(r"[;/]", entry) if g.strip()]
+        return []
+
+    def write_genres(audio, ext: str, genres: list[str]) -> None:
+        if ext in EXT_ID3:
+            if audio.tags is None:
+                audio.add_tags()
+            audio.tags.add(TCON(encoding=3, text=genres))
+        elif ext in EXT_VORBIS:
+            audio["GENRE"] = genres
+        elif ext in EXT_MP4:
+            audio["\xa9gen"] = genres
+        audio.save()
+
+    def process_file(filepath: str, target_genres: list[str]) -> str:
+        """Single-open read+write. Returns 'correct', 'updated', or 'error'."""
+        ext = os.path.splitext(filepath)[1].lower()
+        opener = OPENERS.get(ext)
+        if opener is None:
+            return "error"
+
+        audio = opener(filepath)
+        current = read_genres(audio, ext)
+        if current == target_genres:
+            return "correct"
+
+        if not DRY_RUN:
+            write_genres(audio, ext, target_genres)
+        return "updated"
+
+    # ── Stats ───────────────────────────────────────────────────────────────
+
+    @dataclass
+    class Stats:
+        total: int = 0
+        skipped: int = 0
+        already_correct: int = 0
+        updated: int = 0
+        errors: int = 0
+        per_genre: dict[str, int] = field(default_factory=dict)
+
+    @dataclass
+    class DirBatch:
+        path: str = ""
+        total: int = 0
+        updated: int = 0
+        correct: int = 0
+        errors: int = 0
+        error_files: list[str] = field(default_factory=list)
+
+    # ── Main ────────────────────────────────────────────────────────────────
+
+    def main():
+        stats = Stats()
+        all_errors: list[str] = []
+        mode = "DRY RUN" if DRY_RUN else "LIVE"
+        print(f"=== Simplify Genres ({mode}) ===")
+        print(f"Music root: {MUSIC_ROOT}\n")
+
+        current_batch = DirBatch()
+
+        def flush_batch(batch: DirBatch) -> None:
+            if batch.total == 0:
+                return
+            rel = os.path.relpath(batch.path, MUSIC_ROOT)
+            if batch.updated > 0 or batch.errors > 0:
+                parts = [f"{batch.updated}/{batch.total} {'to update' if DRY_RUN else 'updated'}"]
+                if batch.correct:
+                    parts.append(f"{batch.correct} ok")
+                if batch.errors:
+                    parts.append(f"{batch.errors} err")
+                print(f"  {rel:60s}  {', '.join(parts)}")
+
+        for root, dirs, files in os.walk(MUSIC_ROOT):
+            dirs.sort()
+            audio_files = sorted(
+                f for f in files
+                if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS
+            )
+            if not audio_files:
+                continue
+
+            if root != current_batch.path:
+                flush_batch(current_batch)
+                current_batch = DirBatch(path=root)
+
+            for fname in audio_files:
+                filepath = os.path.join(root, fname)
+                stats.total += 1
+                current_batch.total += 1
+
+                target_genres = resolve_genres(filepath)
+                if target_genres is None:
+                    stats.skipped += 1
+                    continue
+
+                stats.per_genre[target_genres[0]] = stats.per_genre.get(target_genres[0], 0) + 1
+
+                try:
+                    result = process_file(filepath, target_genres)
+                except Exception as e:
+                    stats.errors += 1
+                    current_batch.errors += 1
+                    all_errors.append(f"{filepath}: {e}")
+                    continue
+
+                if result == "correct":
+                    stats.already_correct += 1
+                    current_batch.correct += 1
+                elif result == "updated":
+                    stats.updated += 1
+                    current_batch.updated += 1
+                else:
+                    stats.errors += 1
+                    current_batch.errors += 1
+                    all_errors.append(f"{filepath}: unreadable format")
+
+            if stats.total % 2000 == 0:
+                print(f"  ... {stats.total} files processed ...")
+
+        flush_batch(current_batch)
+
+        # ── Summary ──────────────────────────────────────────────────────────
+        print(f"\n{'=' * 60}")
+        print(f"Mode:             {mode}")
+        print(f"Total files:      {stats.total}")
+        print(f"Already correct:  {stats.already_correct}")
+        verb = "Would update" if DRY_RUN else "Updated"
+        print(f"{verb}:       {stats.updated}")
+        print(f"Skipped:          {stats.skipped}")
+        print(f"Errors:           {stats.errors}")
+        print("\nGenre distribution:")
+        for genre, count in sorted(stats.per_genre.items(), key=lambda x: -x[1]):
+            print(f"  {genre:20s}  {count:>6d} files")
+
+        if all_errors:
+            print(f"\nErrors ({len(all_errors)}):")
+            for err in all_errors:
+                print(f"  {err}")
+
+        if DRY_RUN and stats.updated > 0:
+            print("\nRe-run with DRY_RUN=false to apply changes.")
+
+    if __name__ == "__main__":
+        main()
