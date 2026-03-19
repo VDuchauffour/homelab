@@ -95,7 +95,7 @@ direnv allow
 | `TRAEFIK_CLUSTER_IP` | ClusterIP of the Traefik service (for CoreDNS split-horizon) | `10.43.x.x` |
 | `WAKATIME_API_KEY` | API key for WakaTime / Wakapi (used by wakatime-exporter) | (keep secure) |
 | `PIHOLE_ADMIN_PASSWORD` | Admin password for Pi-hole web UI | (keep secure) |
-| `JELLYFIN_API_KEY` | API key for Jellyfin (used by jellyfin-cleanup script) | (keep secure) |
+| `JELLYFIN_API_KEY` | API key for Jellyfin (used by jellyfin-move script) | (keep secure) |
 
 Once configured, these variables will be automatically loaded whenever you enter the project directory.
 
@@ -517,11 +517,21 @@ The `scripts/` directory contains utility scripts for managing the homelab clust
 
 ### Media Library Management
 
-A shell script moves completed downloads from qBittorrent to the media library:
+The `jellyfin/` package provides a script to move completed downloads from qBittorrent to the organized media library while preserving manually identified metadata (TMDB/IMDB IDs).
 
 ```shell
-./scripts/move-to-library.sh /path/to/source /path/to/destination
+make jellyfin-move           # Move files and update Jellyfin
+make jellyfin-move-dry-run   # Preview moves without executing
 ```
+
+The script moves files via `kubectl exec` in the Jellyfin pod, then uses the Jellyfin API to:
+
+1. Capture ProviderIds (TMDB/IMDB) from the old item before moving
+2. Delete the old library entry to prevent duplicates
+3. Trigger a library scan and wait for the new item to appear
+4. Copy the ProviderIds to the new item, preserving manual identifications
+
+Files are moved from `/media/downloads/<category>/` to `/media/videos/<category>/` (movies, shows, documentaries, stand-up, tv-programs, tv-shows).
 
 ### Warden Monitoring Tools
 
@@ -537,15 +547,6 @@ make warden-compare       # Compare K8s vs Warden
 ```
 
 See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
-
-### Jellyfin Library Cleanup
-
-The `jellyfin/` package removes missing (ghost) items from the Jellyfin library database — entries where the underlying file no longer exists on disk. Requires `JELLYFIN_API_KEY`.
-
-```shell
-make jellyfin-cleanup           # Delete all missing items
-make jellyfin-cleanup-dry-run   # Preview without deleting
-```
 
 ## Useful Commands
 

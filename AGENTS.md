@@ -31,7 +31,7 @@ homelab/
 ├── scripts/                     # Python utility scripts (uv, Python 3.12+)
 │   ├── pyproject.toml           # Shared project config, dependencies, CLI entry points
 │   ├── warden/                  # Kubernetes-to-Warden monitoring integration
-│   └── jellyfin/                # Jellyfin library cleanup (remove ghost entries)
+│   └── jellyfin/                # Jellyfin media mover with metadata preservation
 │
 └── README.md                    # Main documentation
 ```
@@ -610,7 +610,7 @@ Python utility scripts managed with **uv** (Python 3.12+). All packages live und
 ### Packages
 
 - `warden/` — Kubernetes-to-Warden monitoring integration (discover, seed, compare, delete monitors)
-- `jellyfin/` — Jellyfin library cleanup (find and remove missing/ghost items from the library database)
+- `jellyfin/` — Jellyfin media mover with metadata preservation (move downloads to library, preserve ProviderIds, delete old entries)
 
 ### Script Conventions
 

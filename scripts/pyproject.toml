@@ -16,7 +16,7 @@ dependencies = [
 warden-seed = "warden.seed_monitors:app"
 warden-delete = "warden.delete_monitors:app"
 warden-compare = "warden.compare:main"
-jellyfin-cleanup = "jellyfin.cleanup_missing:app"
+jellyfin-move = "jellyfin.move_to_library:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -35,7 +35,7 @@ omit = [
   "warden/delete_monitors.py",
   "warden/compare.py",
   "warden/tests/*",
-  "jellyfin/cleanup_missing.py",
+  "jellyfin/move_to_library.py",
   "jellyfin/tests/*",
 ]
 
