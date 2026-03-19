@@ -525,6 +525,15 @@ terraform destroy
 
 The `scripts/` directory contains utility scripts for managing the homelab cluster.
 
+### Media Library Management
+
+A shell script moves completed downloads from qBittorrent to the media library:
+
+```shell
+cd scripts
+./move-to-library.sh /path/to/source /path/to/destination
+```
+
 ### Warden Monitoring Tools
 
 The `warden/` package provides Kubernetes-to-Warden monitoring integration with automatic discovery, deployment verification, and cleanup capabilities.
