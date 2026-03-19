@@ -6,11 +6,3 @@ releases:
     chart: ./charts/medialyze
     values:
       - values.yaml
-    hooks:
-      - events:
-          - presync
-        showlogs: true
-        command: /bin/sh
-        args:
-          - -c
-          - kubectl apply -f manifests/media-pv.yaml
