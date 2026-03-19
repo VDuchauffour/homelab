@@ -64,12 +64,6 @@ spec:
         superuser: false
         passwordSecret:
           name: linkding-cnpg-credentials
-      - name: passbolt
-        ensure: present
-        login: true
-        superuser: false
-        passwordSecret:
-          name: passbolt-cnpg-credentials
       - name: immich
         ensure: present
         login: true

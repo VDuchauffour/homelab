@@ -1,4 +1,4 @@
-.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare
+.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare jellyfin-cleanup jellyfin-cleanup-dry-run
 
 warden-seed:
 	@cd scripts && uv run warden-seed --apps-only --host http://warden.home.arpa
@@ -11,6 +11,12 @@ warden-delete:
 
 warden-compare:
 	@cd scripts && uv run warden-compare
+
+jellyfin-cleanup:
+	@cd scripts && uv run jellyfin-cleanup --host http://jellyfin.home.arpa
+
+jellyfin-cleanup-dry-run:
+	@cd scripts && uv run jellyfin-cleanup --dry-run --host http://jellyfin.home.arpa
 
 check-readme:
 	@echo "Checking README.md tables against kubernetes/ directories..."
