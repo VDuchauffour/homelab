@@ -12,7 +12,8 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: enabled
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18-1.1.0
+  imageName: homelab/cnpg-vectorchord-timescaledb:18
+  imagePullPolicy: IfNotPresent
   instances: 1
   storage:
     size: 10Gi
@@ -106,13 +107,23 @@ spec:
         superuser: false
         passwordSecret:
           name: nextcloud-cnpg-credentials
+      - name: tracearr
+        ensure: present
+        login: true
+        superuser: true
+        passwordSecret:
+          name: tracearr-cnpg-credentials
 
   postgresql:
     shared_preload_libraries:
       - vchord.so
+      - timescaledb
     parameters:
       shared_buffers: 256MB
       max_connections: '100'
+      max_locks_per_transaction: '4096'
+      timescaledb.telemetry_level: 'off'
+      timescaledb.max_tuples_decompressed_per_dml_transaction: '0'
   monitoring:
     enablePodMonitor: true
   resources:

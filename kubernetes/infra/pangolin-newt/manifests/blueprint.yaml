@@ -653,6 +653,25 @@ data:
               path: /
               interval: 30
               timeout: 5
+      tracearr:
+        name: Tracearr
+        protocol: http
+        full-domain: tracearr.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: tracearr.tracearr.svc.cluster.local
+            method: http
+            port: 3000
+            healthcheck:
+              hostname: tracearr.tracearr.svc.cluster.local
+              port: 3000
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       wakapi:
         name: Wakapi
         protocol: http

@@ -1,0 +1,58 @@
+---
+image:
+  repository: ghcr.io/connorgallopo/tracearr
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3000
+
+database:
+  host: cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local
+  port: '5432'
+  user: tracearr
+  name: tracearr
+
+secrets:
+  jwtSecret: ref+scw:///homelab/tracearr#/jwt-secret
+  cookieSecret: ref+scw:///homelab/tracearr#/cookie-secret
+  database:
+    password: ref+scw:///homelab/cnpg#/tracearr-password
+
+config:
+  NODE_ENV: production
+  PORT: '3000'
+  HOST: 0.0.0.0
+  TZ: Europe/Paris
+  LOG_LEVEL: info
+  CORS_ORIGIN: '*'
+  REDIS_URL: redis://tracearr-redis-master.tracearr.svc.cluster.local:6379
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 5Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: tracearr.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - tracearr.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: tracearr-mkcert-tls
