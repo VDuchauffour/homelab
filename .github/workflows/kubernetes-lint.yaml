@@ -17,7 +17,8 @@ on:
 env:
   SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
   SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-  SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+  SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
+  SCW_DEFAULT_REGION: ${{ secrets.SCW_REGION }}
 
 jobs:
   helmfile-lint:
@@ -26,6 +27,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Configure Scaleway
+        uses: scaleway/action-scw@v0
+        with:
+          access-key: ${{ secrets.SCW_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          default-project-id: ${{ secrets.SCW_PROJECT_ID }}
+          save-config: true
+          export-config: true
 
       - name: Setup Helm
         uses: azure/setup-helm@v4
