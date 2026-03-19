@@ -290,3 +290,15 @@ apps:
         mountPath: /data
     excludes:
       - '*.log'
+
+  medialyze:
+    namespace: medialyze
+    schedule: 55 4 * * 0
+    targets:
+      - type: deployment
+        name: medialyze
+    pvcs:
+      - name: medialyze
+        mountPath: /data
+    excludes:
+      - '*.log'
