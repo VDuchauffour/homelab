@@ -94,6 +94,9 @@ glance:
         - title: MediaLyze
           subdomain: medialyze
           icon: https://raw.githubusercontent.com/frederikemmer/MediaLyze/refs/heads/main/frontend/public/favicon-32x32.png
+        - title: Tracearr
+          subdomain: tracearr
+          icon: https://raw.githubusercontent.com/connorgallopo/Tracearr/main/apps/web/public/favicon-96x96.png
         - title: Immich
           subdomain: immich
           icon: di:immich

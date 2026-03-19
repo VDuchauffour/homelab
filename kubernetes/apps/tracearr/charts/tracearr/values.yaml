@@ -1,0 +1,52 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/connorgallopo/tracearr
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 5Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+database:
+  host: localhost
+  port: '5432'
+  user: tracearr
+  name: tracearr
+
+secrets:
+  jwtSecret: ''
+  cookieSecret: ''
+  database:
+    password: ''
+
+config:
+  NODE_ENV: production
+  PORT: '3000'
+  HOST: 0.0.0.0
+  TZ: UTC
+  LOG_LEVEL: info
+  CORS_ORIGIN: '*'
+  REDIS_URL: redis://localhost:6379

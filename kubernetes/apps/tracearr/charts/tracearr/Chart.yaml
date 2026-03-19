@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: tracearr
+description: tracearr - Media tracking and monitoring
+type: application
+version: 0.1.0
+appVersion: latest
