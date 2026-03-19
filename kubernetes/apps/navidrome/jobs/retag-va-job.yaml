@@ -1,0 +1,193 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retag-va-compilations
+  namespace: navidrome
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: retag
+          image: python:3.12-slim
+          command:
+            - python3
+            - -u
+            - /scripts/retag.py
+          volumeMounts:
+            - name: music
+              mountPath: /music
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: music
+          persistentVolumeClaim:
+            claimName: media-library
+        - name: script
+          configMap:
+            name: retag-va-script
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: retag-va-script
+  namespace: navidrome
+data:
+  retag.py: |-
+    """Retag fragmented VA compilation albums.
+
+    Sets ALBUMARTIST=Various Artists and COMPILATION=1 on all audio files
+    in the affected directories so Navidrome groups them as single albums.
+    """
+
+    import os
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "mutagen"])
+
+    from mutagen import File as MutagenFile
+    from mutagen.id3 import TPE2, TCMP
+    from mutagen.mp3 import MP3
+    from mutagen.flac import FLAC
+    from mutagen.oggvorbis import OggVorbis
+    from mutagen.aiff import AIFF
+    from mutagen.mp4 import MP4
+
+    MUSIC_ROOT = "/music/music"
+
+    # Directories containing fragmented VA compilations (relative to MUSIC_ROOT)
+    DIRS = [
+        "Disco - Soul - Funk - RnB - New Jack Swing/COMPILATIONS/The Very Best Of Disco Funk (2Gether Disco Funk)",
+        "Disco - Soul - Funk - RnB - New Jack Swing/COMPILATIONS/VA - Retro Party - Disco Hits - The Best Of The 70s (2015) mp3.www.zone-telechargement.com",
+        "Disco - Soul - Funk - RnB - New Jack Swing/Joey Negro/Joey Negro Compilation  - Supafunkanova",
+        "Disco - Soul - Funk - RnB - New Jack Swing/VA - Groove On Down (2004)",
+        "Disco - Soul - Funk - RnB - New Jack Swing/VA - The T.S.O.B. Anthology The Funk & Disco Sound of Brooklyn (2013) mp3",
+        "Hip Hop - Rap - G-Funk/NWA/Disc 1 - NWA Legacy Vol 1",
+        "Hip Hop - Rap - G-Funk/NWA/N.W.A. (2002) - The N.W.A Legacy Vol. 2",
+        "Musiques Electroniques/Deep House/Certain Circles/[CC02] Certain Circles 02",
+        "Musiques Electroniques/Deep House/Fathers & Sons Productions/[fas001] Various - FAS001 (2012)",
+        "Musiques Electroniques/Deep House/Fathers & Sons Productions/[fas006] Various - FAS006 (2013)",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/Hypnus Records/Various - The AdEPts Of Hypnus Midwinter II 2015",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/Hypnus Records/Various - Various AdEPts Volume I 2014",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/Hypnus Records/Various \u200e\u2013 Various Adepts Volume II 2015",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/Hypnus Records/Various \u200e\u2013 Zodiac 2015",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/Hypnus Records/Zodiac (2015)",
+        "Musiques Electroniques/Deep Techno - Dub Techno - Hyptonic Techno/\u00c6X/VA - \u00c6X010 (\u00c6X, 2019)",
+        "Musiques Electroniques/Drum & Bass - Jungle - Dubstep/1994 - Jungle Tekno 5",
+        "Musiques Electroniques/Drum & Bass - Jungle - Dubstep/VA - Total Science 2 [1996]",
+        "Musiques Electroniques/Hard Techno - Hard Trance - Rave/VA - Narcosis 19 [2020]",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/[CHURCHV001] Church Volumes 001",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/[CHURCHV002] Church Volumes 002",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/[ST 003] Welcome To Paradise (Italian Dream House 89-93) (2017)",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/Les Yeux Orange/[LYO003] Earth Trax & Newborn Jr. - Mirage EP - 2017",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/NDATL/NDATL Special Edition 2014",
+        "Musiques Electroniques/House - Disco House - Balearic - Exotic/Various - Fifty Fathoms Deep Remixed Vol. 1",
+        "Musiques Electroniques/Industrial Techno - EBM/Various Artists - Unwitch - The Presence (2018)",
+        "Musiques Electroniques/LoFi - Leftfield - Detroit/Alixkun & Brawther - \u30cf\u30a6\u30b9 Once Upon A Time In Japan\u2026 [2015]",
+        "Musiques Electroniques/LoFi - Leftfield - Detroit/Blorp/[Blorp003] (2016) (V0)",
+        "Musiques Electroniques/Modern Funk - Nu-Disco/KSOSA FUNK Presents  New Funk Era Vol.4",
+        "Musiques Electroniques/Synthwave/Kung Fury OST",
+        "OST/Burnout 3 Takedown OST",
+        "OST/David Lynch's Wild At Heart (by Angelo Badalamenti & VA)",
+    ]
+
+    AUDIO_EXTENSIONS = {".mp3", ".flac", ".ogg", ".m4a", ".aiff", ".aif", ".wma", ".opus"}
+
+    def set_va_tags(filepath: str) -> bool:
+        """Set ALBUMARTIST and COMPILATION tags on an audio file."""
+        ext = os.path.splitext(filepath)[1].lower()
+        try:
+            if ext == ".mp3":
+                audio = MP3(filepath)
+                if audio.tags is None:
+                    audio.add_tags()
+                audio.tags.add(TPE2(encoding=3, text=["Various Artists"]))
+                audio.tags.add(TCMP(encoding=3, text=["1"]))
+                audio.save()
+            elif ext == ".flac":
+                audio = FLAC(filepath)
+                audio["ALBUMARTIST"] = "Various Artists"
+                audio["COMPILATION"] = "1"
+                audio.save()
+            elif ext == ".ogg" or ext == ".opus":
+                audio = OggVorbis(filepath)
+                audio["ALBUMARTIST"] = "Various Artists"
+                audio["COMPILATION"] = "1"
+                audio.save()
+            elif ext == ".m4a":
+                audio = MP4(filepath)
+                audio["\xa9ART"]  # verify it's readable
+                audio["aART"] = ["Various Artists"]
+                audio["cpil"] = True
+                audio.save()
+            elif ext in (".aiff", ".aif"):
+                audio = AIFF(filepath)
+                if audio.tags is None:
+                    audio.add_tags()
+                audio.tags.add(TPE2(encoding=3, text=["Various Artists"]))
+                audio.tags.add(TCMP(encoding=3, text=["1"]))
+                audio.save()
+            else:
+                # Generic fallback via mutagen.File
+                audio = MutagenFile(filepath)
+                if audio is None:
+                    return False
+                if hasattr(audio, "tags") and audio.tags is not None:
+                    if hasattr(audio.tags, "add"):
+                        audio.tags.add(TPE2(encoding=3, text=["Various Artists"]))
+                        audio.tags.add(TCMP(encoding=3, text=["1"]))
+                    else:
+                        audio["ALBUMARTIST"] = "Various Artists"
+                        audio["COMPILATION"] = "1"
+                    audio.save()
+                else:
+                    return False
+            return True
+        except Exception as e:
+            print(f"  ERROR: {filepath}: {e}")
+            return False
+
+    def main():
+        total_files = 0
+        total_tagged = 0
+        total_errors = 0
+        missing_dirs = []
+
+        for rel_dir in DIRS:
+            full_dir = os.path.join(MUSIC_ROOT, rel_dir)
+            if not os.path.isdir(full_dir):
+                print(f"SKIP (not found): {rel_dir}")
+                missing_dirs.append(rel_dir)
+                continue
+
+            dir_files = 0
+            dir_tagged = 0
+            for root, _, files in os.walk(full_dir):
+                for fname in sorted(files):
+                    ext = os.path.splitext(fname)[1].lower()
+                    if ext not in AUDIO_EXTENSIONS:
+                        continue
+                    fpath = os.path.join(root, fname)
+                    dir_files += 1
+                    if set_va_tags(fpath):
+                        dir_tagged += 1
+                    else:
+                        total_errors += 1
+
+            total_files += dir_files
+            total_tagged += dir_tagged
+            print(f"OK: {rel_dir} ({dir_tagged}/{dir_files} files)")
+
+        print(f"\n{'='*60}")
+        print(f"Total: {total_tagged}/{total_files} files tagged, {total_errors} errors")
+        if missing_dirs:
+            print(f"Missing dirs: {len(missing_dirs)}")
+            for d in missing_dirs:
+                print(f"  - {d}")
+
+    if __name__ == "__main__":
+        main()

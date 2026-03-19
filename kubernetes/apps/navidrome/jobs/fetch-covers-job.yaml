@@ -1,0 +1,269 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fetch-covers-script
+  namespace: navidrome
+data:
+  fetch_covers.py: |
+    """Fetch missing album cover art from iTunes and Deezer APIs.
+
+    Queries the Navidrome DB for albums without artwork, searches free APIs
+    (iTunes Search, Deezer) by album name + artist, downloads the best match,
+    and saves as cover.jpg in each album's directory.
+    """
+
+    import json
+    import os
+    import re
+    import sqlite3
+    import sys
+    import time
+    import urllib.request
+    import urllib.parse
+    import urllib.error
+    from pathlib import Path
+
+    MUSIC_ROOT = Path("/music/music")
+    DB_PATH = "/data/navidrome.db"
+    COVER_NAMES = {"cover.jpg", "cover.png", "folder.jpg", "folder.png", "front.jpg", "front.png"}
+    HEADERS = {"User-Agent": "homelab-cover-fetcher/1.0"}
+    MIN_SIZE = 5000  # minimum file size in bytes to consider valid
+
+    def http_get(url: str, timeout: int = 15) -> bytes | None:
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read()
+        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError):
+            return None
+
+    def http_get_json(url: str, timeout: int = 10) -> dict | None:
+        data = http_get(url, timeout)
+        if data:
+            try:
+                return json.loads(data)
+            except json.JSONDecodeError:
+                pass
+        return None
+
+    def search_itunes(album: str, artist: str) -> str | None:
+        """Search iTunes for album cover. Returns high-res image URL or None."""
+        query = f"{album} {artist}"
+        params = urllib.parse.urlencode({
+            "term": query, "media": "music", "entity": "album", "limit": "5"
+        })
+        url = f"https://itunes.apple.com/search?{params}"
+        data = http_get_json(url)
+        if not data:
+            return None
+
+        album_lower = album.lower().strip()
+        artist_lower = artist.lower().strip()
+
+        for item in data.get("results", []):
+            if item.get("wrapperType") != "collection":
+                continue
+            name = (item.get("collectionName") or "").lower().strip()
+            art = (item.get("artistName") or "").lower().strip()
+            art_url = item.get("artworkUrl100", "")
+            if not art_url:
+                continue
+            # Loose match: album name contains search term or vice versa
+            if album_lower in name or name in album_lower:
+                # Upgrade to 600x600
+                return art_url.replace("100x100bb", "600x600bb")
+
+        # Fallback: return first result if any
+        for item in data.get("results", []):
+            art_url = item.get("artworkUrl100", "")
+            if art_url:
+                return art_url.replace("100x100bb", "600x600bb")
+        return None
+
+    def search_deezer(album: str, artist: str) -> str | None:
+        """Search Deezer for album cover. Returns high-res image URL or None."""
+        query = urllib.parse.quote(f"{artist} {album}")
+        url = f"https://api.deezer.com/search/album?q={query}&limit=5"
+        data = http_get_json(url)
+        if not data or not data.get("data"):
+            return None
+
+        album_lower = album.lower().strip()
+        for item in data["data"]:
+            name = (item.get("title") or "").lower().strip()
+            cover = item.get("cover_xl") or item.get("cover_big") or item.get("cover_medium")
+            if not cover:
+                continue
+            if album_lower in name or name in album_lower:
+                return cover
+
+        # Fallback: first result
+        first = data["data"][0]
+        return first.get("cover_xl") or first.get("cover_big")
+
+    def search_coverartarchive(mbid: str) -> str | None:
+        """Fetch cover from MusicBrainz Cover Art Archive by MBID."""
+        url = f"https://coverartarchive.org/release/{mbid}/front-500"
+        # CAA returns a 307 redirect to the actual image
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status == 200:
+                    return url
+        except (urllib.error.URLError, urllib.error.HTTPError):
+            pass
+        return None
+
+    def has_cover(directory: Path) -> bool:
+        """Check if directory already has a cover image file."""
+        if not directory.is_dir():
+            return False
+        for f in directory.iterdir():
+            if f.name.lower() in COVER_NAMES and f.stat().st_size > MIN_SIZE:
+                return True
+        return False
+
+    def get_albums_without_art(db_path: str) -> list[dict]:
+        """Query Navidrome DB for albums missing artwork."""
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.execute("""
+            SELECT
+                a.name as album_name,
+                a.album_artist as artist,
+                a.mbz_album_id as mbid,
+                (SELECT mf.path FROM media_file mf WHERE mf.album_id = a.id LIMIT 1) as sample_path
+            FROM album a
+            WHERE a.embed_art_path = ''
+              AND a.small_image_url = ''
+              AND a.name != '[Unknown Album]'
+              AND a.name != ''
+            ORDER BY a.song_count DESC
+        """)
+        albums = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        return albums
+
+    def main():
+        albums = get_albums_without_art(DB_PATH)
+        print(f"Found {len(albums)} albums without cover art\n")
+
+        fetched = 0
+        skipped = 0
+        failed = 0
+        already_has = 0
+
+        for i, album in enumerate(albums):
+            name = album["album_name"]
+            artist = album["artist"]
+            mbid = album["mbid"] or ""
+            sample = album["sample_path"] or ""
+
+            if not sample:
+                print(f"[{i+1}/{len(albums)}] SKIP (no files): {artist} - {name}")
+                skipped += 1
+                continue
+
+            # Derive directory from sample file path
+            album_dir = MUSIC_ROOT / str(Path(sample).parent)
+            if not album_dir.is_dir():
+                print(f"[{i+1}/{len(albums)}] SKIP (dir not found): {album_dir}")
+                skipped += 1
+                continue
+
+            # Check if cover already exists on disk
+            if has_cover(album_dir):
+                already_has += 1
+                continue
+
+            # Clean up artist name for search
+            search_artist = artist.replace("[Unknown Artist]", "").replace("Various Artists", "").strip()
+            search_name = re.sub(r'\s*[\[\(].*?[\]\)]', '', name).strip()  # Remove brackets
+
+            cover_url = None
+            source = ""
+
+            # 1. Try Cover Art Archive if we have MBID
+            if mbid:
+                cover_url = search_coverartarchive(mbid)
+                source = "CAA"
+                time.sleep(1.1)  # MusicBrainz rate limit
+
+            # 2. Try iTunes
+            if not cover_url:
+                cover_url = search_itunes(search_name, search_artist or search_name)
+                source = "iTunes"
+                time.sleep(0.3)
+
+            # 3. Try Deezer
+            if not cover_url:
+                cover_url = search_deezer(search_name, search_artist or search_name)
+                source = "Deezer"
+                time.sleep(0.2)
+
+            if not cover_url:
+                print(f"[{i+1}/{len(albums)}] MISS: {artist} - {name}")
+                failed += 1
+                continue
+
+            # Download the cover
+            img_data = http_get(cover_url)
+            if not img_data or len(img_data) < MIN_SIZE:
+                print(f"[{i+1}/{len(albums)}] MISS (download failed): {artist} - {name}")
+                failed += 1
+                continue
+
+            # Save as cover.jpg
+            cover_path = album_dir / "cover.jpg"
+            cover_path.write_bytes(img_data)
+            fetched += 1
+            size_kb = len(img_data) // 1024
+            print(f"[{i+1}/{len(albums)}] OK ({source}, {size_kb}KB): {artist} - {name}")
+
+        print(f"\n{'='*60}")
+        print(f"Fetched: {fetched}")
+        print(f"Already had cover: {already_has}")
+        print(f"Skipped: {skipped}")
+        print(f"Not found: {failed}")
+        print(f"Total processed: {len(albums)}")
+
+    if __name__ == "__main__":
+        main()
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fetch-album-covers
+  namespace: navidrome
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: fetch
+          image: python:3.12-slim
+          command:
+            - python3
+            - -u
+            - /scripts/fetch_covers.py
+          volumeMounts:
+            - name: music
+              mountPath: /music
+            - name: config
+              mountPath: /data
+              readOnly: true
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: music
+          persistentVolumeClaim:
+            claimName: media-library
+        - name: config
+          persistentVolumeClaim:
+            claimName: navidrome-config
+        - name: script
+          configMap:
+            name: fetch-covers-script
