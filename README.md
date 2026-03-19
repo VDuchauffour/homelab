@@ -134,6 +134,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/memos.png" width="32"> | memos | Lightweight self-hosted memo hub | Helmfile |
 | <img src="https://raw.githubusercontent.com/frederikemmer/MediaLyze/refs/heads/main/frontend/public/favicon-32x32.png" width="32"> | medialyze | Self-hosted media library analyzer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/mlflow.png" width="32"> | mlflow | ML experiment tracking and model registry | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/musicbrainz.png" width="32"> | musicbrainz-picard | Cross-platform music tagger powered by MusicBrainz | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/navidrome.png" width="32"> | navidrome | Web-based music collection server and streamer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/opencode.png" width="32"> | opencode | AI-powered coding assistant with built-in web UI | Helmfile |

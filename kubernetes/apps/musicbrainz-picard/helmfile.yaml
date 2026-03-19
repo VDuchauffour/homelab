@@ -1,0 +1,8 @@
+---
+releases:
+  - name: musicbrainz-picard
+    namespace: musicbrainz-picard
+    createNamespace: true
+    chart: ./charts/musicbrainz-picard
+    values:
+      - values.yaml
