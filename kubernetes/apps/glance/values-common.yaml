@@ -83,37 +83,44 @@ glance:
       - type: todo
 
   commonBookmarkGroups:
-    - title: Media
+    - title: Streaming
       links:
         - title: Jellyfin
           subdomain: jellyfin
           icon: di:jellyfin
-        - title: Jellyseerr
-          subdomain: jellyseerr
-          icon: di:jellyseerr
-        - title: MediaLyze
-          subdomain: medialyze
-          icon: https://raw.githubusercontent.com/frederikemmer/MediaLyze/refs/heads/main/frontend/public/favicon-32x32.png
-        - title: Tracearr
-          subdomain: tracearr
-          icon: https://raw.githubusercontent.com/connorgallopo/Tracearr/main/apps/web/public/favicon-96x96.png
-        - title: Immich
-          subdomain: immich
-          icon: di:immich
-        - title: qBittorrent
-          subdomain: qbittorrent
-          icon: di:qbittorrent
         - title: Navidrome
           subdomain: navidrome
           icon: di:navidrome
-        - title: MusicBrainz Picard
-          subdomain: musicbrainz-picard
-          icon: di:musicbrainz
+        - title: Immich
+          subdomain: immich
+          icon: di:immich
+    - title: Requests & Insights
+      links:
+        - title: Jellyseerr
+          subdomain: jellyseerr
+          icon: di:jellyseerr
+        - title: Tracearr
+          subdomain: tracearr
+          icon: https://raw.githubusercontent.com/connorgallopo/Tracearr/main/apps/web/public/favicon-96x96.png
+        - title: MediaLyze
+          subdomain: medialyze
+          icon: https://raw.githubusercontent.com/frederikemmer/MediaLyze/refs/heads/main/frontend/public/favicon-32x32.png
+    - title: Downloads
+      links:
+        - title: qBittorrent
+          subdomain: qbittorrent
+          icon: di:qbittorrent
         - title: slskd
           subdomain: slskd
           icon: di:slskd
-    - title: Arr
+        - title: MusicBrainz Picard
+          subdomain: musicbrainz-picard
+          icon: di:musicbrainz
+    - title: Automation
       links:
+        - title: Lidarr
+          subdomain: lidarr
+          icon: di:lidarr
         - title: Bazarr
           subdomain: bazarr
           icon: di:bazarr
@@ -123,15 +130,12 @@ glance:
         - title: Sonarr
           subdomain: sonarr
           icon: di:sonarr
-        - title: Lidarr
-          subdomain: lidarr
-          icon: di:lidarr
-        - title: Prowlarr
-          subdomain: prowlarr
-          icon: di:prowlarr
         - title: Tdarr
           subdomain: tdarr
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tdarr.png
+        - title: Prowlarr
+          subdomain: prowlarr
+          icon: di:prowlarr
     - title: Productivity
       links:
         - title: Kan.sh
