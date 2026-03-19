@@ -289,6 +289,25 @@ data:
               path: /
               interval: 30
               timeout: 5
+      medialyze:
+        name: MediaLyze
+        protocol: http
+        full-domain: medialyze.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: medialyze.medialyze.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: medialyze.medialyze.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       memos:
         name: Memos
         protocol: http
@@ -376,29 +395,6 @@ data:
               path: /status.php
               interval: 30
               timeout: 5
-      passbolt:
-        name: Passbolt
-        protocol: http
-        full-domain: passbolt.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
-        targets:
-          - hostname: passbolt.passbolt.svc.cluster.local
-            method: https
-            port: 443
-            healthcheck:
-              hostname: passbolt.passbolt.svc.cluster.local
-              port: 80
-              scheme: http
-              enabled: true
-              path: /healthcheck/status.json
-              interval: 30
-              timeout: 5
-              headers:
-                - name: Host
-                  value: passbolt.home.arpa
       pgadmin:
         name: pgAdmin
         protocol: http
