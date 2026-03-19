@@ -6,6 +6,7 @@ env:
   ND_ENABLETRANSCODINGCONFIG: 'false'
   ND_MUSICFOLDER: /music/music
   ND_ENABLESHARING: 'false'
+  ND_PID_ALBUM: albumartistid,album,albumversion
 
 service:
   main:
