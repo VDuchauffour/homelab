@@ -7,6 +7,6 @@ releases:
     namespace: kube-system
     createNamespace: false
     chart: headlamp/headlamp
-    version: 0.40.0
+    version: 0.40.1
     values:
       - values.yaml
