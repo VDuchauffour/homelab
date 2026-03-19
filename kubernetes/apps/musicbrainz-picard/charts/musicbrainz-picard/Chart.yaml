@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: musicbrainz-picard
+description: MusicBrainz Picard - Cross-platform music tagger
+type: application
+version: 0.1.0
+appVersion: latest

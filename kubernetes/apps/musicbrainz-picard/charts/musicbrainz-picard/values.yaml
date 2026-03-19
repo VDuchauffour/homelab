@@ -1,0 +1,36 @@
+---
+replicaCount: 1
+
+image:
+  repository: jlesage/musicbrainz-picard
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 5800
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "100m"
+  limits:
+    memory: "2Gi"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  TZ: Europe/Paris
+  PUID: "1000"
+  PGID: "1000"

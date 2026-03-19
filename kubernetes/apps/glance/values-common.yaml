@@ -106,6 +106,9 @@ glance:
         - title: Navidrome
           subdomain: navidrome
           icon: di:navidrome
+        - title: MusicBrainz Picard
+          subdomain: musicbrainz-picard
+          icon: di:musicbrainz
         - title: slskd
           subdomain: slskd
           icon: di:slskd
