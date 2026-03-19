@@ -85,13 +85,15 @@ resource "scaleway_instance_server" "dev" {
       pangolin_pg_user       = var.pangolin_pg_user
     })
     compose_file = templatefile("compose.yaml.tftpl", {
-      scaleway_access_key             = var.scaleway_access_key
-      scaleway_secret_key             = var.scaleway_secret_key
-      pangolin_pg_user                = var.pangolin_pg_user
-      pangolin_pg_password            = var.pangolin_pg_password
-      crowdsec_bouncer_key            = var.crowdsec_bouncer_key
-      crowdsec_firewall_bouncer_key   = var.crowdsec_firewall_bouncer_key
-      crowdsec_webui_machine_password = var.crowdsec_webui_machine_password
+      scaleway_access_key                 = var.scaleway_access_key
+      scaleway_secret_key                 = var.scaleway_secret_key
+      pangolin_pg_user                    = var.pangolin_pg_user
+      pangolin_pg_password                = var.pangolin_pg_password
+      crowdsec_bouncer_key                = var.crowdsec_bouncer_key
+      crowdsec_firewall_bouncer_key       = var.crowdsec_firewall_bouncer_key
+      crowdsec_webui_machine_password     = var.crowdsec_webui_machine_password
+      crowdsec_blocklist_bouncer_key      = var.crowdsec_blocklist_bouncer_key
+      crowdsec_blocklist_machine_password = var.crowdsec_blocklist_machine_password
     })
     pangolin_config = templatefile("config.yml.tftpl", {
       domain_name          = var.domain_name
@@ -108,13 +110,14 @@ resource "scaleway_instance_server" "dev" {
       crowdsec_bouncer_key      = var.crowdsec_bouncer_key
       crowdsec_webui_basic_auth = var.crowdsec_webui_basic_auth
     })
-    domain_name                     = var.domain_name
-    username                        = var.username
-    password_hash                   = var.password_hash
-    ssh_public_keys                 = var.ssh_public_keys
-    crowdsec_firewall_bouncer_key   = var.crowdsec_firewall_bouncer_key
-    crowdsec_capi_whitelisted_cidrs = var.crowdsec_capi_whitelisted_cidrs
-    crowdsec_webui_machine_password = var.crowdsec_webui_machine_password
+    domain_name                         = var.domain_name
+    username                            = var.username
+    password_hash                       = var.password_hash
+    ssh_public_keys                     = var.ssh_public_keys
+    crowdsec_firewall_bouncer_key       = var.crowdsec_firewall_bouncer_key
+    crowdsec_capi_whitelisted_cidrs     = var.crowdsec_capi_whitelisted_cidrs
+    crowdsec_webui_machine_password     = var.crowdsec_webui_machine_password
+    crowdsec_blocklist_machine_password = var.crowdsec_blocklist_machine_password
   })
 
   tags = var.tags

@@ -127,6 +127,18 @@ variable "crowdsec_webui_basic_auth" {
   sensitive   = true
 }
 
+variable "crowdsec_blocklist_bouncer_key" {
+  description = "API key for CrowdSec blocklist-import to read existing decisions for deduplication (generate with: openssl rand -base64 32)"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_blocklist_machine_password" {
+  description = "Machine account password for CrowdSec blocklist-import to write decisions via LAPI (generate with: openssl rand -hex 32)"
+  type        = string
+  sensitive   = true
+}
+
 variable "pangolin_backup_retention_days" {
   description = "Number of days to retain Pangolin database backups in the S3 bucket (lifecycle expiration)"
   type        = number

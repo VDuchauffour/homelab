@@ -68,6 +68,7 @@ services:
       PARSERS: "crowdsecurity/whitelists"
       BOUNCER_KEY_traefik: "${crowdsec_bouncer_key}"
       BOUNCER_KEY_firewall: "${crowdsec_firewall_bouncer_key}"
+      BOUNCER_KEY_blocklist: "${crowdsec_blocklist_bouncer_key}"
     healthcheck:
       test: ["CMD", "cscli", "lapi", "status"]
       interval: 10s
@@ -97,6 +98,26 @@ services:
       - CROWDSEC_PASSWORD=${crowdsec_webui_machine_password}
     volumes:
       - ./config/crowdsec-web-ui:/app/data
+
+  blocklist-import:
+    # https://github.com/wolffcatskyy/crowdsec-blocklist-import/releases
+    image: ghcr.io/wolffcatskyy/crowdsec-blocklist-import:latest
+    container_name: blocklist_import
+    restart: unless-stopped
+    depends_on:
+      crowdsec:
+        condition: service_healthy
+    environment:
+      - CROWDSEC_LAPI_URL=http://crowdsec:8080
+      - CROWDSEC_LAPI_KEY=${crowdsec_blocklist_bouncer_key}
+      - CROWDSEC_MACHINE_ID=blocklist-import
+      - CROWDSEC_MACHINE_PASSWORD=${crowdsec_blocklist_machine_password}
+      - DECISION_DURATION=24h
+      - BATCH_SIZE=500
+      - INTERVAL=3600
+      - LOG_LEVEL=INFO
+      - CONSOLIDATE_ALERTS=true
+    mem_limit: 256m
 
   traefik:
     # https://github.com/traefik/traefik/releases
