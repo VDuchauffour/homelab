@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "musicbrainz-picard.fullname" . }}
+  labels:
+    {{- include "musicbrainz-picard.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: webui
+      protocol: TCP
+      name: webui
+  selector:
+    {{- include "musicbrainz-picard.selectorLabels" . | nindent 4 }}

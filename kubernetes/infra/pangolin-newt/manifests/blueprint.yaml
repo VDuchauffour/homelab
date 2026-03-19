@@ -346,6 +346,25 @@ data:
               path: /health
               interval: 30
               timeout: 5
+      musicbrainz-picard:
+        name: MusicBrainz Picard
+        protocol: http
+        full-domain: musicbrainz-picard.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: musicbrainz-picard.musicbrainz-picard.svc.cluster.local
+            method: http
+            port: 5800
+            healthcheck:
+              hostname: musicbrainz-picard.musicbrainz-picard.svc.cluster.local
+              port: 5800
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       n8n:
         name: n8n
         protocol: http
