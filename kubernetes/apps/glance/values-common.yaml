@@ -16,6 +16,9 @@ glance:
         - title: Pangolin
           url: https://pangolin.ref+envsubst://$PUBLIC_DOMAIN_NAME
           icon: di:pangolin
+        - title: CrowdSec
+          url: https://crowdsec.ref+envsubst://$PUBLIC_DOMAIN_NAME
+          icon: di:crowdsec
     - title: Cluster
       links:
         - title: Headlamp

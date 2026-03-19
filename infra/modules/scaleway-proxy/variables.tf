@@ -115,6 +115,18 @@ variable "crowdsec_capi_whitelisted_cidrs" {
   default     = []
 }
 
+variable "crowdsec_webui_machine_password" {
+  description = "Machine account password for CrowdSec Web UI to authenticate with LAPI (generate with: openssl rand -hex 32)"
+  type        = string
+  sensitive   = true
+}
+
+variable "crowdsec_webui_basic_auth" {
+  description = "Htpasswd-format credentials for CrowdSec Web UI basic auth (generate with: htpasswd -nB admin)"
+  type        = string
+  sensitive   = true
+}
+
 variable "pangolin_backup_retention_days" {
   description = "Number of days to retain Pangolin database backups in the S3 bucket (lifecycle expiration)"
   type        = number
