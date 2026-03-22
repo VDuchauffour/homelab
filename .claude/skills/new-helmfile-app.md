@@ -108,6 +108,18 @@ persistence:
     mountPath: /media
 ```
 
+**Critical**: Apps mounting `media-library` (NFS) with `fsGroup` must set `fsGroupChangePolicy: OnRootMismatch` to avoid a recursive ownership walk of the entire share:
+
+```yaml
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch  # Required for NFS media volumes
+```
+
+If `fsGroup` differs from the NFS root owner (1000), use `supplementalGroups` instead of `fsGroup` to avoid the walk entirely.
+
 ### Database (CloudNativePG)
 
 Add cluster to `kubernetes/cluster/cloudnative-pg/`:

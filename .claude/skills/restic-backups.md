@@ -92,7 +92,7 @@ Two backup modes:
 ## Schedule Convention
 
 - Weekly on Sundays, staggered 5-minute intervals starting at 3:00 AM
-- Retention: 3 weekly snapshots
+- Retention: 2 weekly snapshots
 - Check existing schedules in `values.yaml` to avoid overlap
 
 ## Trigger Backup Manually
