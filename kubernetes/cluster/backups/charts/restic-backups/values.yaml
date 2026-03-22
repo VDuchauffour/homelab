@@ -2,7 +2,7 @@ global:
   resticImage: restic/restic:0.17.3
   orchestratorImage: alpine/curl:latest
   retention:
-    keepWeekly: 3
+    keepWeekly: 2
   nodeSelector:
     kubernetes.io/hostname: ""
 

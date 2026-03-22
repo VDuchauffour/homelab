@@ -5,6 +5,16 @@ image:
   pullPolicy: IfNotPresent
 
 nextcloud:
+  # Use supplementalGroups instead of fsGroup to avoid recursive ownership
+  # changes on the large NFS media volume (fsGroup=33 would trigger a full
+  # walk since the NFS root is owned by 1000:1000, not 33)
+  podSecurityContext:
+    runAsUser: 33
+    runAsGroup: 33
+    supplementalGroups:
+      - 33
+      - 1000
+
   host: nextcloud.ref+envsubst://$LOCAL_DOMAIN_NAME
   username: admin
   password: ref+scw:///homelab/nextcloud#/admin-password
