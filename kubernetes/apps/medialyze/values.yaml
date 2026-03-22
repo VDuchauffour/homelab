@@ -28,6 +28,10 @@ ingress:
         - medialyze.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: medialyze-mkcert-tls
 
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+
 resources:
   requests:
     cpu: 5m

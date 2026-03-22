@@ -188,6 +188,8 @@ cd kubernetes/infra/nfs-csi-driver && helmfile apply
 - **Static PVs** (`kubernetes/cluster/persistent-volumes/media.yaml`): Used by arr suite, Jellyfin, qBittorrent, filebrowser, slskd, nextcloud, immich. Each PV specifies a `share` subpath (e.g. `/`, `/photos/immich`) to scope access. Filebrowser's share PV uses the share NFS server.
 - **Dynamic PVCs** (`nfs-tank-media` StorageClass): Creates subdirectories per PVC under `/mnt/tank/media`, useful for isolated app data
 
+**Important**: Any pod mounting an NFS media volume with `fsGroup` **must** set `fsGroupChangePolicy: OnRootMismatch` in `podSecurityContext`. Without it, Kubernetes performs a recursive ownership walk of the entire NFS share on every pod start, which fails on large media libraries. For pods where `fsGroup` differs from the NFS root owner (1000), use `supplementalGroups` instead of `fsGroup` (e.g. nextcloud uses `fsGroup: 33` → replaced with `supplementalGroups: [33, 1000]`).
+
 ## Database (CloudNativePG)
 
 The cluster runs a single CloudNativePG instance (`cnpg-cluster0`) in namespace `cnpg-clusters` with dynamically provisioned ZFS storage (`zfs-vm-pool-dynamic`, 10Gi).
@@ -259,7 +261,7 @@ Two backup modes:
 - **App values**: `kubernetes/cluster/backups/values.yaml` — all 21 apps defined here
 - **Destination**: RustFS bucket `restic-backups` at `http://rustfs-svc.rustfs.svc.cluster.local:9000`
 - **Schedule**: Weekly on Sundays, staggered 5-minute intervals starting at 3:00 AM
-- **Retention**: 3 weekly snapshots
+- **Retention**: 2 weekly snapshots
 
 ### Environment Variables
 

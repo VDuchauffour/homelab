@@ -277,6 +277,8 @@ Static PVs use `share` subpaths (e.g. `/`, `/photos/immich`) to scope access per
 
 Static PVs are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
+**Important**: Any pod mounting an NFS media volume with `fsGroup` must set `fsGroupChangePolicy: OnRootMismatch` in `podSecurityContext`. Without it, Kubernetes performs a recursive ownership walk of the entire NFS share on every pod start, which fails on large media libraries. For pods where `fsGroup` differs from the NFS root owner (1000), use `supplementalGroups` instead of `fsGroup`.
+
 ### Database (PostgreSQL)
 
 All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-vm-pool-dynamic`).
@@ -351,7 +353,7 @@ The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community
 
 All app config PVCs are backed up weekly to [RustFS](https://github.com/rustfs/rustfs) using [Restic](https://restic.net/). A single custom Helm chart (`kubernetes/cluster/backups/charts/restic-backups/`) manages all 21 backup CronJobs.
 
-The orchestrated backup pattern scales down the app, runs a restic backup in an inner Job, and scales back up via an EXIT trap. All backups run on Sundays with staggered 5-minute intervals starting at 3:00 AM. Retention is 3 weekly snapshots.
+The orchestrated backup pattern scales down the app, runs a restic backup in an inner Job, and scales back up via an EXIT trap. All backups run on Sundays with staggered 5-minute intervals starting at 3:00 AM. Retention is 2 weekly snapshots.
 
 ```shell
 cd kubernetes/cluster/backups
