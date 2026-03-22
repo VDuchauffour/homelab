@@ -25,7 +25,7 @@ Selected services are exposed to the Internet through a reverse proxy hosted on 
 | External Proxy | Pangolin + Gerbil + Traefik (Scaleway) |
 | Security | CrowdSec (WAF + AppSec + host firewall bouncer) |
 | Secret Management | Scaleway CLI (via vals `ref+scw://` provider) |
-| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) |
+| Backup | Restic (app configs to RustFS) + Barman Cloud Plugin (PostgreSQL) + Pangolin DB (Scaleway S3) + CrowdSec DB (Scaleway S3) |
 | IaC | Terraform |
 
 ## Project Structure
@@ -486,10 +486,10 @@ The backup script and cron job are deployed via cloud-init. Credentials reuse th
 # List available backups
 export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
 export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
-aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+aws s3 ls s3://<instance_name>-pangolin-backups/pangolin/ --endpoint-url https://s3.fr-par.scw.cloud
 
 # Download the latest dump
-aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
 
 # Stop Pangolin (keep Postgres running)
 docker stop pangolin gerbil traefik crowdsec
@@ -515,6 +515,22 @@ docker compose -f ~/pangolin/compose.yaml down && docker compose -f ~/pangolin/c
 **Why the Gerbil key fix is needed:** Gerbil generates and saves its WireGuard private key at `~/pangolin/config/key` on first start (`--generateAndSaveKeyTo`). On a new instance, this key is different from the one stored in the backup. Gerbil sends its public key to Pangolin's config API, but Pangolin matches exit nodes by public key — if it doesn't match, Gerbil receives an empty config with no CIDR address, causing a crash loop. Traefik also fails because it shares Gerbil's network namespace (`network_mode: service:gerbil`).
 
 Check backup logs: `cat /var/log/pangolin-backup.log`
+
+### CrowdSec DB Backup
+
+CrowdSec's SQLite database and Web UI data are backed up weekly to the same Scaleway S3 bucket under a `crowdsec/` prefix. The script briefly stops the containers for a consistent snapshot, creates compressed archives, uploads to S3, and restarts via an EXIT trap.
+
+```
+Cron (Sunday 3am) → backup-crowdsec.sh → docker stop → tar + gzip → aws s3 cp → docker start → Scaleway S3
+```
+
+**Manual backup** (SSH into the proxy):
+
+```shell
+/home/<username>/pangolin/backup-crowdsec.sh
+```
+
+Check backup logs: `cat /var/log/crowdsec-backup.log`
 
 ### Destroy
 

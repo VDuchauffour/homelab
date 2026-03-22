@@ -503,10 +503,10 @@ After `terraform apply` creates a fresh instance and `docker compose up -d` star
 # List available backups
 export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
 export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
-aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-par.scw.cloud
+aws s3 ls s3://<instance_name>-pangolin-backups/pangolin/ --endpoint-url https://s3.fr-par.scw.cloud
 
 # Download the latest dump
-aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+aws s3 cp s3://<instance_name>-pangolin-backups/pangolin/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
 
 # Stop Pangolin (keep Postgres running)
 docker stop pangolin gerbil traefik crowdsec
@@ -535,6 +535,82 @@ docker compose -f ~/pangolin/compose.yaml down && docker compose -f ~/pangolin/c
 
 - **Terraform files**: `infra/modules/scaleway-proxy/` — `main.tf` (bucket resource), `backup-db.sh.tftpl` (script template), `cloud-init.yaml.tftpl` (cron + script delivery)
 - **Variable**: `pangolin_backup_retention_days` (default: 30) in `variables.tf`
+
+## CrowdSec DB Backup
+
+CrowdSec's SQLite database and Web UI data are backed up weekly to the same Scaleway Object Storage bucket as Pangolin, under a `crowdsec/` prefix.
+
+- **Bucket**: `<instance_name>-pangolin-backups` (shared with Pangolin backups)
+- **Script**: `backup-crowdsec.sh.tftpl` → rendered to `/home/<username>/pangolin/backup-crowdsec.sh` on the instance
+- **Schedule**: Weekly on Sunday at 3:00 AM via `/etc/cron.d/crowdsec-backup`
+- **Retention**: 30 days (same S3 lifecycle rule as Pangolin backups)
+- **Logs**: `/var/log/crowdsec-backup.log`
+
+### What Gets Backed Up
+
+| Archive | Source Path | Contents |
+|---------|-------------|----------|
+| `crowdsec-db-<timestamp>.tar.gz` | `~/pangolin/config/crowdsec/db/` | SQLite DB (decisions, alerts, CAPI state, metrics, machine accounts) |
+| `crowdsec-webui-<timestamp>.tar.gz` | `~/pangolin/config/crowdsec-web-ui/` | Web UI session data and state |
+
+### How It Works
+
+```
+Cron (Sunday 3am) → backup-crowdsec.sh → docker stop → tar + gzip → aws s3 cp → docker start → Scaleway Object Storage
+```
+
+The script stops CrowdSec and Web UI containers briefly (a few seconds) for a consistent SQLite snapshot, creates compressed archives, uploads them to S3, then restarts the containers via an EXIT trap (ensuring restart even on failure). Existing iptables rules from the host firewall bouncer remain active during the brief downtime.
+
+### Manual Backup
+
+```shell
+ssh <username>@<instance-ip>
+/home/<username>/pangolin/backup-crowdsec.sh
+```
+
+### Restore on New Instance
+
+After `terraform apply` creates a fresh instance and `docker compose up -d` starts the stack:
+
+```shell
+# List available CrowdSec backups
+export AWS_ACCESS_KEY_ID="<scaleway_access_key>"
+export AWS_SECRET_ACCESS_KEY="<scaleway_secret_key>"
+aws s3 ls s3://<instance_name>-pangolin-backups/crowdsec/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Download the latest archives
+aws s3 cp s3://<instance_name>-pangolin-backups/crowdsec/crowdsec-db-<timestamp>.tar.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+aws s3 cp s3://<instance_name>-pangolin-backups/crowdsec/crowdsec-webui-<timestamp>.tar.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
+
+# Stop CrowdSec containers
+docker stop crowdsec_web_ui crowdsec
+
+# Restore CrowdSec DB (overwrites the fresh empty DB)
+tar -xzf /tmp/crowdsec-db-<timestamp>.tar.gz -C ~/pangolin/config/crowdsec/
+
+# Restore Web UI data
+tar -xzf /tmp/crowdsec-webui-<timestamp>.tar.gz -C ~/pangolin/config/
+
+# Restart CrowdSec and wait for LAPI health
+docker start crowdsec
+for i in $(seq 1 30); do docker exec crowdsec cscli lapi status >/dev/null 2>&1 && break || sleep 5; done
+
+# Re-register the web UI machine account (the restored DB may have a stale registration)
+docker exec crowdsec cscli machines add crowdsec-web-ui --password "<crowdsec_webui_machine_password>" --force -f /dev/null
+
+# Restart Web UI
+docker start crowdsec_web_ui
+
+# Cleanup
+rm -f /tmp/crowdsec-db-<timestamp>.tar.gz /tmp/crowdsec-webui-<timestamp>.tar.gz
+```
+
+**Note:** Community blocklists sync automatically via CAPI on CrowdSec startup regardless of restore. The main value of restoring the DB is preserving **local decisions** (manual bans), alert history, and metrics. If you don't need those, CrowdSec will rebuild its state from scratch.
+
+### Configuration
+
+- **Terraform files**: `infra/modules/scaleway-proxy/` — `main.tf` (script template), `backup-crowdsec.sh.tftpl` (script template), `cloud-init.yaml.tftpl` (cron + script delivery)
+- **Shared bucket**: Uses the same `scaleway_object_bucket.pangolin_backups` resource with `crowdsec/` key prefix
 
 ## Secret Management (Scaleway CLI + vals)
 

@@ -13,7 +13,7 @@ export AWS_SECRET_ACCESS_KEY="${scaleway_secret_key}"
 docker exec postgres pg_dump -U ${pangolin_pg_user} pangolin | gzip > "$DUMP_FILE"
 
 # Upload to S3
-aws s3 cp "$DUMP_FILE" "$${BUCKET}/pangolin-db-$${TIMESTAMP}.sql.gz" --endpoint-url "$ENDPOINT"
+aws s3 cp "$DUMP_FILE" "$${BUCKET}/pangolin/pangolin-db-$${TIMESTAMP}.sql.gz" --endpoint-url "$ENDPOINT"
 
 # Cleanup local file
 rm -f "$DUMP_FILE"
