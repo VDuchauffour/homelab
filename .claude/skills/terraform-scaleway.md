@@ -114,14 +114,27 @@ aws s3 ls s3://<instance_name>-pangolin-backups/ --endpoint-url https://s3.fr-pa
 aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /tmp/ --endpoint-url https://s3.fr-par.scw.cloud
 
 # Stop Pangolin (keep Postgres running)
-docker stop pangolin gerbil traefik
+docker stop pangolin gerbil traefik crowdsec
+
+# Drop and recreate the database (required — restoring into an existing DB causes FK/PK conflicts)
+docker exec postgres psql -U <pangolin_pg_user> -d postgres -c "DROP DATABASE pangolin;"
+docker exec postgres psql -U <pangolin_pg_user> -d postgres -c "CREATE DATABASE pangolin OWNER <pangolin_pg_user>;"
 
 # Restore
 gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
 
+# Fix Gerbil public key — the new instance generates a fresh WireGuard keypair,
+# but the restored DB still has the old exit node's public key.
+# Derive the current public key from gerbil's private key and update the DB:
+NEW_PUBKEY=$(cat ~/pangolin/config/key | wg pubkey)
+docker exec postgres psql -U <pangolin_pg_user> -d pangolin \
+  -c "UPDATE \"exitNodes\" SET \"publicKey\" = '$NEW_PUBKEY' WHERE \"exitNodeId\" = 1;"
+
 # Restart all services
-docker compose -f ~/pangolin/compose.yaml up -d
+docker compose -f ~/pangolin/compose.yaml down && docker compose -f ~/pangolin/compose.yaml up -d
 ```
+
+**Why the Gerbil key fix is needed:** Gerbil generates its WireGuard private key at `~/pangolin/config/key` on first start. On a new instance, this key differs from the backup. Pangolin matches exit nodes by public key — a mismatch means Gerbil gets an empty config (no CIDR), causing a crash loop. Traefik also fails since it shares Gerbil's network namespace.
 
 ## Files
 
