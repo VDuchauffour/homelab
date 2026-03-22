@@ -127,6 +127,12 @@ variable "crowdsec_webui_basic_auth" {
   sensitive   = true
 }
 
+variable "crowdsec_console_enrollment_id" {
+  description = "Enrollment ID for the CrowdSec Console dashboard (from https://app.crowdsec.net)"
+  type        = string
+  default     = ""
+}
+
 variable "pangolin_backup_retention_days" {
   description = "Number of days to retain Pangolin database backups in the S3 bucket (lifecycle expiration)"
   type        = number

@@ -122,6 +122,7 @@ resource "scaleway_instance_server" "dev" {
     crowdsec_firewall_bouncer_key   = var.crowdsec_firewall_bouncer_key
     crowdsec_capi_whitelisted_cidrs = var.crowdsec_capi_whitelisted_cidrs
     crowdsec_webui_machine_password = var.crowdsec_webui_machine_password
+    crowdsec_console_enrollment_id  = var.crowdsec_console_enrollment_id
   })
 
   tags = var.tags

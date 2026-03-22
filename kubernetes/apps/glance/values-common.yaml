@@ -16,8 +16,11 @@ glance:
         - title: Pangolin
           url: https://pangolin.ref+envsubst://$PUBLIC_DOMAIN_NAME
           icon: di:pangolin
-        - title: CrowdSec
+        - title: CrowdSec WebUI
           url: https://crowdsec.ref+envsubst://$PUBLIC_DOMAIN_NAME
+          icon: di:crowdsec
+        - title: CrowdSec Console
+          url: https://app.crowdsec.net
           icon: di:crowdsec
     - title: Cluster
       links:

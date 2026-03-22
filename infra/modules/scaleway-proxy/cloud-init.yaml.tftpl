@@ -165,3 +165,6 @@ runcmd:
     # Wait for CrowdSec LAPI to be healthy, then register the web UI machine account
     for i in $(seq 1 30); do docker exec crowdsec cscli lapi status >/dev/null 2>&1 && break || sleep 5; done
     docker exec crowdsec cscli machines add crowdsec-web-ui --password "${crowdsec_webui_machine_password}" -f /dev/null
+%{ if crowdsec_console_enrollment_id != "" ~}
+    docker exec crowdsec cscli console enroll "${crowdsec_console_enrollment_id}"
+%{ endif ~}
