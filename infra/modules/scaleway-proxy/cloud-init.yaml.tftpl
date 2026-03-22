@@ -148,6 +148,7 @@ runcmd:
   - /home/${username}/init.sh ${username}
   - curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip && unzip -q /tmp/awscliv2.zip -d /tmp/aws-install && /tmp/aws-install/aws/install && rm -rf /tmp/awscliv2.zip /tmp/aws-install
   - systemctl enable --now docker
+  - curl -fsSL https://claude.ai/install.sh | bash
   - docker compose -f /home/${username}/pangolin/compose.yaml up -d
   - |
     # Wait for CrowdSec LAPI to be healthy, then register the web UI machine account
