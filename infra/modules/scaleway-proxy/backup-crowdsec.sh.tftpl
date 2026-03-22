@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euo pipefail
+
+BUCKET="s3://${pangolin_backup_bucket}"
+ENDPOINT="https://s3.${region}.scw.cloud"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+PANGOLIN_DIR="/home/${username}/pangolin"
+CROWDSEC_DB_DUMP="/tmp/crowdsec-db-$${TIMESTAMP}.tar.gz"
+CROWDSEC_WEBUI_DUMP="/tmp/crowdsec-webui-$${TIMESTAMP}.tar.gz"
+
+export AWS_ACCESS_KEY_ID="${scaleway_access_key}"
+export AWS_SECRET_ACCESS_KEY="${scaleway_secret_key}"
+
+# Ensure containers are restarted and temp files cleaned up on exit
+cleanup() {
+  docker start crowdsec 2>/dev/null || true
+  for i in $(seq 1 30); do docker exec crowdsec cscli lapi status >/dev/null 2>&1 && break || sleep 5; done
+  docker start crowdsec_web_ui 2>/dev/null || true
+  rm -f "$CROWDSEC_DB_DUMP" "$CROWDSEC_WEBUI_DUMP"
+}
+trap cleanup EXIT
+
+# Stop containers for consistent SQLite snapshot
+docker stop crowdsec_web_ui crowdsec
+
+# Create compressed archives
+tar -czf "$CROWDSEC_DB_DUMP" -C "$PANGOLIN_DIR/config/crowdsec" db
+tar -czf "$CROWDSEC_WEBUI_DUMP" -C "$PANGOLIN_DIR/config" crowdsec-web-ui
+
+# Upload to S3 with crowdsec/ prefix
+aws s3 cp "$CROWDSEC_DB_DUMP" "$${BUCKET}/crowdsec/crowdsec-db-$${TIMESTAMP}.tar.gz" --endpoint-url "$ENDPOINT"
+aws s3 cp "$CROWDSEC_WEBUI_DUMP" "$${BUCKET}/crowdsec/crowdsec-webui-$${TIMESTAMP}.tar.gz" --endpoint-url "$ENDPOINT"
+
+echo "$(date): CrowdSec backup completed: crowdsec-db-$${TIMESTAMP}.tar.gz, crowdsec-webui-$${TIMESTAMP}.tar.gz"

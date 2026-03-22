@@ -109,12 +109,23 @@ write_files:
     owner: root:root
     content: |
       ${indent(6, backup_script)}
+  - path: /home/${username}/pangolin/backup-crowdsec.sh
+    permissions: "0755"
+    owner: root:root
+    content: |
+      ${indent(6, backup_crowdsec_script)}
   - path: /etc/cron.d/pangolin-db-backup
     permissions: "0644"
     owner: root:root
     content: |
       # Weekly Pangolin database backup - Sunday at 3:00 AM
       0 3 * * 0 root /home/${username}/pangolin/backup-db.sh >> /var/log/pangolin-backup.log 2>&1
+  - path: /etc/cron.d/crowdsec-backup
+    permissions: "0644"
+    owner: root:root
+    content: |
+      # Weekly CrowdSec + Web UI backup - Sunday at 3:00 AM
+      0 3 * * 0 root /home/${username}/pangolin/backup-crowdsec.sh >> /var/log/crowdsec-backup.log 2>&1
   - path: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
     permissions: "0600"
     owner: root:root

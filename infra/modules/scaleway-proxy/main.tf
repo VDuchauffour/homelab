@@ -84,6 +84,13 @@ resource "scaleway_instance_server" "dev" {
       scaleway_secret_key    = var.scaleway_secret_key
       pangolin_pg_user       = var.pangolin_pg_user
     })
+    backup_crowdsec_script = templatefile("backup-crowdsec.sh.tftpl", {
+      pangolin_backup_bucket = scaleway_object_bucket.pangolin_backups.name
+      region                 = var.region
+      scaleway_access_key    = var.scaleway_access_key
+      scaleway_secret_key    = var.scaleway_secret_key
+      username               = var.username
+    })
     compose_file = templatefile("compose.yaml.tftpl", {
       scaleway_access_key             = var.scaleway_access_key
       scaleway_secret_key             = var.scaleway_secret_key
