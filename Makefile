@@ -1,4 +1,4 @@
-.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare jellyfin-move jellyfin-move-dry-run
+.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare jellyfin-move jellyfin-move-dry-run helm-update helm-update-all helm-diff helm-diff-all
 
 warden-seed:
 	@cd scripts && uv run warden-seed --apps-only --host http://warden.home.arpa
@@ -17,6 +17,18 @@ jellyfin-move:
 
 jellyfin-move-dry-run:
 	@cd scripts && uv run jellyfin-move --dry-run
+
+helm-update:
+	@./scripts/helm-update.sh $(APP)
+
+helm-update-all:
+	@./scripts/helm-update.sh --all
+
+helm-diff:
+	@./scripts/helm-update.sh --diff $(APP)
+
+helm-diff-all:
+	@./scripts/helm-update.sh --diff --all
 
 check-readme:
 	@echo "Checking README.md tables against kubernetes/ directories..."
