@@ -91,6 +91,16 @@ write_files:
       source: appsec
       labels:
         type: appsec
+  - path: /home/${username}/pangolin/config/crowdsec/parsers/s02-enrich/navidrome-whitelist.yaml
+    permissions: "0644"
+    owner: root:root
+    content: |
+      name: custom/navidrome-subsonic-api
+      description: "Whitelist Navidrome Subsonic API requests to prevent false-positive bans from rapid client traffic"
+      whitelist:
+        reason: "Navidrome Subsonic API client traffic"
+        expression:
+          - evt.Parsed.request contains '/rest/'
   - path: /home/${username}/pangolin/config/crowdsec/config.yaml.local
     permissions: "0644"
     owner: root:root
@@ -153,7 +163,7 @@ runcmd:
   - chown -R ${username}:${username} /home/${username}
   - mkdir -p /home/${username}/.ssh
   - cp /root/.ssh/authorized_keys /home/${username}/.ssh/authorized_keys
-  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db /home/${username}/pangolin/config/crowdsec-web-ui
+  - mkdir -p /home/${username}/pangolin/config/traefik/logs /home/${username}/pangolin/config/db /home/${username}/pangolin/config/letsencrypt /home/${username}/pangolin/config/logs /home/${username}/pangolin/config/postgres /home/${username}/pangolin/config/crowdsec/acquis.d /home/${username}/pangolin/config/crowdsec/db /home/${username}/pangolin/config/crowdsec/parsers/s02-enrich /home/${username}/pangolin/config/crowdsec-web-ui
   - curl -sLo /home/${username}/pangolin/config/traefik/ban.html https://raw.githubusercontent.com/maxlerebourg/crowdsec-bouncer-traefik-plugin/main/ban.html
   - chown -R ${username}:${username} /home/${username}/pangolin
   - /home/${username}/init.sh ${username}
