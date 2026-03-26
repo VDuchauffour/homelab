@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: add-gpu-support description: Configure Intel iGPU hardware acceleration for a pod. Use when enabling QSV/VAAPI transcoding for apps like Jellyfin or Tdarr, or troubleshooting GPU device access. compatibility: Requires Intel Device Plugins Operator deployed in-cluster and Intel iGPU on the node metadata: author: homelab version: "1.0"
+
 # Add Intel GPU Support
-
-Configure a pod to use Intel iGPU for hardware acceleration (QSV/VAAPI).
-
-## Usage
-
-```
-/add-gpu-support <app-name>
-```
 
 ## Prerequisites
 

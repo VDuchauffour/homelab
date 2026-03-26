@@ -1,17 +1,13 @@
+______________________________________________________________________
+
+## name: scaleway-secrets description: Manage secrets in Scaleway Secret Manager using vals ref+scw:// provider. Use when creating, listing, or referencing secrets for Helmfile deployments, or troubleshooting secret resolution. compatibility: Requires scw CLI, vals, and helmfile metadata: author: homelab version: "1.0"
+
 # Scaleway CLI Secret Management
-
-Manage secrets in Scaleway Secret Manager using vals `ref+scw://` provider.
-
-## Usage
-
-```
-/scaleway-secrets <list|get|set|delete>
-```
 
 ## Architecture
 
 ```
-Helmfile with vals → ref+scw:// → Scaleway Secret Manager API → secret value
+Helmfile with vals -> ref+scw:// -> Scaleway Secret Manager API -> secret value
 ```
 
 The `vals` tool supports a Scaleway provider that fetches secret values at deploy time, eliminating hardcoded secrets in Helm charts.

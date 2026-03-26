@@ -1,17 +1,13 @@
+______________________________________________________________________
+
+## name: restic-backups description: Manage app config backups using the unified Restic backup Helm chart. Use when adding, triggering, checking, or restoring Restic backups for Kubernetes apps backed up to RustFS. compatibility: Requires helmfile, helm, kubectl, and vals CLI tools metadata: author: homelab version: "1.0"
+
 # Restic Backups
-
-Manage app config backups using the unified restic backup Helm chart.
-
-## Usage
-
-```
-/restic-backups <add|trigger|status|restore>
-```
 
 ## Architecture
 
 ```
-CronJob (orchestrator) → scales down app → creates inner Job (restic + PVC mounts) → restic backup to RustFS → scales app back up
+CronJob (orchestrator) -> scales down app -> creates inner Job (restic + PVC mounts) -> restic backup to RustFS -> scales app back up
 ```
 
 Two backup modes:

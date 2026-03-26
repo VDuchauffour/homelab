@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: terraform-scaleway description: Manage Scaleway reverse proxy infrastructure with Terraform. Use when planning, applying, or destroying the Pangolin/Gerbil/Traefik/CrowdSec proxy stack, or restoring from Pangolin DB backups. compatibility: Requires terraform, ssh, docker, and awscli metadata: author: homelab version: "1.0"
+
 # Terraform Scaleway Operations
-
-Manage the Scaleway reverse proxy infrastructure.
-
-## Usage
-
-```
-/terraform-scaleway <plan|apply|destroy>
-```
 
 ## Architecture
 
@@ -116,14 +112,14 @@ aws s3 cp s3://<instance_name>-pangolin-backups/pangolin-db-<timestamp>.sql.gz /
 # Stop Pangolin (keep Postgres running)
 docker stop pangolin gerbil traefik crowdsec
 
-# Drop and recreate the database (required — restoring into an existing DB causes FK/PK conflicts)
+# Drop and recreate the database (required -- restoring into an existing DB causes FK/PK conflicts)
 docker exec postgres psql -U <pangolin_pg_user> -d postgres -c "DROP DATABASE pangolin;"
 docker exec postgres psql -U <pangolin_pg_user> -d postgres -c "CREATE DATABASE pangolin OWNER <pangolin_pg_user>;"
 
 # Restore
 gunzip -c /tmp/pangolin-db-<timestamp>.sql.gz | docker exec -i postgres psql -U <pangolin_pg_user> -d pangolin
 
-# Fix Gerbil public key — the new instance generates a fresh WireGuard keypair,
+# Fix Gerbil public key -- the new instance generates a fresh WireGuard keypair,
 # but the restored DB still has the old exit node's public key.
 # Derive the current public key from gerbil's private key and update the DB:
 NEW_PUBKEY=$(cat ~/pangolin/config/key | wg pubkey)

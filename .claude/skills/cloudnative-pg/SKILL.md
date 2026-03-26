@@ -1,19 +1,15 @@
+______________________________________________________________________
+
+## name: cloudnative-pg description: Manage PostgreSQL databases using CloudNativePG operator with Barman Cloud Plugin backups. Use when creating databases, checking backup status, restoring from backup, or connecting to PostgreSQL. compatibility: Requires kubectl and cnpg kubectl plugin metadata: author: homelab version: "1.0"
+
 # CloudNativePG Database Operations
-
-Manage PostgreSQL databases using CloudNativePG operator with Barman Cloud Plugin backups.
-
-## Usage
-
-```
-/cloudnative-pg <create|backup|restore|connect>
-```
 
 ## Current Cluster
 
 - **Cluster**: `cnpg-cluster0` in `cnpg-clusters` namespace (1 instance)
 - **Storage**: `zfs-vm-pool-dynamic` (10Gi, dynamically provisioned ZFS)
 - **Databases**: See `kubernetes/cluster/cloudnative-pg/*.yaml`
-- **Backups**: Barman Cloud Plugin to MinIO (`cnpg-backups` bucket), daily at 2:00 AM UTC, 30d retention
+- **Backups**: Barman Cloud Plugin to RustFS (`cnpg-backups` bucket), daily at 2:00 AM UTC, 30d retention
 
 ## Create Database Cluster
 
@@ -117,8 +113,8 @@ Backups use the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cl
 - **Plugin**: Helm chart `cnpg/plugin-barman-cloud` v0.5.0 in `cnpg-system` namespace
 - **ObjectStore CR**: `cnpg-minio-store` in `cnpg-clusters` namespace
 - **ScheduledBackup CR**: `cnpg-cluster0-daily` -- daily at 2:00 AM UTC
-- **Destination**: MinIO bucket `cnpg-backups` at `http://minio.minio.svc.cluster.local:9000`
-- **Credentials**: Secret `minio-cnpg-credentials` in `cnpg-clusters` (keys: `ACCESS_KEY_ID`, `ACCESS_SECRET_KEY`)
+- **Destination**: RustFS bucket `cnpg-backups` at `http://rustfs-svc.rustfs.svc.cluster.local:9000`
+- **Credentials**: Secret `rustfs-cnpg-credentials` in `cnpg-clusters` (keys: `ACCESS_KEY_ID`, `ACCESS_SECRET_KEY`)
 - **Retention**: 30 days
 - **WAL compression**: gzip, 2 parallel workers
 

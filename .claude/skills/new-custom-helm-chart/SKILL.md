@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: new-custom-helm-chart description: Create a custom Helm chart when no upstream chart exists. Use when scaffolding a new app that needs its own chart with deployment, service, ingress, and optional configmap/pvc templates. compatibility: Requires helmfile, helm, kubectl, and vals metadata: author: homelab version: "1.0"
+
 # Create Custom Helm Chart
-
-Create a custom Helm chart when no suitable upstream chart exists.
-
-## Usage
-
-```
-/new-custom-helm-chart <app-name> <namespace>
-```
 
 ## Chart Structure
 

@@ -1,6 +1,8 @@
-# SSH into Reverse Proxy
+______________________________________________________________________
 
-Connect to the Scaleway reverse proxy instance via SSH.
+## name: ssh-reverse-proxy description: Connect to and manage the Scaleway reverse proxy instance via SSH. Use when managing Pangolin, Traefik, CrowdSec, or Docker services on the proxy, or troubleshooting external access. compatibility: Requires SSH access configured in ~/.ssh/config metadata: author: homelab version: "1.0"
+
+# SSH into Reverse Proxy
 
 ## Getting the SSH Command
 
