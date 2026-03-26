@@ -3,52 +3,67 @@
     {
       "name": "deploy-helmfile-app",
       "description": "Deploy or update a Kubernetes application using Helmfile",
-      "file": "skills/deploy-helmfile-app.md"
+      "file": "skills/deploy-helmfile-app/SKILL.md"
     },
     {
       "name": "new-helmfile-app",
       "description": "Scaffold a new application with Helmfile following project conventions",
-      "file": "skills/new-helmfile-app.md"
+      "file": "skills/new-helmfile-app/SKILL.md"
     },
     {
       "name": "new-custom-helm-chart",
       "description": "Create a custom Helm chart when no upstream chart exists",
-      "file": "skills/new-custom-helm-chart.md"
+      "file": "skills/new-custom-helm-chart/SKILL.md"
     },
     {
       "name": "terraform-scaleway",
       "description": "Manage Scaleway reverse proxy infrastructure with Terraform",
-      "file": "skills/terraform-scaleway.md"
+      "file": "skills/terraform-scaleway/SKILL.md"
     },
     {
       "name": "debug-pod",
       "description": "Troubleshoot Kubernetes pod issues",
-      "file": "skills/debug-pod.md"
+      "file": "skills/debug-pod/SKILL.md"
     },
     {
       "name": "add-gpu-support",
       "description": "Configure Intel iGPU hardware acceleration for a pod",
-      "file": "skills/add-gpu-support.md"
+      "file": "skills/add-gpu-support/SKILL.md"
     },
     {
       "name": "configure-ingress-tls",
       "description": "Set up Traefik ingress with TLS certificates",
-      "file": "skills/configure-ingress-tls.md"
+      "file": "skills/configure-ingress-tls/SKILL.md"
     },
     {
       "name": "cloudnative-pg",
       "description": "Manage PostgreSQL databases using CloudNativePG operator",
-      "file": "skills/cloudnative-pg.md"
+      "file": "skills/cloudnative-pg/SKILL.md"
     },
     {
       "name": "storage-classes",
       "description": "Configure persistent storage for applications",
-      "file": "skills/storage-classes.md"
+      "file": "skills/storage-classes/SKILL.md"
     },
     {
       "name": "new-utility-script",
       "description": "Scaffold a new Python utility script package under scripts/ following project conventions (Typer CLI, Pydantic models, structlog, httpx, pytest with MagicMock)",
-      "file": "skills/new-utility-script.md"
+      "file": "skills/new-utility-script/SKILL.md"
+    },
+    {
+      "name": "restic-backups",
+      "description": "Manage app config backups using the unified Restic backup Helm chart",
+      "file": "skills/restic-backups/SKILL.md"
+    },
+    {
+      "name": "scaleway-secrets",
+      "description": "Manage secrets in Scaleway Secret Manager using vals ref+scw:// provider",
+      "file": "skills/scaleway-secrets/SKILL.md"
+    },
+    {
+      "name": "ssh-reverse-proxy",
+      "description": "Connect to and manage the Scaleway reverse proxy instance via SSH",
+      "file": "skills/ssh-reverse-proxy/SKILL.md"
     }
   ]
 }

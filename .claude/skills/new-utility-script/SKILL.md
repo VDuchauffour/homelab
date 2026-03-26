@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: new-utility-script description: Scaffold a new Python utility script package under scripts/ following project conventions (Typer CLI, Pydantic models, structlog, httpx, pytest with MagicMock). Use when creating new CLI tools for the homelab. compatibility: Requires Python 3.12+ and uv metadata: author: homelab version: "1.0"
+
 # Create New Utility Script Package
-
-Scaffold a new Python utility script under `scripts/` following project conventions.
-
-## Usage
-
-```
-/new-utility-script <package-name>
-```
 
 ## Conventions
 
@@ -140,7 +136,7 @@ scripts/<package-name>/
      "<package>/tests/*",
    ]
 
-   # [project].dependencies — add any new deps
+   # [project].dependencies -- add any new deps
    ```
 
 8. Install and verify:

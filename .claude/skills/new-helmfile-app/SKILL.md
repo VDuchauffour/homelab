@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: new-helmfile-app description: Scaffold a new application with Helmfile following project conventions. Use when creating a new Kubernetes app with Helmfile, including directory structure, values, storage, secrets, ingress, and post-deployment checklist. compatibility: Requires helmfile, helm, kubectl, vals, and make metadata: author: homelab version: "1.0"
+
 # Create New Helmfile Application
-
-Scaffold a new application following the project's conventions.
-
-## Usage
-
-```
-/new-helmfile-app <app-name> <namespace> <chart-repo-url> <chart-name> <chart-version>
-```
 
 ## App Structure
 

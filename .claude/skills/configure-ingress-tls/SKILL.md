@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: configure-ingress-tls description: Set up Traefik ingress with TLS certificates. Use when configuring local mkcert-CA TLS, public Let's Encrypt TLS via Pangolin, or troubleshooting certificate issues. compatibility: Requires kubectl, mkcert, and cert-manager in-cluster metadata: author: homelab version: "1.0"
+
 # Configure Ingress with TLS
-
-Set up Traefik ingress with TLS certificates.
-
-## Usage
-
-```
-/configure-ingress-tls <app-name> <hostname>
-```
 
 ## Local Network (mkcert CA)
 

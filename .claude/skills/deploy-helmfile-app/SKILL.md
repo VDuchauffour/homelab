@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: deploy-helmfile-app description: Deploy or update a Kubernetes application using Helmfile. Use when deploying, redeploying, or updating any app or infra component managed by Helmfile. compatibility: Requires helmfile, helm, kubectl, and vals CLI tools metadata: author: homelab version: "1.0"
+
 # Deploy Helmfile Application
-
-Deploy or update a Kubernetes application using Helmfile.
-
-## Usage
-
-```
-/deploy-helmfile-app <app-name>
-```
 
 ## Steps
 

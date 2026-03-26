@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: storage-classes description: Configure persistent storage for applications. Use when selecting storage classes, creating PVCs, or troubleshooting storage issues for ZFS-LocalPV, NFS, or local-path backends. compatibility: Requires kubectl metadata: author: homelab version: "1.0"
+
 # Storage Configuration
-
-Configure persistent storage for applications.
-
-## Usage
-
-```
-/storage-classes
-```
 
 ## Available Storage Classes
 

@@ -1,12 +1,8 @@
+______________________________________________________________________
+
+## name: debug-pod description: Troubleshoot Kubernetes pod issues. Use when diagnosing CrashLoopBackOff, ImagePullBackOff, Pending pods, GPU problems, or any pod that is not running correctly. compatibility: Requires kubectl metadata: author: homelab version: "1.0"
+
 # Debug Kubernetes Pod
-
-Troubleshoot pod issues in the cluster.
-
-## Usage
-
-```
-/debug-pod <namespace> <pod-name-or-selector>
-```
 
 ## Diagnostic Steps
 
