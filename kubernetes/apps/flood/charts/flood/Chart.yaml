@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: flood
+description: flood - A modern web UI for torrent clients
+type: application
+version: 0.1.0
+appVersion: master-distroless

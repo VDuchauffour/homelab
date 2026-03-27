@@ -119,6 +119,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/changedetection-io.png" width="32"> | changedetection-io | Website change detection and monitoring | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/dozzle.png" width="32"> | dozzle | Real-time log viewer for containers | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/filebrowser.png" width="32"> | filebrowser | Web-based file manager | Helmfile |
+| <img src="https://raw.githubusercontent.com/jesec/flood/master/flood.svg" width="32"> | flood | Modern web UI for qBittorrent | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="32"> | glance | Personal dashboard | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="32"> | headlamp | Kubernetes web UI | Helmfile |
 | <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="32"> | helm-dashboard | Helm charts management UI | Helmfile |
