@@ -1,0 +1,8 @@
+---
+releases:
+  - name: flood
+    namespace: flood
+    createNamespace: true
+    chart: ./charts/flood
+    values:
+      - values.yaml

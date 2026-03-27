@@ -113,6 +113,9 @@ glance:
         - title: qBittorrent
           subdomain: qbittorrent
           icon: di:qbittorrent
+        - title: Flood
+          subdomain: flood
+          icon: https://raw.githubusercontent.com/jesec/flood/master/flood.svg
         - title: slskd
           subdomain: slskd
           icon: di:slskd

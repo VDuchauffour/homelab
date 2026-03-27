@@ -1,0 +1,41 @@
+---
+image:
+  repository: jesec/flood
+  pullPolicy: IfNotPresent
+  tag: master-distroless
+
+config:
+  FLOOD_OPTION_port: '3000'
+  FLOOD_OPTION_auth: none
+  FLOOD_OPTION_qburl: http://qbittorrent-vpn.qbittorrent-vpn.svc.cluster.local:8080
+
+secrets:
+  FLOOD_OPTION_qbuser: ref+scw:///homelab/qbittorrent#/webui-username
+  FLOOD_OPTION_qbpass: ref+scw:///homelab/qbittorrent#/webui-password
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: flood.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - flood.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: flood-mkcert-tls

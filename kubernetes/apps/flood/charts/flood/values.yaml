@@ -1,0 +1,35 @@
+---
+replicaCount: 1
+
+image:
+  repository: jesec/flood
+  pullPolicy: IfNotPresent
+  tag: master-distroless
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  FLOOD_OPTION_port: '3000'
+  FLOOD_OPTION_auth: none
+  FLOOD_OPTION_qburl: ''
+
+secrets:
+  FLOOD_OPTION_qbuser: ''
+  FLOOD_OPTION_qbpass: ''
