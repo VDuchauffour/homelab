@@ -1,0 +1,8 @@
+---
+releases:
+  - name: backrest
+    namespace: backrest
+    createNamespace: true
+    chart: ./charts/backrest
+    values:
+      - values.yaml

@@ -36,6 +36,9 @@ glance:
         - title: RustFS
           subdomain: rustfs-console
           icon: di:rustfs
+        - title: Backrest
+          subdomain: backrest
+          icon: di:backrest-light
         - title: Pi-hole
           subdomain: pihole
           icon: di:pi-hole
