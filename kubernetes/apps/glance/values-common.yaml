@@ -36,6 +36,9 @@ glance:
         - title: RustFS
           subdomain: rustfs-console
           icon: di:rustfs
+        - title: Backrest
+          subdomain: backrest
+          icon: di:backrest-light
         - title: Pi-hole
           subdomain: pihole
           icon: di:pi-hole
@@ -158,9 +161,6 @@ glance:
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
     - title: Tools
       links:
-        - title: Backrest
-          subdomain: backrest
-          icon: https://raw.githubusercontent.com/garethgeorge/backrest/main/webui/assets/backrest-256.png
         - title: ChangeDetection
           subdomain: changedetection
           icon: di:changedetection
