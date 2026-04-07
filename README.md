@@ -401,8 +401,7 @@ cd kubernetes/infra/pangolin-newt
 helmfile apply
 
 # Or update the blueprint only
-vals eval -f manifests/blueprint.yaml | kubectl apply -f -
-kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
+make blueprint-update
 ```
 
 > **Note:** `sso-roles` cannot include "Admin" (reserved by Pangolin). Use `whitelist-users` with email addresses instead. The blueprint YAML lives inside a ConfigMap literal block — indentation errors are silently ignored, so always validate rendered output with `vals eval`.
@@ -581,6 +580,18 @@ make warden-compare       # Compare K8s vs Warden
 See [`scripts/warden/README.md`](scripts/warden/README.md) for detailed documentation.
 
 ## Useful Commands
+
+Update Jellyfin (helm release + rollout restart):
+
+```shell
+make jellyfin-update
+```
+
+Update Pangolin blueprint (apply ConfigMap + restart Newt):
+
+```shell
+make blueprint-update
+```
 
 Generate a strong password:
 

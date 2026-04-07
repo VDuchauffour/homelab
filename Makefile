@@ -1,4 +1,4 @@
-.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare jellyfin-move jellyfin-move-dry-run helm-update helm-update-all helm-diff helm-diff-all
+.PHONY: check-readme fix-readme warden-seed warden-seed-cleanup warden-delete warden-compare jellyfin-move jellyfin-move-dry-run jellyfin-update blueprint-update helm-update helm-update-all helm-diff helm-diff-all
 
 warden-seed:
 	@cd scripts && uv run warden-seed --apps-only --host http://warden.home.arpa
@@ -17,6 +17,14 @@ jellyfin-move:
 
 jellyfin-move-dry-run:
 	@cd scripts && uv run jellyfin-move --dry-run
+
+jellyfin-update:
+	@cd kubernetes/apps/jellyfin && helmfile apply
+	@kubectl rollout restart deployment/jellyfin -n media-center
+
+blueprint-update:
+	@vals eval -f kubernetes/infra/pangolin-newt/manifests/blueprint.yaml | kubectl apply -f -
+	@kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
 helm-update:
 	@./scripts/helm-update.sh $(APP)
