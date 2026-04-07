@@ -96,11 +96,12 @@ write_files:
     owner: root:root
     content: |
       name: custom/navidrome-subsonic-api
-      description: "Whitelist Navidrome Subsonic API requests to prevent false-positive bans from rapid client traffic"
+      description: "Whitelist Navidrome requests to prevent false-positive http-probing bans from Subsonic clients (missing artwork 404s, rapid API polling)"
       whitelist:
-        reason: "Navidrome Subsonic API client traffic"
+        reason: "Navidrome client traffic"
         expression:
-          - evt.Parsed.request contains '/rest/'
+          - evt.Parsed.request contains '/rest/' && evt.Meta.http_status != '401'
+          - evt.Parsed.request contains '/share/img/'
   - path: /home/${username}/pangolin/config/crowdsec/config.yaml.local
     permissions: "0644"
     owner: root:root
