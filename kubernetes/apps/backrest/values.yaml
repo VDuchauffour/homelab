@@ -1,0 +1,49 @@
+---
+image:
+  repository: garethgeorge/backrest
+  pullPolicy: IfNotPresent
+  tag: latest
+
+env:
+  TZ: Europe/Paris
+  BACKREST_PORT: 0.0.0.0:9898
+  BACKREST_DATA: /data
+  BACKREST_CONFIG: /config/config.json
+  XDG_CACHE_HOME: /cache
+
+persistence:
+  data:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 2Gi
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 100Mi
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 9898
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: backrest.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - backrest.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: backrest-mkcert-tls

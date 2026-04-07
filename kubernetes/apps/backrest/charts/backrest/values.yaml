@@ -1,0 +1,43 @@
+---
+replicaCount: 1
+
+image:
+  repository: garethgeorge/backrest
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 9898
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  data:
+    enabled: true
+    storageClass: ''
+    size: 2Gi
+  config:
+    enabled: true
+    storageClass: ''
+    size: 100Mi
+
+env:
+  TZ: UTC
+  BACKREST_PORT: '0.0.0.0:9898'
+  BACKREST_DATA: /data
+  BACKREST_CONFIG: /config/config.json
+  XDG_CACHE_HOME: /cache
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

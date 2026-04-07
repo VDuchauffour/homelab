@@ -56,6 +56,20 @@ apps:
 
   # --- Simple single-PVC apps ---
 
+  backrest:
+    namespace: backrest
+    schedule: 0 5 * * 0
+    targets:
+      - type: deployment
+        name: backrest
+    pvcs:
+      - name: backrest-data
+        mountPath: /data/data
+      - name: backrest-config
+        mountPath: /data/config
+    excludes:
+      - '*.log'
+
   filebrowser:
     namespace: filebrowser
     schedule: 5 3 * * 0
