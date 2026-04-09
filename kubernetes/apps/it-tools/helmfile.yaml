@@ -1,0 +1,8 @@
+---
+releases:
+  - name: it-tools
+    namespace: it-tools
+    createNamespace: true
+    chart: ./charts/it-tools
+    values:
+      - values.yaml

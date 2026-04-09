@@ -167,6 +167,9 @@ glance:
         - title: ChangeDetection
           subdomain: changedetection
           icon: di:changedetection
+        - title: IT Tools
+          subdomain: it-tools
+          icon: di:it-tools
         - title: Wakapi
           subdomain: wakapi
           icon: di:wakapi
