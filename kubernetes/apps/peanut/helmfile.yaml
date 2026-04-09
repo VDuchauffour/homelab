@@ -1,0 +1,8 @@
+---
+releases:
+  - name: peanut
+    namespace: peanut
+    createNamespace: true
+    chart: ./charts/peanut
+    values:
+      - values.yaml

@@ -59,6 +59,9 @@ glance:
         - title: Scrutiny
           subdomain: scrutiny
           icon: di:scrutiny-light
+        - title: PeaNUT
+          subdomain: peanut
+          icon: di:peanut
     - title: ''
       links:
         - title: qBittorrent
