@@ -748,10 +748,6 @@ data:
         name: Wallos
         protocol: http
         full-domain: wallos.ref+envsubst://$PUBLIC_DOMAIN_NAME
-        auth:
-          sso-enabled: true
-          whitelist-users:
-            - ref+envsubst://$EMAIL_ADDRESS
         targets:
           - hostname: wallos.wallos.svc.cluster.local
             method: http
