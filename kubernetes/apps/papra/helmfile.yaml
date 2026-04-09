@@ -1,0 +1,8 @@
+---
+releases:
+  - name: papra
+    namespace: papra
+    createNamespace: true
+    chart: ./charts/papra
+    values:
+      - values.yaml

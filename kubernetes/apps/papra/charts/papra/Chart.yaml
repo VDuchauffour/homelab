@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: papra
+description: Papra - A self-hosted document management system
+type: application
+version: 0.1.0
+appVersion: latest

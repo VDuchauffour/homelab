@@ -471,6 +471,21 @@ data:
               path: /status.php
               interval: 30
               timeout: 5
+      papra:
+        name: Papra
+        protocol: http
+        full-domain: papra.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: papra.papra.svc.cluster.local
+            method: http
+            port: 1221
+            healthcheck:
+              hostname: papra.papra.svc.cluster.local
+              port: 1221
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       peanut:
         name: PeaNUT
         protocol: http

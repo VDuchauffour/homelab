@@ -1,0 +1,46 @@
+---
+config:
+  TZ: Europe/Paris
+  APP_BASE_URL: https://papra.ref+envsubst://$LOCAL_DOMAIN_NAME
+  DOCUMENTS_OCR_LANGUAGES: eng
+  DOCUMENT_STORAGE_MAX_UPLOAD_SIZE: '52428800'
+
+secrets:
+  AUTH_SECRET: ref+scw:///homelab/papra#/auth-secret
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 5Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+image:
+  repository: ghcr.io/papra-hq/papra
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 1221
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: papra.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - papra.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: papra-mkcert-tls

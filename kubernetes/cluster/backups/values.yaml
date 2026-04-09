@@ -328,3 +328,15 @@ apps:
         mountPath: /data
     excludes:
       - '*.log'
+
+  papra:
+    namespace: papra
+    schedule: 10 5 * * 0
+    targets:
+      - type: deployment
+        name: papra
+    pvcs:
+      - name: papra
+        mountPath: /data
+    excludes:
+      - '*.log'
