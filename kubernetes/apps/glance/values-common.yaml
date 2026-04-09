@@ -162,6 +162,9 @@ glance:
         - title: Memos
           subdomain: memos
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/memos.png
+        - title: Papra
+          subdomain: papra
+          icon: di:papra
     - title: Tools
       links:
         - title: ChangeDetection

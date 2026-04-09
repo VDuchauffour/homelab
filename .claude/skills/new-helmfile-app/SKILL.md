@@ -177,11 +177,11 @@ Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appro
   icon: di:myapp  # or sh:myapp, or a raw URL
 ```
 
-Icon conventions:
+Icon conventions (**PNG only** — Glance does not render SVG reliably):
 
-- `di:<name>` — [Dashboard Icons](https://github.com/walkxcode/dashboard-icons) (preferred)
-- `sh:<name>` — [Selfh.st Icons](https://selfh.st/icons/)
-- Raw URL — GitHub raw links for icons not in the above sets
+- `di:<name>` — [Dashboard Icons](https://github.com/walkxcode/dashboard-icons) (preferred, resolves to PNG)
+- `sh:<name>` — [Selfh.st Icons](https://selfh.st/icons/) (resolves to PNG)
+- Raw URL — `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/<name>.png` or `https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/<name>.png`. **Never use SVG.**
 
 Redeploy Glance:
 
@@ -245,11 +245,12 @@ Each row follows the pattern:
 | <img src="ICON_URL" width="24"> | name | Short description |
 ```
 
-For icons, prefer in order:
+For icons, prefer in order (**PNG only — never SVG**):
 
 1. `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/<app-name>.png`
-2. Project's GitHub raw icon
-3. `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png` as fallback
+2. `https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/<app-name>.png`
+3. Project's GitHub raw PNG icon (never SVG)
+4. `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png` as fallback
 
 ## Conventions
 
