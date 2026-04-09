@@ -3,6 +3,9 @@ controllers:
   main:
     containers:
       main:
+        env:
+          PUID: '1000'
+          PGID: '1000'
         resources:
           requests:
             cpu: 50m
