@@ -26,6 +26,10 @@ blueprint-update:
 	@vals eval -f kubernetes/infra/pangolin-newt/manifests/blueprint.yaml | kubectl apply -f -
 	@kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
+glance-update:
+	@cd kubernetes/apps/glance && helmfile apply
+	@kubectl rollout restart deployment -n glance
+
 helm-update:
 	@./scripts/helm-update.sh $(APP)
 

@@ -195,3 +195,8 @@ glance:
         - title: MLflow
           subdomain: mlflow
           icon: di:ml-flow-wordmark-dark
+    - title: Money
+      links:
+        - title: Wallos
+          subdomain: wallos
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png
