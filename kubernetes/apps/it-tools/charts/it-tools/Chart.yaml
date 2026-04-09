@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: it-tools
+description: A collection of handy online tools for developers
+type: application
+version: 0.1.0
+appVersion: latest

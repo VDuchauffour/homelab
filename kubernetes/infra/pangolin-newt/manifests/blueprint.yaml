@@ -227,6 +227,25 @@ data:
               path: /ping
               interval: 30
               timeout: 5
+      it-tools:
+        name: IT Tools
+        protocol: http
+        full-domain: it-tools.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: it-tools.it-tools.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: it-tools.it-tools.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       jellyfin:
         name: Jellyfin
         protocol: http
