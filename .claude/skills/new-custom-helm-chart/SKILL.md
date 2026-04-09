@@ -118,7 +118,7 @@ Icon conventions:
 Redeploy Glance:
 
 ```shell
-cd kubernetes/apps/glance && helmfile apply
+make glance-update
 ```
 
 ### 2. Update Pangolin Blueprint (if externally accessible)

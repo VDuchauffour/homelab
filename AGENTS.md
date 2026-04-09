@@ -366,7 +366,7 @@ Each link uses either `url` (full URL) or `subdomain` (auto-expanded to `https:/
      icon: di:myapp  # or sh:myapp, or a raw URL
    ```
 
-2. Redeploy: `cd kubernetes/apps/glance && helmfile apply`
+2. Redeploy: `make glance-update`
 
 ### Icon Conventions
 
@@ -426,7 +426,7 @@ kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
 After deploying a new app or infra tool, complete these additional steps:
 
-1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`cd kubernetes/apps/glance && helmfile apply`)
+1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`make glance-update`)
 2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
 3. **Warden monitoring**: Run `make warden-seed-cleanup` to discover the new app and sync monitors (adds new, removes stale)
 4. **Restic backup** (if app has config PVCs): Add an entry to `kubernetes/cluster/backups/values.yaml`, then redeploy (`cd kubernetes/cluster/backups && helmfile apply`)

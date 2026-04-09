@@ -316,3 +316,15 @@ apps:
         mountPath: /data
     excludes:
       - '*.log'
+
+  wallos:
+    namespace: wallos
+    schedule: 5 5 * * 0
+    targets:
+      - type: deployment
+        name: wallos
+    pvcs:
+      - name: wallos
+        mountPath: /data
+    excludes:
+      - '*.log'

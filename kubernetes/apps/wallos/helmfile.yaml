@@ -1,0 +1,8 @@
+---
+releases:
+  - name: wallos
+    namespace: wallos
+    createNamespace: true
+    chart: ./charts/wallos
+    values:
+      - values.yaml

@@ -154,6 +154,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://raw.githubusercontent.com/connorgallopo/Tracearr/main/apps/web/public/favicon-96x96.png" width="32"> | tracearr | Real-time monitoring for Plex, Jellyfin, and Emby | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/uptime-kuma.png" width="32"> | uptime-kuma | Uptime monitoring dashboard | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wakapi.png" width="32"> | wakapi | Self-hosted WakaTime-compatible coding statistics | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wallos.png" width="32"> | wallos | Personal subscription and expense tracker | Helmfile |
 | <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
 | <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
 

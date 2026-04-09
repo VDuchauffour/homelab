@@ -41,9 +41,7 @@ ______________________________________________________________________
 6. **Glance only** — Helm doesn't detect ConfigMap content changes, so force a restart:
 
    ```shell
-   cd kubernetes/apps/glance
-   helmfile apply
-   kubectl rollout restart deployment -n glance
+   make glance-update
    ```
 
 7. Verify deployment:

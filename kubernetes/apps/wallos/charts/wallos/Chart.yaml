@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: wallos
+description: Wallos - A self-hosted personal subscription tracker
+type: application
+version: 0.1.0
+appVersion: latest

@@ -725,6 +725,25 @@ data:
               path: /api/health
               interval: 30
               timeout: 5
+      wallos:
+        name: Wallos
+        protocol: http
+        full-domain: wallos.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: wallos.wallos.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: wallos.wallos.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       warden:
         name: Warden
         protocol: http
