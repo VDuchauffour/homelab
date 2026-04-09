@@ -452,6 +452,25 @@ data:
               path: /status.php
               interval: 30
               timeout: 5
+      peanut:
+        name: PeaNUT
+        protocol: http
+        full-domain: peanut.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: peanut.peanut.svc.cluster.local
+            method: http
+            port: 8080
+            healthcheck:
+              hostname: peanut.peanut.svc.cluster.local
+              port: 8080
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       pgadmin:
         name: pgAdmin
         protocol: http

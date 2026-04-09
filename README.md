@@ -138,6 +138,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/navidrome.png" width="32"> | navidrome | Web-based music collection server and streamer | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/peanut.png" width="32"> | peanut | Dashboard for Network UPS Tools (NUT) monitoring | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/privatebin.png" width="32"> | privatebin | Encrypted pastebin for sharing secrets | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png" width="32"> | prowlarr | Indexer manager for arr suite | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/protonmail.png" width="32"> | protonmail-bridge | ProtonMail SMTP/IMAP bridge for local mail relay | Helmfile |

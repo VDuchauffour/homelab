@@ -1,0 +1,40 @@
+---
+config:
+  TZ: Europe/Paris
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 256Mi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+image:
+  repository: brandawg93/peanut
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: peanut.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - peanut.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: peanut-mkcert-tls

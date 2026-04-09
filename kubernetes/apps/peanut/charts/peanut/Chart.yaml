@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: peanut
+description: PeaNUT - A tiny dashboard for Network UPS Tools
+type: application
+version: 0.1.0
+appVersion: latest

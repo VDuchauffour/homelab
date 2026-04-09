@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "peanut.fullname" . }}-config
+  labels:
+    {{- include "peanut.labels" . | nindent 4 }}
+data:
+  TZ: {{ .Values.config.TZ | quote }}
