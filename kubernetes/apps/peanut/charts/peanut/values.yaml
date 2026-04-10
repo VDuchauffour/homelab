@@ -41,6 +41,20 @@ nutServers:
     username: ""
     password: ""
 
+nutUpsd:
+  enabled: false
+  image:
+    repository: instantlinux/nut-upsd
+    tag: latest
+    pullPolicy: IfNotPresent
+  apiUser: upsmon
+  apiPassword: ""
+  driver: usbhid-ups
+  upsName: ups
+  description: ""
+  server: master
+  resources: {}
+
 influxdb:
   enabled: false
   image:
