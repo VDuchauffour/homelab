@@ -355,12 +355,15 @@ The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community
 
 #### Grafana Dashboards
 
-| Dashboard | Source | Provisioning |
-|-----------|--------|:------------:|
-| [qBittorrent](https://github.com/esanchezm/prometheus-qbittorrent-exporter/blob/master/grafana/dashboard.json) | prometheus-qbittorrent-exporter | Manual import |
-| [Wakapi](https://github.com/muety/wakapi#grafana) | wakatime-exporter chart (`dashboards/wakatime.json`) | Auto (sidecar) |
+Dashboards are provisioned automatically via the Grafana Helm chart's `dashboards` section in `kubernetes/infra/kube-prometheus-stack/values.yaml`. The chart downloads the JSON from the upstream URL at deploy time and creates a ConfigMap that the Grafana sidecar picks up.
 
-Dashboards labeled `grafana_dashboard: "1"` are auto-provisioned by the Grafana sidecar. Manual import dashboards can be added via Grafana UI → Dashboards → Import.
+| Dashboard | Source | Datasource |
+|-----------|--------|:----------:|
+| [qBittorrent](https://github.com/esanchezm/prometheus-qbittorrent-exporter/blob/master/grafana/dashboard.json) | [prometheus-qbittorrent-exporter](https://github.com/esanchezm/prometheus-qbittorrent-exporter) | Prometheus |
+| [Wakapi](https://github.com/MacroPower/wakatime_exporter/blob/master/docs/dashboards/wakatime-coding-stats.json) | [wakatime_exporter](https://github.com/MacroPower/wakatime_exporter) | Prometheus |
+| [PeaNUT](https://github.com/zephyr325/Grafana-for-PeaNUT/blob/main/dashboard/PeaNUT%20Grafana.json) | [Grafana-for-PeaNUT](https://github.com/zephyr325/Grafana-for-PeaNUT) | InfluxDB |
+
+The PeaNUT dashboard requires an InfluxDB datasource, provisioned via a sidecar Secret in `kubernetes/infra/kube-prometheus-stack/manifests/secret.yaml`.
 
 ### Backups (Restic)
 

@@ -21,6 +21,47 @@ grafana:
     enabled: true
     storageClassName: zfs-vm-pool-dynamic
     size: 10Gi
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    default:
+      qbittorrent:
+        url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/master/grafana/dashboard.json
+        datasource:
+          - name: DS_PROMETHEUS
+            value: Prometheus
+      wakatime:
+        url: https://raw.githubusercontent.com/MacroPower/wakatime_exporter/master/docs/dashboards/wakatime-coding-stats.json
+      peanut:
+        url: https://raw.githubusercontent.com/zephyr325/Grafana-for-PeaNUT/main/dashboard/PeaNUT%20Grafana.json
+        datasource:
+          - name: DS_INFLUXDB
+            value: InfluxDB
+  extraInitContainers:
+    - name: fix-peanut-datasources
+      image: docker.io/library/busybox:1.37.0
+      command:
+        - sh
+        - -c
+        - |
+          f=/var/lib/grafana/dashboards/default/peanut.json
+          [ -f "$f" ] || exit 0
+          for name in nominal_power_watts model_info polling_interval; do
+            sed -i "s/\"name\": \"$name\"/\"datasource\": {\"type\": \"influxdb\", \"uid\": \"InfluxDB\"}, \"name\": \"$name\"/" "$f"
+          done
+      volumeMounts:
+        - name: storage
+          mountPath: /var/lib/grafana
   grafana.ini:
     database:
       type: postgres
