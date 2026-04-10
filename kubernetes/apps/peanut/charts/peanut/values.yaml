@@ -32,8 +32,12 @@ affinity: {}
 
 config:
   TZ: UTC
+  WEB_PORT: 8080
   AUTH_DISABLED: false
-  INFLUX_INTERVAL: "10"
+  WEB_USERNAME: ""
+  WEB_PASSWORD: ""
+  BASE_PATH: ""
+  DEBUG: false
 
 nutServers:
   - host: localhost
@@ -57,6 +61,7 @@ nutUpsd:
 
 influxdb:
   enabled: false
+  interval: 10
   image:
     repository: influxdb
     tag: "2.7-alpine"

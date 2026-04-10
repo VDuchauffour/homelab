@@ -6,7 +6,6 @@ nutServers:
 config:
   TZ: Europe/Paris
   AUTH_DISABLED: true
-  INFLUX_INTERVAL: '10'
 
 persistence:
   enabled: true

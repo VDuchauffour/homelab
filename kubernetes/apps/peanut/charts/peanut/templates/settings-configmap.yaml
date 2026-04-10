@@ -22,5 +22,5 @@ data:
     INFLUX_TOKEN: {{ .Values.influxdb.init.token | quote }}
     INFLUX_ORG: {{ .Values.influxdb.init.org | quote }}
     INFLUX_BUCKET: {{ .Values.influxdb.init.bucket | quote }}
-    INFLUX_INTERVAL: {{ .Values.config.INFLUX_INTERVAL }}
+    INFLUX_INTERVAL: {{ .Values.influxdb.interval }}
     {{- end }}
