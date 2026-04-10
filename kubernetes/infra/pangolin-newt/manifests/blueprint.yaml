@@ -193,6 +193,25 @@ data:
               path: /
               interval: 30
               timeout: 5
+      home-assistant:
+        name: Home Assistant
+        protocol: http
+        full-domain: home-assistant.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: home-assistant.home-assistant.svc.cluster.local
+            method: http
+            port: 8123
+            healthcheck:
+              hostname: home-assistant.home-assistant.svc.cluster.local
+              port: 8123
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       helm-dashboard:
         name: Helm Dashboard
         protocol: http

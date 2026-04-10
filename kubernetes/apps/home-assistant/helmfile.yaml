@@ -1,0 +1,21 @@
+---
+repositories:
+  - name: k8s-home-lab
+    url: https://k8s-home-lab.github.io/helm-charts/
+
+releases:
+  - name: home-assistant
+    namespace: home-assistant
+    createNamespace: true
+    chart: k8s-home-lab/home-assistant
+    version: 16.3.0
+    values:
+      - values.yaml
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: /bin/sh
+        args:
+          - -c
+          - kubectl apply -f manifests/configmap.yaml

@@ -123,6 +123,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://raw.githubusercontent.com/jesec/flood/master/flood.svg" width="32"> | flood | Modern web UI for qBittorrent | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/glance.png" width="32"> | glance | Personal dashboard | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/headlamp.png" width="32"> | headlamp | Kubernetes web UI | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png" width="32"> | home-assistant | Home automation platform | Helmfile |
 | <img src="https://raw.githubusercontent.com/komodorio/helm-dashboard/refs/heads/main/images/logo.png" width="32"> | helm-dashboard | Helm charts management UI | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png" width="32"> | immich | Self-hosted photo and video management | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/it-tools.png" width="32"> | it-tools | Collection of handy online tools for developers | Helmfile |
