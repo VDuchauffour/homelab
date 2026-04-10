@@ -11,6 +11,8 @@ gluetunUrl: ''
 gluetunApiKey: ''
 immichUrl: ''
 immichApiKey: ''
+peanutUrl: ''
+peanutDeviceName: ''
 
 
 service:
