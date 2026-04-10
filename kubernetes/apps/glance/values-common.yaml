@@ -215,3 +215,8 @@ glance:
         - title: Wallos
           subdomain: wallos
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png
+    - title: Smart Home
+      links:
+        - title: Home Assistant
+          subdomain: home-assistant
+          icon: di:home-assistant

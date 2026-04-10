@@ -1,0 +1,49 @@
+---
+env:
+  TZ: Europe/Paris
+
+securityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath: /config
+    readOnly: false
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+  ha-config-yaml:
+    enabled: true
+    type: configMap
+    name: home-assistant-config
+    mountPath: /config/configuration.yaml
+    subPath: configuration.yaml
+    readOnly: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+ingress:
+  main:
+    enabled: true
+    primary: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      cert-manager.io/cluster-issuer: mkcert-ca
+    labels: {}
+    ingressClassName: traefik
+    hosts:
+      - host: home-assistant.ref+envsubst://$LOCAL_DOMAIN_NAME
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - home-assistant.ref+envsubst://$LOCAL_DOMAIN_NAME
+        secretName: home-assistant-mkcert-tls
