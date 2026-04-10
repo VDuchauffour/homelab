@@ -32,3 +32,30 @@ affinity: {}
 
 config:
   TZ: UTC
+  AUTH_DISABLED: false
+  INFLUX_INTERVAL: "10"
+
+nutServers:
+  - host: localhost
+    port: 3493
+    username: ""
+    password: ""
+
+influxdb:
+  enabled: false
+  image:
+    repository: influxdb
+    tag: "2.7-alpine"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 1Gi
+  resources: {}
+  init:
+    username: admin
+    password: ""
+    org: homelab
+    bucket: peanut
+    token: ""
+    retention: ""

@@ -1,6 +1,12 @@
 ---
+nutServers:
+  - host: ref+envsubst://$SINGLE_NODE_NAME
+    port: 3493
+
 config:
   TZ: Europe/Paris
+  AUTH_DISABLED: true
+  INFLUX_INTERVAL: "10"
 
 persistence:
   enabled: true
@@ -38,3 +44,21 @@ ingress:
     - hosts:
         - peanut.ref+envsubst://$LOCAL_DOMAIN_NAME
       secretName: peanut-mkcert-tls
+
+influxdb:
+  enabled: true
+  persistence:
+    storageClass: zfs-vm-pool-dynamic
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 512Mi
+  init:
+    username: admin
+    password: ref+scw:///homelab/peanut-influxdb#/password
+    org: homelab
+    bucket: peanut
+    token: ref+scw:///homelab/peanut-influxdb#/token

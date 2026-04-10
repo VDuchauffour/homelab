@@ -1,0 +1,19 @@
+{{- if .Values.influxdb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "peanut.fullname" . }}-influxdb
+  labels:
+    {{- include "peanut.labels" . | nindent 4 }}
+    app.kubernetes.io/component: influxdb
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8086
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: influxdb
+    app.kubernetes.io/instance: {{ .Release.Name }}-influxdb
+{{- end }}

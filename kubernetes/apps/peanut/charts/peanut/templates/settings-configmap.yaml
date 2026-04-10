@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "peanut.fullname" . }}-settings
+  labels:
+    {{- include "peanut.labels" . | nindent 4 }}
+data:
+  settings.yml: |
+    NUT_SERVERS:
+    {{- range .Values.nutServers }}
+      - HOST: {{ .host | quote }}
+        PORT: {{ .port }}
+        {{- if .username }}
+        USERNAME: {{ .username | quote }}
+        {{- end }}
+        {{- if .password }}
+        PASSWORD: {{ .password | quote }}
+        {{- end }}
+    {{- end }}
+    {{- if .Values.influxdb.enabled }}
+    INFLUX_HOST: {{ printf "http://%s-influxdb:8086" (include "peanut.fullname" .) | quote }}
+    INFLUX_TOKEN: {{ .Values.influxdb.init.token | quote }}
+    INFLUX_ORG: {{ .Values.influxdb.init.org | quote }}
+    INFLUX_BUCKET: {{ .Values.influxdb.init.bucket | quote }}
+    INFLUX_INTERVAL: {{ .Values.config.INFLUX_INTERVAL }}
+    {{- end }}

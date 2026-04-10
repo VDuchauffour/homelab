@@ -6,3 +6,11 @@ metadata:
     {{- include "peanut.labels" . | nindent 4 }}
 data:
   TZ: {{ .Values.config.TZ | quote }}
+  AUTH_DISABLED: {{ .Values.config.AUTH_DISABLED | quote }}
+  {{- if .Values.influxdb.enabled }}
+  INFLUX_HOST: "http://{{ include "peanut.fullname" . }}-influxdb:8086"
+  INFLUX_TOKEN: {{ .Values.influxdb.init.token | quote }}
+  INFLUX_ORG: {{ .Values.influxdb.init.org | quote }}
+  INFLUX_BUCKET: {{ .Values.influxdb.init.bucket | quote }}
+  INFLUX_INTERVAL: {{ .Values.config.INFLUX_INTERVAL | quote }}
+  {{- end }}
