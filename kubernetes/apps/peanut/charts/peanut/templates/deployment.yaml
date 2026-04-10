@@ -16,6 +16,19 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      {{- if .Values.influxdb.enabled }}
+      initContainers:
+        - name: wait-for-influxdb
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              until wget -q -O /dev/null http://{{ include "peanut.fullname" . }}-influxdb:8086/health; do
+                echo "Waiting for InfluxDB..."
+                sleep 2
+              done
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
