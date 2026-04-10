@@ -32,3 +32,49 @@ affinity: {}
 
 config:
   TZ: UTC
+  WEB_PORT: 8080
+  AUTH_DISABLED: false
+  WEB_USERNAME: ""
+  WEB_PASSWORD: ""
+  BASE_PATH: ""
+  DEBUG: false
+
+nutServers:
+  - host: localhost
+    port: 3493
+    username: ""
+    password: ""
+
+nutUpsd:
+  enabled: false
+  image:
+    repository: instantlinux/nut-upsd
+    tag: latest
+    pullPolicy: IfNotPresent
+  apiUser: upsmon
+  apiPassword: ""
+  driver: usbhid-ups
+  upsName: ups
+  description: ""
+  server: master
+  resources: {}
+
+influxdb:
+  enabled: false
+  interval: 10
+  image:
+    repository: influxdb
+    tag: "2.7-alpine"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 1Gi
+  resources: {}
+  init:
+    username: admin
+    password: ""
+    org: homelab
+    bucket: peanut
+    token: ""
+    retention: ""

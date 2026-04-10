@@ -14,13 +14,15 @@ spec:
       labels:
         {{- include "peanut.selectorLabels" . | nindent 8 }}
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.config.WEB_PORT }}
               protocol: TCP
           envFrom:
             - configMapRef:
@@ -44,15 +46,57 @@ spec:
             - name: config
               mountPath: /config
             {{- end }}
+            - name: settings
+              mountPath: /config/settings.yml
+              subPath: settings.yml
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- if .Values.nutUpsd.enabled }}
+        - name: nut-upsd
+          image: "{{ .Values.nutUpsd.image.repository }}:{{ .Values.nutUpsd.image.tag }}"
+          imagePullPolicy: {{ .Values.nutUpsd.image.pullPolicy }}
+          ports:
+            - name: nut
+              containerPort: 3493
+              protocol: TCP
+          env:
+            - name: API_USER
+              value: {{ .Values.nutUpsd.apiUser | quote }}
+            - name: API_PASSWORD
+              value: {{ .Values.nutUpsd.apiPassword | quote }}
+            - name: DRIVER
+              value: {{ .Values.nutUpsd.driver | quote }}
+            - name: NAME
+              value: {{ .Values.nutUpsd.upsName | quote }}
+            - name: DESCRIPTION
+              value: {{ .Values.nutUpsd.description | quote }}
+            - name: SERVER
+              value: {{ .Values.nutUpsd.server | quote }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: usb
+              mountPath: /dev/bus/usb
+          {{- with .Values.nutUpsd.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
       volumes:
         {{- if .Values.persistence.enabled }}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "peanut.fullname" . }}
+        {{- end }}
+        - name: settings
+          configMap:
+            name: {{ include "peanut.fullname" . }}-settings
+        {{- if .Values.nutUpsd.enabled }}
+        - name: usb
+          hostPath:
+            path: /dev/bus/usb
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

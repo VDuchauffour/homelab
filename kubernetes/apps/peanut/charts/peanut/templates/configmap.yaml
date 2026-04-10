@@ -6,3 +6,19 @@ metadata:
     {{- include "peanut.labels" . | nindent 4 }}
 data:
   TZ: {{ .Values.config.TZ | quote }}
+  WEB_PORT: {{ .Values.config.WEB_PORT | quote }}
+  AUTH_DISABLED: {{ .Values.config.AUTH_DISABLED | quote }}
+  {{- if not .Values.config.AUTH_DISABLED }}
+  {{- if .Values.config.WEB_USERNAME }}
+  WEB_USERNAME: {{ .Values.config.WEB_USERNAME | quote }}
+  {{- end }}
+  {{- if .Values.config.WEB_PASSWORD }}
+  WEB_PASSWORD: {{ .Values.config.WEB_PASSWORD | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.config.BASE_PATH }}
+  BASE_PATH: {{ .Values.config.BASE_PATH | quote }}
+  {{- end }}
+  {{- if .Values.config.DEBUG }}
+  DEBUG: {{ .Values.config.DEBUG | quote }}
+  {{- end }}
