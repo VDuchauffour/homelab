@@ -5,7 +5,8 @@ nutServers:
 
 config:
   TZ: Europe/Paris
-  AUTH_DISABLED: true
+  WEB_USERNAME: ref+scw:///homelab/peanut#/username
+  WEB_PASSWORD: ref+scw:///homelab/peanut#/password
 
 persistence:
   enabled: true
