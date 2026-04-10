@@ -66,22 +66,26 @@ glance:
           icon: di:peanut
     - title: ''
       links:
-        - title: qBittorrent
-          subdomain: grafana
-          path: /d/eKyTETFMk/qbittorrent
-          icon: di:qbittorrent
-        - title: UPS statistics
-          subdomain: grafana
-          path: /d/a67b2952-0853-4775-83a1-0aa1fe774afb/peanut-grafana
-          icon: di:peanut
-        - title: Wakapi
-          subdomain: grafana
-          path: /d/BRqbRfVGz/wakatime
-          icon: di:wakapi
         - title: Status
           subdomain: warden
           path: /status/all
           icon: https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg
+        - title: CloudNativePG
+          subdomain: grafana
+          path: /d/cloudnative-pg/cloudnativepg
+          icon: di:postgresql
+        - title: UPS statistics
+          subdomain: grafana
+          path: /d/a67b2952-0853-4775-83a1-0aa1fe774afb/peanut-grafana
+          icon: di:peanut
+        - title: qBittorrent
+          subdomain: grafana
+          path: /d/eKyTETFMk/qbittorrent
+          icon: di:qbittorrent
+        - title: Wakapi
+          subdomain: grafana
+          path: /d/BRqbRfVGz/wakatime
+          icon: di:wakapi
 
   sharedWidgets:
     stats:
