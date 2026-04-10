@@ -13,6 +13,8 @@ data:
       trusted_proxies:
         - 10.42.0.0/16
 
+    prometheus:
+
     automation: !include automations.yaml
     script: !include scripts.yaml
     scene: !include scenes.yaml

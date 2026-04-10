@@ -22,6 +22,12 @@ persistence:
     subPath: configuration.yaml
     readOnly: true
 
+metrics:
+  enabled: true
+  serviceMonitor:
+    interval: 1m
+    scrapeTimeout: 30s
+
 resources:
   requests:
     cpu: 10m
