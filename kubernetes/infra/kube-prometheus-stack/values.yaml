@@ -2,6 +2,8 @@
 namespaceOverride: monitoring
 prometheus:
   prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
     retention: 15d
     storageSpec:
       volumeClaimTemplate:
