@@ -353,6 +353,15 @@ More info [here](https://intel.github.io/intel-device-plugins-for-kubernetes/cmd
 
 The cluster runs [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) for monitoring and alerting. Configuration is in `kubernetes/infra/kube-prometheus-stack/`.
 
+#### Grafana Dashboards
+
+| Dashboard | Source | Provisioning |
+|-----------|--------|:------------:|
+| [qBittorrent](https://github.com/esanchezm/prometheus-qbittorrent-exporter/blob/master/grafana/dashboard.json) | prometheus-qbittorrent-exporter | Manual import |
+| [Wakapi](https://github.com/muety/wakapi#grafana) | wakatime-exporter chart (`dashboards/wakatime.json`) | Auto (sidecar) |
+
+Dashboards labeled `grafana_dashboard: "1"` are auto-provisioned by the Grafana sidecar. Manual import dashboards can be added via Grafana UI → Dashboards → Import.
+
 ### Backups (Restic)
 
 All app config PVCs are backed up weekly to [RustFS](https://github.com/rustfs/rustfs) using [Restic](https://restic.net/). A single custom Helm chart (`kubernetes/cluster/backups/charts/restic-backups/`) manages all 21 backup CronJobs.
