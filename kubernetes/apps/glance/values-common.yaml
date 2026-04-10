@@ -6,6 +6,8 @@ resources:
   limits:
     memory: 64Mi
 gluetunUrl: gluetun-api.qbittorrent-vpn.svc.cluster.local:8000
+peanutUrl: peanut.peanut.svc.cluster.local:8080
+peanutDeviceName: UPS-1
 immichUrl: immich-server.immich.svc.cluster.local:2283
 gluetunApiKey: ref+scw:///homelab/glance#/gluetun-api-key
 immichApiKey: ref+scw:///homelab/immich#/api-key
