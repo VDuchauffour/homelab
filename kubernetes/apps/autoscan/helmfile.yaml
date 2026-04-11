@@ -1,0 +1,8 @@
+---
+releases:
+  - name: autoscan
+    namespace: autoscan
+    createNamespace: true
+    chart: ./charts/autoscan
+    values:
+      - values.yaml

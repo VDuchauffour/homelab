@@ -352,3 +352,15 @@ apps:
         mountPath: /data
     excludes:
       - '*.log'
+
+  autoscan:
+    namespace: autoscan
+    schedule: 20 5 * * 0
+    targets:
+      - type: deployment
+        name: autoscan
+    pvcs:
+      - name: autoscan
+        mountPath: /data
+    excludes:
+      - '*.log'
