@@ -1,0 +1,45 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/music-assistant/server
+  pullPolicy: IfNotPresent
+  tag: ''
+
+service:
+  type: ClusterIP
+  port: 8095
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  config:
+    enabled: true
+    storageClass: ''
+    size: 5Gi
+  media:
+    enabled: false
+    existingClaim: ''
+    mountPath: /media
+
+hostNetwork: false
+dnsPolicy: ClusterFirst
+
+env: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

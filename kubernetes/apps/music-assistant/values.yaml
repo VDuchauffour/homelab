@@ -1,0 +1,51 @@
+---
+image:
+  tag: beta
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
+env:
+  TZ: Europe/Paris
+
+securityContext:
+  capabilities:
+    add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+
+persistence:
+  config:
+    enabled: true
+    storageClass: zfs-vm-pool-dynamic
+    size: 5Gi
+  media:
+    enabled: true
+    existingClaim: media-library
+    mountPath: /media
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: music-assistant.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - music-assistant.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: music-assistant-mkcert-tls
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1Gi

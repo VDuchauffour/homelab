@@ -220,3 +220,6 @@ glance:
         - title: Home Assistant
           subdomain: home-assistant
           icon: di:home-assistant
+        - title: Music Assistant
+          subdomain: music-assistant
+          icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/music-assistant.png
