@@ -422,6 +422,25 @@ data:
               path: /health
               interval: 30
               timeout: 5
+      music-assistant:
+        name: Music Assistant
+        protocol: http
+        full-domain: music-assistant.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        auth:
+          sso-enabled: true
+          whitelist-users:
+            - ref+envsubst://$EMAIL_ADDRESS
+        targets:
+          - hostname: music-assistant.music-assistant.svc.cluster.local
+            method: http
+            port: 8095
+            healthcheck:
+              hostname: music-assistant.music-assistant.svc.cluster.local
+              port: 8095
+              enabled: true
+              path: /
+              interval: 30
+              timeout: 5
       musicbrainz-picard:
         name: MusicBrainz Picard
         protocol: http

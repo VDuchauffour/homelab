@@ -1,0 +1,8 @@
+---
+releases:
+  - name: music-assistant
+    namespace: music-assistant
+    createNamespace: true
+    chart: ./charts/music-assistant
+    values:
+      - values.yaml
