@@ -18,4 +18,4 @@ releases:
         command: /bin/sh
         args:
           - -c
-          - kubectl apply -f manifests/configmap.yaml
+          - for f in manifests/*.yaml; do vals eval -f "$f" | kubectl apply -f -; done

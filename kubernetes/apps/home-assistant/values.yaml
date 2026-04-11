@@ -6,6 +6,23 @@ securityContext:
   runAsUser: 0
   runAsGroup: 0
 
+initContainers:
+  download-card-mod:
+    image: curlimages/curl:8.12.1
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+    command:
+      - sh
+      - -c
+      - |
+        mkdir -p /config/www
+        curl -fsSL -o /config/www/card-mod.js \
+          "https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.1/card-mod.js"
+    volumeMounts:
+      - name: config
+        mountPath: /config
+
 persistence:
   config:
     enabled: true
@@ -21,12 +38,22 @@ persistence:
     mountPath: /config/configuration.yaml
     subPath: configuration.yaml
     readOnly: true
+  ha-themes:
+    enabled: true
+    type: configMap
+    name: home-assistant-themes
+    mountPath: /config/themes/soft-ui.yaml
+    subPath: soft-ui.yaml
+    readOnly: true
 
 metrics:
   enabled: true
   serviceMonitor:
     interval: 1m
     scrapeTimeout: 30s
+    bearerTokenSecret:
+      name: home-assistant-prometheus-token
+      key: token
 
 resources:
   requests:
