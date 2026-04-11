@@ -1,0 +1,45 @@
+---
+config:
+  TZ: Europe/Paris
+  PUID: '1000'
+  PGID: '1000'
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 512Mi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+image:
+  repository: ghcr.io/niniyas/autoscan
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3468
+
+# Autoscan config.json — rendered into a Kubernetes Secret and mounted at /config/config.json
+# Secrets are resolved by vals at deploy time via ref+envsubst://
+autoscan:
+  ENABLE_PLEX: false
+  ENABLE_JOE: true
+  SERVER_IP: 0.0.0.0
+  SERVER_PORT: 3468
+  SERVER_PASS: ref+scw:///homelab/autoscan#/server-pass
+  SERVER_SCAN_DELAY: 180
+  SERVER_USE_SQLITE: true
+  USE_DOCKER: false
+  JELLYFIN_EMBY: jellyfin
+  JOE_API_KEY: ref+envsubst://$JELLYFIN_API_KEY
+  JOE_HOST: http://jellyfin.media-center.svc.cluster.local:8096
+  SERVER_PATH_MAPPINGS: {}
+  GOOGLE:
+    ENABLED: false
+  CHECK_FILESYSTEM: false

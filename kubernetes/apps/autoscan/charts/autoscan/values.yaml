@@ -1,0 +1,38 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/niniyas/autoscan
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 3468
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 512Mi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  TZ: UTC
+  PUID: '1000'
+  PGID: '1000'
+
+autoscan: {}
