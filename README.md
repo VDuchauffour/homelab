@@ -114,6 +114,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 
 | | App | Description | Deployed via |
 |:--:|-----|-------------|:------------:|
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/autoscan.png" width="32"> | autoscan | Webhook-based media scanner bridge for Sonarr/Radarr/Lidarr to Jellyfin | Helmfile |
 | <img src="https://raw.githubusercontent.com/garethgeorge/backrest/main/webui/assets/backrest-256.png" width="32"> | backrest | Web UI for restic backup management | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png" width="32"> | bazarr | Subtitle management for media | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bentopdf.png" width="32"> | bentopdf | Privacy-first PDF toolkit with client-side processing | Helmfile |

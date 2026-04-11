@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "autoscan.fullname" . }}-config
+  labels:
+    {{- include "autoscan.labels" . | nindent 4 }}
+data:
+  TZ: {{ .Values.config.TZ | quote }}
+  PUID: {{ .Values.config.PUID | quote }}
+  PGID: {{ .Values.config.PGID | quote }}

@@ -1,0 +1,7 @@
+---
+apiVersion: v2
+name: autoscan
+description: Autoscan - Webhook-based media scanner bridge for Sonarr/Radarr/Lidarr to Jellyfin
+type: application
+version: 0.1.0
+appVersion: latest
