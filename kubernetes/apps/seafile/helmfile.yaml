@@ -16,7 +16,7 @@ releases:
     namespace: seafile
     createNamespace: true
     chart: bitnami/memcached
-    version: 8.3.2
+    version: 8.3.16
     values:
       - values-memcached.yaml
 
