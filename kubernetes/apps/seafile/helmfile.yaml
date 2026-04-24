@@ -8,7 +8,7 @@ releases:
     namespace: seafile
     createNamespace: true
     chart: bitnami/mariadb
-    version: 25.0.1
+    version: 25.0.10
     values:
       - values-mariadb.yaml
 
