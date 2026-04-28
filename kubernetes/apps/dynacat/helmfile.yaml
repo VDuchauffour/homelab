@@ -1,41 +1,41 @@
 ---
 releases:
-  - name: glance-k8s
-    namespace: glance
+  - name: dynacat-k8s
+    namespace: dynacat
     createNamespace: true
     chart: oci://ghcr.io/lukasdietrich/glance-k8s/chart/glance-k8s
     version: v0.4.6
     values:
-      - fullnameOverride: glance-k8s
+      - fullnameOverride: dynacat-k8s
 
-  - name: glance-public
-    namespace: glance
+  - name: dynacat-public
+    namespace: dynacat
     createNamespace: true
-    chart: ./charts/glance
+    chart: ./charts/dynacat
     values:
       - values-common.yaml
       - values-public.yaml
       - domainName: ref+envsubst://$PUBLIC_DOMAIN_NAME
-      - glance:
+      - dynacat:
           auth:
-            secretKey: ref+scw:///homelab/glance#/auth-secret-key
+            secretKey: ref+scw:///homelab/dynacat#/auth-secret-key
             users:
               admin:
-                password: ref+scw:///homelab/glance#/admin-password
+                password: ref+scw:///homelab/dynacat#/admin-password
 
-  - name: glance-local
-    namespace: glance
-    chart: ./charts/glance
+  - name: dynacat-local
+    namespace: dynacat
+    chart: ./charts/dynacat
     values:
       - values-common.yaml
       - values-local.yaml
       - domainName: ref+envsubst://$LOCAL_DOMAIN_NAME
-      - glance:
+      - dynacat:
           auth:
-            secretKey: ref+scw:///homelab/glance#/auth-secret-key
+            secretKey: ref+scw:///homelab/dynacat#/auth-secret-key
             users:
               admin:
-                password: ref+scw:///homelab/glance#/admin-password
+                password: ref+scw:///homelab/dynacat#/admin-password
       - ingress:
           hosts:
             - host: dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
@@ -45,4 +45,4 @@ releases:
           tls:
             - hosts:
                 - dashboard.ref+envsubst://$LOCAL_DOMAIN_NAME
-              secretName: glance-local-mkcert-tls
+              secretName: dynacat-local-mkcert-tls

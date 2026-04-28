@@ -329,23 +329,23 @@ kubectl get jobs -A | grep restic
 
 ## Dashboard (Glance)
 
-The homelab uses [Glance](https://github.com/glanceapp/glance) as a personal dashboard. It runs as **two instances** (public + local) from a single helmfile in `kubernetes/apps/glance/`.
+The homelab uses [Glance](https://github.com/dynacatapp/dynacat) as a personal dashboard. It runs as **two instances** (public + local) from a single helmfile in `kubernetes/apps/dynacat/`.
 
 ### Architecture
 
-- **glance-public**: Exposed via Pangolin (public domain), no local ingress
-- **glance-local**: Local network only, ingress with mkcert TLS on `dashboard.<local-domain>`
+- **dynacat-public**: Exposed via Pangolin (public domain), no local ingress
+- **dynacat-local**: Local network only, ingress with mkcert TLS on `dashboard.<local-domain>`
 - Both share `values-common.yaml` for bookmark groups, widgets, and API integrations
 
 ### Configuration Files
 
 | File | Purpose |
 |------|---------|
-| `helmfile.yaml` | Two releases (glance-public, glance-local) with vals secrets |
+| `helmfile.yaml` | Two releases (dynacat-public, dynacat-local) with vals secrets |
 | `values-common.yaml` | Shared bookmarks, widgets (weather, calendar, qBittorrent, Warden) |
 | `values-local.yaml` | Local ingress config (mkcert TLS) |
 | `values-public.yaml` | Public instance config (ingress disabled — exposed via Pangolin) |
-| `charts/glance/` | Custom Helm chart (configmap template generates `glance.yml`) |
+| `charts/dynacat/` | Custom Helm chart (configmap template generates `dynacat.yml`) |
 
 ### Bookmark Structure
 
@@ -358,7 +358,7 @@ Each link uses either `url` (full URL) or `subdomain` (auto-expanded to `https:/
 
 ### Adding a New App to the Dashboard
 
-1. Add a bookmark entry to the appropriate group in `kubernetes/apps/glance/values-common.yaml`:
+1. Add a bookmark entry to the appropriate group in `kubernetes/apps/dynacat/values-common.yaml`:
 
    ```yaml
    - title: MyApp
@@ -366,7 +366,7 @@ Each link uses either `url` (full URL) or `subdomain` (auto-expanded to `https:/
      icon: di:myapp  # or sh:myapp, or a raw URL
    ```
 
-2. Redeploy: `make glance-update`
+2. Redeploy: `make dynacat-update`
 
 ### Icon Conventions
 
@@ -426,7 +426,7 @@ kubectl rollout restart deployment/fossorial-newt-main-tunnel -n fossorial
 
 After deploying a new app or infra tool, complete these additional steps:
 
-1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/glance/values-common.yaml` in the appropriate group, then redeploy Glance (`make glance-update`)
+1. **Glance dashboard**: Add a bookmark entry to `kubernetes/apps/dynacat/values-common.yaml` in the appropriate group, then redeploy Glance (`make dynacat-update`)
 2. **Pangolin blueprint** (if externally accessible): Add a resource block to `kubernetes/infra/pangolin-newt/manifests/blueprint.yaml`, then apply and restart Newt
 3. **Warden monitoring**: Run `make warden-seed-cleanup` to discover the new app and sync monitors (adds new, removes stale)
 4. **Restic backup** (if app has config PVCs): Add an entry to `kubernetes/cluster/backups/values.yaml`, then redeploy (`cd kubernetes/cluster/backups && helmfile apply`)

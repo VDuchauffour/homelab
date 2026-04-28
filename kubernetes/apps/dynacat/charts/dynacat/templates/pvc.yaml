@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "glance.fullname" . }}
+  name: {{ include "dynacat.fullname" . }}
   labels:
-    {{- include "glance.labels" . | nindent 4 }}
+    {{- include "dynacat.labels" . | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteOnce

@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "glance.name" -}}
+{{- define "dynacat.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "glance.fullname" -}}
+{{- define "dynacat.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -24,16 +24,16 @@ Create a default fully qualified app name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "glance.chart" -}}
+{{- define "dynacat.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "glance.labels" -}}
-helm.sh/chart: {{ include "glance.chart" . }}
-{{ include "glance.selectorLabels" . }}
+{{- define "dynacat.labels" -}}
+helm.sh/chart: {{ include "dynacat.chart" . }}
+{{ include "dynacat.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,7 +43,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "glance.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "glance.name" . }}
+{{- define "dynacat.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "dynacat.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

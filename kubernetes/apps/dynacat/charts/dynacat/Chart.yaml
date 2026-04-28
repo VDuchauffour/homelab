@@ -1,6 +1,6 @@
 ---
 apiVersion: v2
-name: glance
+name: dynacat
 description: Glance - A self-hosted dashboard that puts all your feeds in one place
 type: application
 version: 0.1.0

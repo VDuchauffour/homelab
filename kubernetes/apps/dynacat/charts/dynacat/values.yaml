@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: glanceapp/glance
+  repository: panonim/dynacat
   pullPolicy: IfNotPresent
   tag: latest
 
@@ -42,7 +42,7 @@ affinity: {}
 env:
   TZ: Europe/Paris
 
-glance:
+dynacat:
   auth:
     secretKey: ''
     users:
