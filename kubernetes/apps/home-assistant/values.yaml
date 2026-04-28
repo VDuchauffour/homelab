@@ -22,6 +22,35 @@ initContainers:
     volumeMounts:
       - name: config
         mountPath: /config
+  download-heatzy:
+    image: curlimages/curl:8.12.1
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        VERSION=6.4.9
+        DEST=/config/custom_components/heatzy
+        if [ ! -f "$DEST/manifest.json" ] || ! grep -q "\"version\": \"$VERSION\"" "$DEST/manifest.json"; then
+          echo "Installing hass-heatzy $VERSION"
+          mkdir -p /config/custom_components
+          rm -rf "$DEST"
+          cd /tmp
+          curl -fsSL -o heatzy.tar.gz \
+            "https://github.com/Cyr-ius/hass-heatzy/archive/refs/tags/${VERSION}.tar.gz"
+          tar -xzf heatzy.tar.gz
+          mv "hass-heatzy-${VERSION}/custom_components/heatzy" "$DEST"
+          rm -rf "hass-heatzy-${VERSION}" heatzy.tar.gz
+          echo "Installed: $(cat $DEST/manifest.json | grep version)"
+        else
+          echo "hass-heatzy $VERSION already installed, skipping"
+        fi
+    volumeMounts:
+      - name: config
+        mountPath: /config
 
 persistence:
   config:
