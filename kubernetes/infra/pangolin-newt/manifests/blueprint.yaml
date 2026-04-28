@@ -92,11 +92,11 @@ data:
           whitelist-users:
             - ref+envsubst://$EMAIL_ADDRESS
         targets:
-          - hostname: glance-public.glance.svc.cluster.local
+          - hostname: dynacat-public.dynacat.svc.cluster.local
             method: http
             port: 8080
             healthcheck:
-              hostname: glance-public.glance.svc.cluster.local
+              hostname: dynacat-public.dynacat.svc.cluster.local
               port: 8080
               enabled: true
               path: /

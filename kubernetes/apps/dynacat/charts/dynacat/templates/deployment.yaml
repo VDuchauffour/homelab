@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "glance.fullname" . }}
+  name: {{ include "dynacat.fullname" . }}
   labels:
-    {{- include "glance.labels" . | nindent 4 }}
+    {{- include "dynacat.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "glance.selectorLabels" . | nindent 6 }}
+      {{- include "dynacat.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "glance.selectorLabels" . | nindent 8 }}
+        {{- include "dynacat.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -41,8 +41,8 @@ spec:
             timeoutSeconds: 3
           volumeMounts:
             - name: config
-              mountPath: /app/config/glance.yml
-              subPath: glance.yml
+              mountPath: /app/config/dynacat.yml
+              subPath: dynacat.yml
               readOnly: true
             {{- if .Values.persistence.enabled }}
             - name: data
@@ -55,11 +55,11 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "glance.fullname" . }}-config
+            name: {{ include "dynacat.fullname" . }}-config
         {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "glance.fullname" . }}
+            claimName: {{ include "dynacat.fullname" . }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
