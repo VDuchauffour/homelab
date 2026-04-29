@@ -505,6 +505,21 @@ data:
               path: /status.php
               interval: 30
               timeout: 5
+      gotify:
+        name: gotify
+        protocol: http
+        full-domain: gotify.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: gotify-headless.gotify.svc.cluster.local
+            method: http
+            port: 80
+            healthcheck:
+              hostname: gotify-headless.gotify.svc.cluster.local
+              port: 80
+              enabled: true
+              path: /health
+              interval: 30
+              timeout: 5
       papra:
         name: Papra
         protocol: http

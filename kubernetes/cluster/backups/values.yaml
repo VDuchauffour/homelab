@@ -364,3 +364,13 @@ apps:
         mountPath: /data
     excludes:
       - '*.log'
+
+  gotify:
+    namespace: gotify
+    schedule: 25 5 * * 0
+    targets:
+      - type: deployment
+        name: gotify
+    pvcs:
+      - name: gotify-data
+        mountPath: /app/data

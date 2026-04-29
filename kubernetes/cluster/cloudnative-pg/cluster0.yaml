@@ -113,6 +113,12 @@ spec:
         superuser: true
         passwordSecret:
           name: tracearr-cnpg-credentials
+      - name: gotify
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: gotify-cnpg-credentials
 
   postgresql:
     shared_preload_libraries:

@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: pmoscode
+    url: https://pmoscode-helm.github.io/gotify/
+
+releases:
+  - name: gotify
+    namespace: gotify
+    createNamespace: true
+    chart: pmoscode/gotify
+    version: 0.8.1
+    values:
+      - values.yaml

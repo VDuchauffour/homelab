@@ -1,0 +1,36 @@
+---
+fullnameOverride: gotify
+
+server:
+  databaseDialect: postgres
+  databaseConnection: ref+scw:///homelab/gotify#/database-uri
+  defaultUserPassword: ref+scw:///homelab/gotify#/admin-password
+  registration: false
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: gotify.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - gotify.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: gotify-mkcert-tls

@@ -141,6 +141,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/musicbrainz.png" width="32"> | musicbrainz-picard | Cross-platform music tagger powered by MusicBrainz | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/n8n.png" width="32"> | n8n | Workflow automation platform | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/navidrome.png" width="32"> | navidrome | Web-based music collection server and streamer | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/gotify.png" width="32"> | gotify | Simple server for sending and receiving messages | Helmfile |
 | <img src="https://raw.githubusercontent.com/papra-hq/papra/main/apps/papra-client/public/favicon-32x32.png" width="32"> | papra | Self-hosted document management with OCR | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pgadmin.png" width="32"> | pgadmin | PostgreSQL management UI | Helmfile |
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/peanut.png" width="32"> | peanut | Dashboard for Network UPS Tools (NUT) monitoring | Helmfile |
