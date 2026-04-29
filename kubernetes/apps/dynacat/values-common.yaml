@@ -188,6 +188,9 @@ dynacat:
         - title: Stirling PDF
           subdomain: stirling-pdf
           icon: sh:stirling-pdf
+        - title: Gotify
+          subdomain: gotify
+          icon: di:gotify
     - title: Sharing
       links:
         - title: Filebrowser
