@@ -5,6 +5,10 @@ nutServers:
 
 config:
   TZ: Europe/Paris
+  # Auth disabled: API is consumed anonymously by the dynacat (Glance) custom-api
+  # widget on the Cluster page. Service is ClusterIP-only; ingress is local-only
+  # behind mkcert TLS. WEB_USERNAME/WEB_PASSWORD kept for easy re-enable.
+  AUTH_DISABLED: true
   WEB_USERNAME: ref+scw:///homelab/peanut#/username
   WEB_PASSWORD: ref+scw:///homelab/peanut#/password
 
@@ -18,7 +22,7 @@ resources:
     cpu: 10m
     memory: 64Mi
   limits:
-    memory: 256Mi
+    memory: 512Mi
 
 image:
   repository: brandawg93/peanut
