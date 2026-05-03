@@ -20,9 +20,15 @@ global:
   image:
     registry: docker.io
     repository: fosrl/newt
-    tag: 1.10.1
+    tag: 1.12.3
     imagePullPolicy: IfNotPresent
-
+  tests:
+    enabled: false
+    image:
+      repository: bitnami/kubectl
+      tag: 1.28.15
+      pullPolicy: IfNotPresent
+  resources:
     requests:
       cpu: 100m
       memory: 128Mi
@@ -31,14 +37,6 @@ global:
       cpu: 200m
       memory: 256Mi
       ephemeral-storage: 256Mi
-
-  tests:
-    enabled: false
-    image:
-      repository: bitnami/kubectl
-      tag: 1.28.15
-      pullPolicy: IfNotPresent
-
   metrics:
     enabled: true
     port: 9090
