@@ -164,6 +164,7 @@ For detailed Scaleway CLI usage and vals provider documentation, see the `scalew
 | <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/wallos.png" width="32"> | wallos | Personal subscription and expense tracker | Helmfile |
 | <img src="https://raw.githubusercontent.com/projecthelena/warden/702a44724394d9841d86992b800d8df763023b9b/assets/favicon.svg" width="32"> | warden | Service health monitoring and alerting | Helmfile |
 | <img src="https://raw.githubusercontent.com/ad4mts/zfdash/refs/heads/main/src/data/icons/zfs-gui.png" width="32"> | zfdash | ZFS monitoring dashboard | Helmfile |
+| <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/zublo.png" width="32"> | zublo | Self-hosted personal subscription tracker (PocketBase-based) | Helmfile |
 
 </details>
 

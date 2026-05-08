@@ -880,3 +880,18 @@ data:
               path: /login
               interval: 30
               timeout: 5
+      zublo:
+        name: Zublo
+        protocol: http
+        full-domain: zublo.ref+envsubst://$PUBLIC_DOMAIN_NAME
+        targets:
+          - hostname: zublo.zublo.svc.cluster.local
+            method: http
+            port: 9597
+            healthcheck:
+              hostname: zublo.zublo.svc.cluster.local
+              port: 9597
+              enabled: true
+              path: /api/health
+              interval: 30
+              timeout: 5
