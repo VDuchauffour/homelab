@@ -1,0 +1,50 @@
+proxmox_node                 = "pve"                                        # Proxmox node name (cluster member)
+proxmox_node_address         = "192.168.1.100"                              # SSH-reachable IP/hostname of the node
+proxmox_ssh_username         = "root"                                       # SSH user with snippet write access
+proxmox_ssh_private_key_file = "~/.ssh/id_ed25519"                          # set to bypass ssh-agent; leave null to use agent
+proxmox_insecure             = true                                         # Proxmox uses a self-signed cert by default
+
+name = "k8s-cp-1"
+
+image_file_id = "local:iso/ubuntu-26.04-server-cloudimg-amd64.img"          # pre-uploaded cloud image
+datastore_id  = "local-zfs"                                                 # VM disk datastore
+
+cpu_cores    = 4                                                            # 4 vCPU is a comfortable CP baseline
+memory_mb    = 8192                                                         # 8 GiB
+disk_size_gb = 32                                                           # 32 GiB
+
+network_bridge = "vmbr0"
+ip_address     = "192.168.1.40/24"                                          # static IP REQUIRED for control plane
+gateway        = "192.168.1.1"
+dns_servers    = ["192.168.1.10", "1.1.1.1"]
+search_domain  = "home.arpa"
+
+ssh_public_keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...your.email@example.com",         # paste your public key
+]
+
+timezone = "Europe/Paris"
+
+additional_packages = [
+  "curl",
+  "ca-certificates",
+  "gnupg",
+  "open-iscsi",
+  "nfs-common",
+]
+
+# Uncomment one of the snippets below to install a Kubernetes control-plane
+# automatically on first boot. Token-bearing commands are written to the
+# Proxmox snippet datastore — for production, prefer running these manually
+# over SSH or via a config-management tool.
+additional_runcmd = [
+  # k3s — single-node server with embedded etcd, traefik+servicelb disabled:
+  # "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='server --cluster-init --disable=servicelb --disable=traefik' sh -",
+
+  # k3s — first server of an HA cluster (other servers join with --server https://<this-ip>:6443):
+  # "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='server --cluster-init --tls-san=<vip-or-fqdn>' sh -",
+
+  # RKE2 — server:
+  # "curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=server sh -",
+  # "systemctl enable --now rke2-server.service",
+]

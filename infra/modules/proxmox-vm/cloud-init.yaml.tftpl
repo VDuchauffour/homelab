@@ -1,0 +1,44 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}
+manage_etc_hosts: true
+preserve_hostname: false
+
+%{ if timezone != null ~}
+timezone: ${timezone}
+%{ endif ~}
+users:
+  - default
+  - name: ${username}
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+%{ if user_password != null ~}
+    plain_text_passwd: ${jsonencode(user_password)}
+    lock_passwd: false
+%{ else ~}
+    lock_passwd: true
+%{ endif ~}
+%{ if length(ssh_public_keys) > 0 ~}
+    ssh_authorized_keys:
+%{ for key in ssh_public_keys ~}
+      - ${key}
+%{ endfor ~}
+%{ endif ~}
+
+%{ if run_apt_upgrade ~}
+package_update: true
+package_upgrade: true
+%{ endif ~}
+
+packages:
+  - qemu-guest-agent
+%{ for pkg in additional_packages ~}
+  - ${pkg}
+%{ endfor ~}
+
+runcmd:
+  - [systemctl, enable, --now, qemu-guest-agent]
+%{ for cmd in additional_runcmd ~}
+  - ${cmd}
+%{ endfor ~}

@@ -1,0 +1,49 @@
+proxmox_node         = "pve"                                                # Proxmox node name (cluster member)
+proxmox_ssh_username = "root"                                              # SSH user with snippet write access
+proxmox_insecure     = false                                                # set true only for self-signed certs you trust
+
+name = "k8s-worker-1"
+
+image_file_id = "local:iso/ubuntu-26.04-server-cloudimg-amd64.img"          # pre-uploaded cloud image
+datastore_id  = "local-zfs"                                                 # VM disk datastore
+
+cpu_cores    = 8                                                            # 8 vCPU
+memory_mb    = 16384                                                        # 16 GiB
+disk_size_gb = 64                                                           # 64 GiB (room for container images + ephemeral pod storage)
+
+network_bridge = "vmbr0"
+ip_address     = "192.168.1.41/24"                                          # static IP recommended; set to null for DHCP
+gateway        = "192.168.1.1"                                              # required when ip_address is set
+dns_servers    = ["192.168.1.10", "1.1.1.1"]
+search_domain  = "home.arpa"
+
+ssh_public_keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...your.email@example.com",         # paste your public key
+]
+
+timezone = "Europe/Paris"
+
+additional_packages = [
+  "curl",
+  "ca-certificates",
+  "gnupg",
+  "open-iscsi",
+  "nfs-common",
+]
+
+# Uncomment ONE snippet below to auto-join the node to an existing cluster on
+# first boot. The control-plane URL and join token must be replaced with real
+# values before running `terraform apply`. NOTE: tokens written to runcmd end
+# up on the Proxmox snippet datastore — for production, prefer manual joining
+# or a config-management tool.
+additional_runcmd = [
+  # k3s — join an existing server:
+  # "curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.40:6443 K3S_TOKEN=<node-token-from-cp> sh -",
+
+  # RKE2 — join an existing server:
+  # "mkdir -p /etc/rancher/rke2",
+  # "echo 'server: https://192.168.1.40:9345' >  /etc/rancher/rke2/config.yaml",
+  # "echo 'token: <node-token-from-cp>'        >> /etc/rancher/rke2/config.yaml",
+  # "curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=agent sh -",
+  # "systemctl enable --now rke2-agent.service",
+]
