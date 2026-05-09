@@ -14,7 +14,7 @@ secret:
   existingSecret: rustfs-credentials
 
 storageclass:
-  name: zfs-vm-pool-dynamic
+  name: zfs-configs-clusters-k3s-dynamic
   dataStorageSize: 50Gi
   logStorageSize: 1Gi
 

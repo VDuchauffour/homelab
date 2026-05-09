@@ -14,11 +14,11 @@ env:
 persistence:
   data:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 2Gi
   config:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 100Mi
 
 resources:

@@ -82,7 +82,7 @@ postgres://memos:PASSWORD@cnpg-cluster0-rw.cnpg-clusters.svc.cluster.local:5432/
 
 Data is persisted in a ZFS-backed PVC:
 
-- **StorageClass**: `zfs-vm-pool-dynamic`
+- **StorageClass**: `zfs-configs-clusters-k3s-dynamic`
 - **Size**: 5Gi
 - **Access Mode**: ReadWriteOnce
 

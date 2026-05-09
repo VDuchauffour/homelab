@@ -15,7 +15,7 @@ configuration:
 
 persistence:
   enabled: true
-  storageClass: zfs-vm-pool-dynamic
+  storageClass: zfs-configs-clusters-k3s-dynamic
   accessMode: ReadWriteOnce
   size: 2Gi
 

@@ -41,7 +41,7 @@ valkey:
       enabled: true
       size: 1Gi
       type: persistentVolumeClaim
-      storageClass: zfs-vm-pool-dynamic
+      storageClass: zfs-configs-clusters-k3s-dynamic
       accessMode: ReadWriteOnce
 
 machine-learning:
@@ -67,7 +67,7 @@ machine-learning:
       enabled: true
       size: 10Gi
       type: persistentVolumeClaim
-      storageClass: zfs-vm-pool-dynamic
+      storageClass: zfs-configs-clusters-k3s-dynamic
       accessMode: ReadWriteOnce
 
 server:

@@ -29,7 +29,7 @@ persistence:
   config:
     enabled: true
     type: pvc
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     accessMode: ReadWriteOnce
     size: 1Gi
     mountPath: /root

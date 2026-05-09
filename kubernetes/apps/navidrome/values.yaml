@@ -17,7 +17,7 @@ service:
 persistence:
   config:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 5Gi
     mountPath: /data
   music:

@@ -1,7 +1,7 @@
 ---
 dashboard:
   persistence:
-    storageClassName: zfs-vm-pool-dynamic
+    storageClassName: zfs-configs-clusters-k3s-dynamic
   resources:
     requests:
       cpu: 5m

@@ -8,7 +8,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: zfs-vm-pool-dynamic
+          storageClassName: zfs-configs-clusters-k3s-dynamic
           accessModes:
             - ReadWriteOnce
           resources:
@@ -21,7 +21,7 @@ grafana:
     passwordKey: password
   persistence:
     enabled: true
-    storageClassName: zfs-vm-pool-dynamic
+    storageClassName: zfs-configs-clusters-k3s-dynamic
     size: 10Gi
   dashboardProviders:
     dashboardproviders.yaml:
@@ -91,7 +91,7 @@ alertmanager:
     storage:
       volumeClaimTemplate:
         spec:
-          storageClassName: zfs-vm-pool-dynamic
+          storageClassName: zfs-configs-clusters-k3s-dynamic
           accessModes:
             - ReadWriteOnce
           resources:

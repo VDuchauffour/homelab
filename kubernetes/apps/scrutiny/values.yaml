@@ -9,11 +9,11 @@ image:
 persistence:
   config:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 1Gi
   influxdb:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 5Gi
 
 resources:

@@ -27,11 +27,11 @@ memcached:
 
 persistence:
   shared:
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 5Gi
   data:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 10Gi
     mountPath: /shared/seafile-data
 

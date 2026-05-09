@@ -18,14 +18,14 @@ persistence:
     type: pvc
     mountPath: /config
     readOnly: false
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 1Gi
   data:
     enabled: true
     type: pvc
     mountPath: /server
     readOnly: false
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     accessMode: ReadWriteOnce
     size: 5Gi
   media:

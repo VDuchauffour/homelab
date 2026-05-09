@@ -34,7 +34,7 @@ ingress:
 
 persistence:
   database:
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
   data:
     enabled: true
     type: persistentVolumeClaim

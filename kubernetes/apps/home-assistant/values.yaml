@@ -58,7 +58,7 @@ persistence:
     type: pvc
     mountPath: /config
     readOnly: false
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     size: 5Gi
   ha-config-yaml:
     enabled: true

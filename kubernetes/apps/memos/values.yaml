@@ -4,7 +4,7 @@ image:
 
 persistence:
   enabled: true
-  storageClass: zfs-vm-pool-dynamic
+  storageClass: zfs-configs-clusters-k3s-dynamic
   accessMode: ReadWriteOnce
   size: 5Gi
 

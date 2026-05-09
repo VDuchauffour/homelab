@@ -36,7 +36,7 @@ additionalContainers:
 persistence:
   data:
     enabled: true
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
     accessMode: ReadWriteOnce
     size: 1Gi
     mountPath: /datastore

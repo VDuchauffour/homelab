@@ -2,10 +2,10 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: zfs-vm-pool-dynamic
+  name: zfs-configs-clusters-k3s-dynamic
 allowVolumeExpansion: true
 parameters:
-  poolname: vm-pool
+  poolname: configs/clusters/k3s
   fstype: zfs
   recordsize: 128k
   compression: lz4

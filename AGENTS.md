@@ -119,18 +119,18 @@ The cluster uses three storage backends optimized for different use cases:
 | StorageClass | Backend | Access Mode | Use Case |
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
-| `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
+| `zfs-configs-clusters-k3s-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss.
 
 ### ZFS-LocalPV (App Configs)
 
-OpenEBS ZFS-LocalPV provides high-performance local storage backed by ZFS on the `vm-pool` dataset.
+OpenEBS ZFS-LocalPV provides high-performance local storage backed by ZFS on the `configs-clusters-k3s` dataset.
 
-- **StorageClass**: `zfs-vm-pool-dynamic`
+- **StorageClass**: `zfs-configs-clusters-k3s-dynamic`
 - **Features**: Compression (lz4), snapshots, dynamic provisioning
-- **Location**: `/vm-pool/<pvc-uuid>` on single node
+- **Location**: `/configs-clusters-k3s/<pvc-uuid>` on single node
 
 ```yaml
 apiVersion: v1
@@ -139,7 +139,7 @@ metadata:
   name: app-config
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: zfs-vm-pool-dynamic
+  storageClassName: zfs-configs-clusters-k3s-dynamic
   resources:
     requests:
       storage: 1Gi
@@ -192,7 +192,7 @@ cd kubernetes/infra/nfs-csi-driver && helmfile apply
 
 ## Database (CloudNativePG)
 
-The cluster runs a single CloudNativePG instance (`cnpg-cluster0`) in namespace `cnpg-clusters` with dynamically provisioned ZFS storage (`zfs-vm-pool-dynamic`, 10Gi).
+The cluster runs a single CloudNativePG instance (`cnpg-cluster0`) in namespace `cnpg-clusters` with dynamically provisioned ZFS storage (`zfs-configs-clusters-k3s-dynamic`, 10Gi).
 
 - **Operator**: `kubernetes/infra/cloudnative-pg/` (Helmfile, chart v0.26.1)
 - **Cluster + Secrets**: `kubernetes/cluster/cloudnative-pg/cluster0.yaml`

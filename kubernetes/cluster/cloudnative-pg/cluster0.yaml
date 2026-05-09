@@ -17,7 +17,7 @@ spec:
   instances: 1
   storage:
     size: 10Gi
-    storageClass: zfs-vm-pool-dynamic
+    storageClass: zfs-configs-clusters-k3s-dynamic
   bootstrap:
     initdb:
       database: noop

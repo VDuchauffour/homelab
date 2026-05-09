@@ -236,7 +236,7 @@ The cluster uses three storage backends optimized for different use cases:
 | StorageClass | Backend | Access Mode | Use Case |
 |--------------|---------|-------------|----------|
 | `local-path` | Rancher Local Path | RWO | App data |
-| `zfs-vm-pool-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
+| `zfs-configs-clusters-k3s-dynamic` | OpenEBS ZFS-LocalPV | RWO | App configs, databases |
 | `nfs-tank-media` | NFS CSI | RWX | Shared NFS storage (media, filebrowser) |
 
 All storage uses **Retain** reclaim policy to prevent accidental data loss. You can use the [kubectl plugin for openebs](https://openebs.io/docs/user-guides/kubectl-openebs#install-kubectl-plugin) to help manage the storage volumes.
@@ -247,11 +247,11 @@ Rancher Local Path utilizes the local storage in each node.
 
 #### ZFS-LocalPV (App Configs)
 
-OpenEBS ZFS-LocalPV provides high-performance local storage backed by ZFS on the `vm-pool` dataset.
+OpenEBS ZFS-LocalPV provides high-performance local storage backed by ZFS on the `configs-clusters-k3s` dataset.
 
-- **StorageClass**: `zfs-vm-pool-dynamic`
+- **StorageClass**: `zfs-configs-clusters-k3s-dynamic`
 - **Features**: Compression (lz4), snapshots, dynamic provisioning
-- **Location**: `/vm-pool/<pvc-uuid>` on single node
+- **Location**: `/configs-clusters-k3s/<pvc-uuid>` on single node
 
 ```yaml
 apiVersion: v1
@@ -260,7 +260,7 @@ metadata:
   name: app-config
 spec:
   accessModes: [ReadWriteOnce]
-  storageClassName: zfs-vm-pool-dynamic
+  storageClassName: zfs-configs-clusters-k3s-dynamic
   resources:
     requests:
       storage: 1Gi
@@ -290,7 +290,7 @@ Static PVs are defined in `kubernetes/cluster/persistent-volumes/media.yaml`.
 
 ### Database (PostgreSQL)
 
-All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-vm-pool-dynamic`).
+All postgres databases run in a [CloudNativePG cluster](https://cloudnative-pg.io/). The cluster uses dynamically provisioned ZFS-backed PVCs (`zfs-configs-clusters-k3s-dynamic`).
 
 Backups are handled by the [Barman Cloud Plugin](https://cloudnative-pg.io/plugin-barman-cloud/) with WAL archiving and daily base backups to [RustFS](https://github.com/rustfs/rustfs) (`cnpg-backups` bucket). Configuration is in `kubernetes/cluster/cloudnative-pg/backup.yaml`.
 
