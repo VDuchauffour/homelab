@@ -235,3 +235,7 @@ config_patches_control_plane = [
 5. **Reaching nodes from outside the homelab.** `talos_machine_configuration_apply`
    talks to TCP/50000 on each node. If you run Terraform from a remote
    machine, ensure routing/firewall allows it.
+
+## Themes
+
+Some themes are available [here](https://github.com/IT-BAER/proxmorph).
