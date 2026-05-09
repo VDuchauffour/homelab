@@ -1,0 +1,64 @@
+proxmox_node                 = "pve"               # Proxmox node name
+proxmox_node_address         = "192.168.1.100"     # SSH-reachable IP of the node
+proxmox_ssh_username         = "root"
+proxmox_ssh_private_key_file = "~/.ssh/proxmox"    # null = use ssh-agent
+proxmox_insecure             = true                # Proxmox uses self-signed cert by default
+
+cluster_name       = "homelab"
+cluster_endpoint   = "https://192.168.1.40:6443"   # MUST be the CP's IP for single-CP
+talos_version      = "v1.10.0"                     # MUST match the nocloud image you downloaded
+kubernetes_version = null                           # null = Talos default for the chosen talos_version
+
+image_file_id        = "local:iso/nocloud-amd64.raw"   # pre-uploaded Talos nocloud image
+datastore_id         = "local-zfs"                     # VM disks
+snippet_datastore_id = "local"                         # must have Snippets content enabled
+
+control_plane_nodes = [
+  {
+    name      = "talos-cp1"
+    vm_id     = 9000
+    cpu       = 4
+    memory_mb = 8192
+    disk_gb   = 32
+    ip        = "192.168.1.40/24"
+    gateway   = "192.168.1.1"
+  },
+]
+
+worker_nodes = [
+  {
+    name      = "talos-w1"
+    vm_id     = 9001
+    cpu       = 8
+    memory_mb = 16384
+    disk_gb   = 64
+    ip        = "192.168.1.41/24"
+    gateway   = "192.168.1.1"
+  },
+  # Add more workers by uncommenting:
+  # {
+  #   name      = "talos-w2"
+  #   vm_id     = 9002
+  #   cpu       = 8
+  #   memory_mb = 16384
+  #   disk_gb   = 64
+  #   ip        = "192.168.1.42/24"
+  #   gateway   = "192.168.1.1"
+  # },
+]
+
+dns_servers = ["192.168.1.10", "1.1.1.1"]
+
+# Extra machine-config patches. Each entry is a YAML or JSON string.
+# Common useful patches:
+config_patches_control_plane = [
+  # Allow workloads to run on the control plane (handy for tiny homelabs):
+  # yamlencode({ cluster = { allowSchedulingOnControlPlanes = true } }),
+
+  # Override install disk if /dev/sda is wrong for your VM:
+  # yamlencode({ machine = { install = { disk = "/dev/vda" } } }),
+]
+
+config_patches_worker = [
+  # yamlencode({ machine = { install = { disk = "/dev/vda" } } }),
+]

@@ -10,8 +10,19 @@ variable "proxmox_ssh_username" {
   default     = "root"
 }
 
+variable "proxmox_ssh_private_key_file" {
+  description = "Path to a private SSH key for the Proxmox node (e.g. \"~/.ssh/id_ed25519\"). When set, this is used directly and ssh-agent is bypassed. Leave null to use ssh-agent instead."
+  type        = string
+  default     = null
+}
+
 variable "proxmox_node" {
   description = "Name of the Proxmox node where the VM will be created (e.g. \"pve\")."
+  type        = string
+}
+
+variable "proxmox_node_address" {
+  description = "SSH-reachable address of the Proxmox node (e.g. \"192.168.1.100\"). Defaults to the API endpoint hostname when omitted, which often differs from the SSH-reachable address."
   type        = string
 }
 

@@ -203,35 +203,35 @@ module "dev_vm" {
 The module exposes ~30 variables. See [`variables.tf`](variables.tf) for the
 full reference. The most commonly tuned ones:
 
-| Variable                 | Default                  | Notes |
+| Variable | Default | Notes |
 |--------------------------|--------------------------|-------|
-| `name`                   | (required)               | DNS-valid; used as hostname and snippet filename prefix |
-| `proxmox_node`           | (required)               | Proxmox node name (e.g. `pve`) |
-| `image_file_id`          | (required)               | Pre-uploaded cloud image, e.g. `local:iso/ubuntu-26.04-server-cloudimg-amd64.img` |
-| `cpu_cores`              | `8`                      | |
-| `memory_mb`              | `16384`                  | Set as both `dedicated` and `floating` (ballooning) |
-| `disk_size_gb`           | `64`                     | Must be ≥ source image size |
-| `datastore_id`           | `local-lvm`              | Where the VM disk and cloud-init drive live |
-| `snippet_datastore_id`   | `local`                  | Must have **Snippets** content enabled |
-| `network_bridge`         | `vmbr0`                  | |
-| `ip_address`             | `null`                   | CIDR for static, `null` for DHCP |
-| `gateway`                | `null`                   | Required when `ip_address` is set |
-| `dns_servers`            | `["1.1.1.1", "8.8.8.8"]` | |
-| `username`               | `ubuntu`                 | Cloud-init user with passwordless sudo |
-| `ssh_public_keys`        | `[]`                     | List of SSH pubkeys to authorize |
-| `additional_packages`    | `[]`                     | Extra apt packages (qemu-guest-agent is always installed) |
-| `timezone`               | `null`                   | e.g. `"Europe/Paris"` |
+| `name` | (required) | DNS-valid; used as hostname and snippet filename prefix |
+| `proxmox_node` | (required) | Proxmox node name (e.g. `pve`) |
+| `image_file_id` | (required) | Pre-uploaded cloud image, e.g. `local:iso/ubuntu-26.04-server-cloudimg-amd64.img` |
+| `cpu_cores` | `8` | |
+| `memory_mb` | `16384` | Set as both `dedicated` and `floating` (ballooning) |
+| `disk_size_gb` | `64` | Must be ≥ source image size |
+| `datastore_id` | `local-lvm` | Where the VM disk and cloud-init drive live |
+| `snippet_datastore_id` | `local` | Must have **Snippets** content enabled |
+| `network_bridge` | `vmbr0` | |
+| `ip_address` | `null` | CIDR for static, `null` for DHCP |
+| `gateway` | `null` | Required when `ip_address` is set |
+| `dns_servers` | `["1.1.1.1", "8.8.8.8"]` | |
+| `username` | `ubuntu` | Cloud-init user with passwordless sudo |
+| `ssh_public_keys` | `[]` | List of SSH pubkeys to authorize |
+| `additional_packages` | `[]` | Extra apt packages (qemu-guest-agent is always installed) |
+| `timezone` | `null` | e.g. `"Europe/Paris"` |
 
 ## Outputs
 
-| Output             | Description |
+| Output | Description |
 |--------------------|-------------|
-| `vm_id`            | Proxmox VM ID assigned by the provider |
-| `name`             | VM name |
-| `node_name`        | Proxmox node hosting the VM |
-| `primary_ipv4`     | First non-loopback IPv4 from the QEMU guest agent (set after first boot) |
-| `ipv4_addresses`   | All IPv4 addresses reported per interface |
-| `mac_addresses`    | NIC MAC addresses |
+| `vm_id` | Proxmox VM ID assigned by the provider |
+| `name` | VM name |
+| `node_name` | Proxmox node hosting the VM |
+| `primary_ipv4` | First non-loopback IPv4 from the QEMU guest agent (set after first boot) |
+| `ipv4_addresses` | All IPv4 addresses reported per interface |
+| `mac_addresses` | NIC MAC addresses |
 | `user_data_file_id`, `meta_data_file_id` | Snippet IDs (useful for debugging) |
 
 ## Gotchas

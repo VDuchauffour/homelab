@@ -1,6 +1,8 @@
-proxmox_node         = "pve"                                                # Proxmox node name (cluster member)
-proxmox_ssh_username = "root"                                              # SSH user with snippet write access
-proxmox_insecure     = false                                                # set true only for self-signed certs you trust
+proxmox_node                 = "pve"                                        # Proxmox node name (cluster member)
+proxmox_node_address         = "192.168.1.100"                              # SSH-reachable IP/hostname of the node
+proxmox_ssh_username         = "root"                                       # SSH user with snippet write access
+proxmox_ssh_private_key_file = "~/.ssh/id_ed25519"                          # set to bypass ssh-agent; leave null to use agent
+proxmox_insecure             = true                                         # Proxmox uses a self-signed cert by default
 
 name = "k8s-worker-1"
 
