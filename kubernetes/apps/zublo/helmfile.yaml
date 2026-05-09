@@ -1,0 +1,8 @@
+---
+releases:
+  - name: zublo
+    namespace: zublo
+    createNamespace: true
+    chart: ./charts/zublo
+    values:
+      - values.yaml

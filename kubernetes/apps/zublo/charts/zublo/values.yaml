@@ -1,0 +1,37 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/danielalves96/zublo
+  pullPolicy: IfNotPresent
+  tag: 0.1.0
+
+service:
+  type: ClusterIP
+  port: 9597
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts: []
+  tls: []
+
+persistence:
+  enabled: true
+  storageClass: ''
+  size: 1Gi
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  TZ: UTC
+
+secrets:
+  PB_ENCRYPTION_KEY: ''

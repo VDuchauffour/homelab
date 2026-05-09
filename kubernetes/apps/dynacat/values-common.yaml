@@ -218,6 +218,9 @@ dynacat:
         - title: Wallos
           subdomain: wallos
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png
+        - title: Zublo
+          subdomain: zublo
+          icon: sh:zublo
     - title: Smart Home
       links:
         - title: Home Assistant

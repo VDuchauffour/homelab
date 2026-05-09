@@ -374,3 +374,16 @@ apps:
     pvcs:
       - name: gotify-data
         mountPath: /app/data
+
+  zublo:
+    namespace: zublo
+    schedule: 30 5 * * 0
+    targets:
+      - type: deployment
+        name: zublo
+    pvcs:
+      - name: zublo
+        mountPath: /pb/pb_data
+    excludes:
+      - '*.log'
+      - logs.db*

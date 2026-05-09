@@ -1,0 +1,43 @@
+---
+config:
+  TZ: Europe/Paris
+
+secrets:
+  PB_ENCRYPTION_KEY: ref+scw:///homelab/zublo#/encryption-key
+
+persistence:
+  enabled: true
+  storageClass: zfs-vm-pool-dynamic
+  size: 1Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+image:
+  repository: ghcr.io/danielalves96/zublo
+  pullPolicy: IfNotPresent
+  tag: 0.1.0
+
+service:
+  type: ClusterIP
+  port: 9597
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: mkcert-ca
+  hosts:
+    - host: zublo.ref+envsubst://$LOCAL_DOMAIN_NAME
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - zublo.ref+envsubst://$LOCAL_DOMAIN_NAME
+      secretName: zublo-mkcert-tls
