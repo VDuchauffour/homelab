@@ -8,6 +8,6 @@ releases:
     namespace: changedetection-io
     createNamespace: true
     chart: zekker6/changedetection-io
-    version: 1.86.0
+    version: 1.93.0
     values:
       - values.yaml
