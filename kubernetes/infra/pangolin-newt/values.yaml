@@ -20,7 +20,7 @@ global:
   image:
     registry: docker.io
     repository: fosrl/newt
-    tag: 1.12.3
+    tag: 1.12.5
     imagePullPolicy: IfNotPresent
   tests:
     enabled: false
