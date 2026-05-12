@@ -7,6 +7,6 @@ releases:
     namespace: kube-system
     createNamespace: false
     chart: komodorio/helm-dashboard
-    version: 2.0.4
+    version: 2.0.6
     values:
       - values.yaml
