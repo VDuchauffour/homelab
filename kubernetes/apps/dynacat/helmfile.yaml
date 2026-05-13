@@ -4,7 +4,7 @@ releases:
     namespace: dynacat
     createNamespace: true
     chart: oci://ghcr.io/lukasdietrich/glance-k8s/chart/glance-k8s
-    version: v0.4.6
+    version: v0.4.9
     values:
       - fullnameOverride: dynacat-k8s
 
