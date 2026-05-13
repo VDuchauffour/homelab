@@ -8,6 +8,6 @@ releases:
     namespace: arr
     createNamespace: true
     chart: k8s-home-lab/lidarr
-    version: 15.3.0
+    version: 15.3.1
     values:
       - values.yaml
