@@ -7,7 +7,7 @@ releases:
     namespace: rustfs
     createNamespace: true
     chart: rustfs/rustfs
-    version: 0.0.83
+    version: 0.0.99
     values:
       - values.yaml
     hooks:
