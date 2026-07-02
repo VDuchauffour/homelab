@@ -8,6 +8,6 @@ releases:
     namespace: csi-nfs
     createNamespace: true
     chart: csi-driver-nfs/csi-driver-nfs
-    version: 4.13.1
+    version: 4.13.4
     values:
       - values.yaml
