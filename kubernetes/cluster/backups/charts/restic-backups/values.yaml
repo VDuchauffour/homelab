@@ -1,5 +1,5 @@
 global:
-  resticImage: restic/restic:0.17.3
+  resticImage: restic/restic:0.19.1
   orchestratorImage: alpine/curl:latest
   retention:
     keepWeekly: 2
