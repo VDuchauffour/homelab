@@ -8,6 +8,6 @@ releases:
     namespace: navidrome
     createNamespace: true
     chart: djjudas21/navidrome
-    version: 6.8.1
+    version: 6.8.4
     values:
       - values.yaml
